@@ -1,0 +1,8 @@
+message("**************src start**************")
+add_subdirectory(boundary)
+add_subdirectory(cal)
+add_subdirectory(coordinate)
+add_subdirectory(element_assemble)
+add_subdirectory(load)
+add_subdirectory(mesh)
+message("**************src end**************")
