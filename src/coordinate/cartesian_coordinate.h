@@ -11,7 +11,6 @@ class CartesianCoord : public CoordBase {
   ~CartesianCoord() = default;
 
   int getID();
-  std::array<double, 3> getFactor();
   arr3 getORIGIN();
   std::array<arr3, 3> getVEC();
 };

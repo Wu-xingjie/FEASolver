@@ -19,7 +19,9 @@ foreach(elem_test ${test_lists})
     add_executable(${elem_name} ${elem_test})
     # 连接依赖
     target_link_libraries(${elem_name} tool)
+    target_link_libraries(${elem_name} coord)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/tool)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
     # 创建可执行程序存放目录
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/test/${elem_dir})
