@@ -8,11 +8,13 @@ namespace COORDINATE {
 typedef std::array<double, 3> arr3;
 class CoordBase {
  public:
+  CoordBase() { _coord_id = TOOL::IdManager(TOOL::id_type::COORDINATE); }
   CoordBase(const arr3& origin, const arr3& vec1, const arr3& vec2,
             const arr3& vec3)
       : _coord_origin(origin), _vec1(vec1), _vec2(vec2), _vec3(vec3) {
     _coord_id = TOOL::IdManager(TOOL::id_type::COORDINATE);
   }
+
   ~CoordBase() = default;
 
   // (接口)获取坐标系id

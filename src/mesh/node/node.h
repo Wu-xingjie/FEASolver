@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 
+#include "coordinate/cartesian_coordinate.h"
+
 namespace NODE {
 // 定义节点类型
 class Node {
@@ -17,9 +19,9 @@ class Node {
                     const std::string& coord = "global");
 
  private:
+  COORDINATE::CartesianCoord _coordinate;
   double _x;
   double _y;
   double _z;
-  // TODO: 等坐标系设计好之后回来设计节点坐标系
 };
 }  // namespace NODE
