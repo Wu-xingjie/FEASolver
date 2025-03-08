@@ -63,5 +63,30 @@ int main() {
     std::cout << std::endl;
   }
 
+  std::cout << "赋值运算符测试：" << std::endl;
+  COORDINATE::CartesianCoord temp;
+  temp = test1;
+  test_arr3 temp_origin = temp.getORIGIN();
+  std::array<test_arr3, 3> temp_vec = temp.getVEC();
+
+
+  // 测试坐标系id
+  std::cout << "coord_id: " << temp.getID() << std::endl;
+  // 测试坐标原点
+  std::cout << "coord_origin: ";
+  for (auto elem : result1_origin) {
+    std::cout << elem << " ";
+  }
+  std::cout << std::endl;
+  // 测试坐标轴
+  std::cout << "coord_axis: " << std::endl;
+  for (int i = 1; i < 4; i++) {
+    std::cout << "axis" << i << ": ";
+    for (auto elem : temp_vec.at(i - 1)) {
+      std::cout << elem << " ";
+    }
+    std::cout << std::endl;
+  }
+
   return 0;
 }

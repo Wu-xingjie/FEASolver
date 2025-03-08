@@ -5,3 +5,5 @@ project(FEASolver CXX)
 add_subdirectory(src)
 add_subdirectory(tool)
 add_subdirectory(test)
+
+set(CMAKE_BUILD_TYPE debug)
