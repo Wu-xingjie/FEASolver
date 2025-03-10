@@ -4,6 +4,8 @@ static int NodeID = 0;
 static int ELEMENTID = 0;
 static int LOADID = 0;
 static int COORDINATEID = 0;
+static int PROPERTYID = 0;
+static int MATERIALID = 0;
 
 int TOOL::IdManager(const TOOL::id_type &type) {
   try {
@@ -24,6 +26,14 @@ int TOOL::IdManager(const TOOL::id_type &type) {
       case TOOL::id_type::ELEMENT:
         ELEMENTID += 1;
         num = ELEMENTID;
+        break;
+      case TOOL::id_type::PROPERTY:
+        PROPERTYID += 1;
+        num = PROPERTYID;
+        break;
+      case TOOL::id_type::MATERIAL:
+        MATERIALID += 1;
+        num = MATERIALID;
         break;
       default:
         break;

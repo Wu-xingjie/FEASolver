@@ -10,7 +10,9 @@ namespace TOOL {
 enum id_type {
   NODE,
   ELEMENT,
+  PROPERTY,
   LOAD,
+  MATERIAL,
   COORDINATE,
 };
 
