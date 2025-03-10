@@ -5,7 +5,7 @@
 
 #include "coordinate/cartesian_coordinate.h"
 
-namespace NODE {
+namespace COMPONENT {
 typedef std::array<double, 3> arr3;
 // 定义节点类型
 class Node {
@@ -29,4 +29,4 @@ private:
   double _y;
   double _z;
 };
-} // namespace NODE
+} // namespace COMPONENT

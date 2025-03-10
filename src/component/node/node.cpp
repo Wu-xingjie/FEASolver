@@ -1,6 +1,6 @@
 #include "node.h"
 
-namespace NODE {
+namespace COMPONENT {
 Node::Node(const Node &n) {
   _cid = n._cid;
   _x = n._x;
@@ -21,4 +21,4 @@ void Node::set_node(const double &x, const double &y, const double &z,
   _z = z;
 }
 
-} // namespace NODE
+} // namespace COMPONENT
