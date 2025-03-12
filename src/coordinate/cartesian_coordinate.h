@@ -2,7 +2,7 @@
 
 #include "coordinate_base.h"
 #include "id_manager/id_mananger.h"
-namespace COORDINATE {
+namespace COMPONENT {
 class CartesianCoord : public CoordBase {
 public:
   CartesianCoord() : CoordBase() {}
@@ -23,4 +23,4 @@ public:
 protected:
   void setID(const int &id);
 };
-} // namespace COORDINATE
+} // namespace COMPONENT

@@ -4,7 +4,7 @@
 
 #include "id_manager/id_mananger.h"
 
-namespace COORDINATE {
+namespace COMPONENT {
 typedef std::array<double, 3> arr3;
 class CoordBase {
  public:
@@ -42,4 +42,4 @@ class CoordBase {
   arr3 _vec2;
   arr3 _vec3;
 };
-}  // namespace COORDINATE
+}  // namespace COMPONENT

@@ -1,6 +1,6 @@
 #include "cartesian_coordinate.h"
 
-namespace COORDINATE {
+namespace COMPONENT {
 
 int CartesianCoord::getID() { return _coord_id; }
 
@@ -38,4 +38,4 @@ CartesianCoord::CartesianCoord(const CartesianCoord &p) {
   _vec3 = p._vec3;
 }
 
-} // namespace COORDINATE
+} // namespace COMPONENT
