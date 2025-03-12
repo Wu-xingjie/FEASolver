@@ -7,7 +7,7 @@
 namespace COORDINATE {
 typedef std::array<double, 3> arr3;
 class CoordBase {
-public:
+ public:
   CoordBase() { _coord_id = TOOL::IdManager(TOOL::id_type::COORDINATE); }
 
   CoordBase(const arr3 &origin, const arr3 &vec1, const arr3 &vec2,
@@ -27,7 +27,12 @@ public:
   // (接口)获取坐标轴
   virtual std::array<arr3, 3> getVEC() = 0;
 
-protected:
+  // 判断坐标系是否为相等
+  bool operator==(const CoordBase &c) {
+    return (_coord_id == c._coord_id) ? true : false;
+  }
+
+ protected:
   int _coord_id;
   // 全局坐标系默认为原点为(0,0,0)、xyz轴分别(1,0,)、(0,1,0)、(0,0,1)的坐标系
   // 坐标原点
@@ -37,4 +42,4 @@ protected:
   arr3 _vec2;
   arr3 _vec3;
 };
-} // namespace COORDINATE
+}  // namespace COORDINATE

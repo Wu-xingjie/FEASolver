@@ -69,7 +69,6 @@ int main() {
   test_arr3 temp_origin = temp.getORIGIN();
   std::array<test_arr3, 3> temp_vec = temp.getVEC();
 
-
   // 测试坐标系id
   std::cout << "coord_id: " << temp.getID() << std::endl;
   // 测试坐标原点
@@ -88,5 +87,11 @@ int main() {
     std::cout << std::endl;
   }
 
+  std::cout << "判断坐标系是否相等：" << std::endl;
+  if (temp == test1) {
+    std::cout << "temp == test1" << std::endl;
+  }else{
+    std::cout << "temp != test1" << std::endl;
+  }
   return 0;
 }
