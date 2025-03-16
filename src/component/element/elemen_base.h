@@ -1,13 +1,13 @@
 #pragma once
+#include "id_manager/id_mananger.h"
 
 namespace COMPONENT {
 class ElemBase {
 public:
-  ElemBase() = default;
+  ElemBase() { _id = TOOL::IdManager(TOOL::id_type::ELEMENT); };
   ~ElemBase() = default;
 
 protected:
   int _id;
-  // TODO:等property完成后处理单元属性
 };
 } // namespace COMPONENT

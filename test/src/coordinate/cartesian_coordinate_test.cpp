@@ -18,19 +18,12 @@ int main() {
   std::cout << "coord_id: " << test.getID() << std::endl;
   // 测试坐标原点
   std::cout << "coord_origin: " << std::endl << result_origin << std::endl;
-  // for (auto elem : result_origin) {
-  //   std::cout << elem << " ";
-  // }
-  // std::cout << std::endl;
+
   // 测试坐标轴
   std::cout << "coord_axis: " << std::endl;
   for (int i = 1; i < 4; i++) {
     std::cout << "axis" << i << ": " << std::endl
               << test_vec.at(i - 1) << std::endl;
-    // for (auto elem : test_vec.at(i - 1)) {
-    //   std::cout << elem << " ";
-    // }
-    // std::cout << std::endl;
   }
 
   std::cout << "*************接口测试*************" << std::endl;
@@ -50,19 +43,12 @@ int main() {
   std::cout << "coord_id: " << test1.getID() << std::endl;
   // 测试坐标原点
   std::cout << "coord_origin: " << std::endl << result1_origin << std::endl;
-  // for (auto elem : result1_origin) {
-  //   std::cout << elem << " ";
-  // }
-  // std::cout << std::endl;
+
   // 测试坐标轴
   std::cout << "coord_axis: " << std::endl;
   for (int i = 1; i < 4; i++) {
     std::cout << "axis" << i << ": " << std::endl
               << test1_vec.at(i - 1) << std::endl;
-    // for (auto elem : test1_vec.at(i - 1)) {
-    //   std::cout << elem << " ";
-    // }
-    // std::cout << std::endl;
   }
 
   std::cout << "赋值运算符测试：" << std::endl;
@@ -75,18 +61,12 @@ int main() {
   std::cout << "coord_id: " << temp.getID() << std::endl;
   // 测试坐标原点
   std::cout << "coord_origin: " << std::endl << temp_origin << std::endl;
-  // for (auto elem : result1_origin) {
-  //   std::cout << elem << " ";
-  // }
-  // std::cout << std::endl;
+
   // 测试坐标轴
   std::cout << "coord_axis: " << std::endl;
   for (int i = 1; i < 4; i++) {
-    std::cout << "axis" << i << ": " << std::endl << temp_vec.at(i - 1) << std::endl;
-    // for (auto elem : test1_vec.at(i - 1)) {
-    //   std::cout << elem << " ";
-    // }
-    // std::cout << std::endl;
+    std::cout << "axis" << i << ": " << std::endl
+              << temp_vec.at(i - 1) << std::endl;
   }
 
   std::cout << "判断坐标系是否相等：" << std::endl;

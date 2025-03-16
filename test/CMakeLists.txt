@@ -20,8 +20,15 @@ foreach(elem_test ${test_lists})
     # 连接依赖
     target_link_libraries(${elem_name} tool)
     target_link_libraries(${elem_name} coord)
+    target_link_libraries(${elem_name} node)
+    target_link_libraries(${elem_name} elem)
+    target_link_libraries(${elem_name} mat)
+    target_link_libraries(${elem_name} prop)
+
+    target_include_directories(${elem_name} PUBLIC ${Eigen3_INC_DIRS})
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/tool)
-    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/coordinate)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component)
 
     # 创建可执行程序存放目录
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/test/${elem_dir})
@@ -29,6 +36,6 @@ foreach(elem_test ${test_lists})
     message("new directory: ${CMAKE_SOURCE_DIR}/build/test/${elem_dir}")
     set_target_properties(${elem_name} PROPERTIES
                              RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${elem_dir})
+    set(CMAKE_BUILD_TYPE debug)
 endforeach()
-
 message("**************test end**************")

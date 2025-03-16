@@ -1,0 +1,6 @@
+message("**************component start**************")
+add_subdirectory(element)
+add_subdirectory(material)
+add_subdirectory(node)
+add_subdirectory(property)
+message("**************component end**************")

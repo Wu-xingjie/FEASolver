@@ -1,5 +1,5 @@
 #pragma once
-#include "tool/id_manager/id_mananger.h"
+#include "id_manager/id_mananger.h"
 
 namespace COMPONENT {
 class MaterialBase {
