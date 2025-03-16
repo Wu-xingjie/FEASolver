@@ -1,6 +1,8 @@
 message("**************coordinate start**************")
 file(GLOB_RECURSE COORDS *.cpp)
 
+message("Eigen3_INC_DIRS: ${Eigen3_INC_DIRS}")
+
 add_library(coord SHARED ${COORDS})
 
 # 将coord库链接到libtool上
