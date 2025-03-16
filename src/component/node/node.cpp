@@ -8,10 +8,10 @@ Node::Node(const Node &n) {
   _z = n._z;
 }
 
-CartesianCoord Node::GetCoord() { return _coord; }
+CartesianCoord Node::GetCoord() const { return _coord; }
 
-arr3 Node::get_location() {
-  arr3 loc{_x, _y, _z};
+vec_3 Node::get_location() const {
+  vec_3 loc(_x, _y, _z);
   return loc;
 }
 
@@ -23,4 +23,4 @@ void Node::set_node(const double &x, const double &y, const double &z,
   _z = z;
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT

@@ -6,7 +6,7 @@
 #include "coordinate/cartesian_coordinate.h"
 
 namespace COMPONENT {
-typedef std::array<double, 3> arr3;
+typedef Eigen::Vector3d vec_3;
 // 定义节点类型
 class Node {
  public:
@@ -19,7 +19,7 @@ class Node {
   Node(const Node &n);
 
   // 获取节点坐标
-  arr3 get_location() const;
+  vec_3 get_location() const;
   // 获取节点坐标系
   CartesianCoord GetCoord() const;
   // 设置节点坐标
