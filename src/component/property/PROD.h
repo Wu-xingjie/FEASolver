@@ -1,15 +1,13 @@
 #pragma once
-
-#include "component/material/mat1.h"
 #include "property_base.h"
 
 namespace COMPONENT {
 // 打包杆单元属性参数
 struct ProdData {
-  ProdData() : _a(-1.0), _mat() {}
+  ProdData() = default;
   ProdData(const ProdData& p);
   double _a;  // 截面面积
-  MAT1 _mat;
+  int _mid;
 };
 
 class PROD : public PropertyBase {
@@ -19,7 +17,7 @@ class PROD : public PropertyBase {
   PROD(const PROD& p);
 
   // 设置对应属性参数
-  void SetProperty(double a, MAT1 mat);
+  void SetProperty(double a, int mid);
 
   // 返回对应属性参数
   ProdData GetProperty();

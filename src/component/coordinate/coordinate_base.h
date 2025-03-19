@@ -1,8 +1,6 @@
 #pragma once
-
-#include "id_manager/id_mananger.h"
 #include <array>
-#include <eigen3/Eigen/Dense>
+#include "src_inc_dir.h"
 
 namespace COMPONENT {
 typedef Eigen::Vector3d vec_3;

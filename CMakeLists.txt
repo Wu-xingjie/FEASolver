@@ -2,19 +2,10 @@ cmake_minimum_required(VERSION 3.28)
 project(FEASolver CXX)
 set(CMAKE_CXX_STANDARD 11)
 # # 添加子目录
-# add_subdirectory(src)
-# add_subdirectory(tool)
-# add_subdirectory(test)
-
-# set(CMAKE_BUILD_TYPE debug)
-
-message("**************src start**************")
-
 find_package(Eigen3 REQUIRED)
 if (Eigen3_FOUND)
     message(">>>Eigen3 FOUNED!!")
     set(Eigen3_INC_DIRS ${EIGEN3_INCLUDE_DIRS})
-
     # 添加子目录
     add_subdirectory(src)
     add_subdirectory(tool)
@@ -22,7 +13,6 @@ if (Eigen3_FOUND)
 else()
 message(FATAL_ERROR "Eigen3 NOT FOUND!")
 endif()
-message("**************src end**************")
 
 set(CMAKE_BUILD_TYPE debug)
 message("cmake_build_type: ${CMAKE_BUILD_TYPE}")

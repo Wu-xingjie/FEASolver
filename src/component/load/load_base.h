@@ -9,7 +9,7 @@ class LoadBase {
 
   virtual int GetID() = 0;
 
- private:
+ protected:
   int _id;
 };
 }  // namespace LOAD

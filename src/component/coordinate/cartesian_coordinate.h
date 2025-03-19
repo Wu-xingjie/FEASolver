@@ -19,8 +19,6 @@ public:
   // set
   void setORIGIN(const vec_3 &vec);
   void setVEC(const vec_3 &vec1, const vec_3 &vec2, const vec_3 &vec3);
-
-protected:
-  void setID(const int &id);
+  // void setID(const int &id);
 };
 } // namespace COMPONENT

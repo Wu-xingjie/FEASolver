@@ -2,8 +2,7 @@
 
 #include <array>
 #include <string>
-
-#include "coordinate/cartesian_coordinate.h"
+#include "src_inc_dir.h"
 
 namespace COMPONENT {
 typedef Eigen::Vector3d vec_3;
@@ -12,7 +11,7 @@ class Node {
  public:
   Node() = default;
   Node(const double &x, const double &y, const double &z,
-       const CartesianCoord &c)
+       const int &c)
       : _x(x), _y(y), _z(z), _coord(c) {}
   ~Node() = default;
   // 拷贝构造
@@ -21,13 +20,13 @@ class Node {
   // 获取节点坐标
   vec_3 get_location() const;
   // 获取节点坐标系
-  CartesianCoord GetCoord() const;
+  int GetCoord() const;
   // 设置节点坐标
   void set_node(const double &x, const double &y, const double &z,
-                const CartesianCoord &coord);
+                const int &coord);
 
  private:
-  CartesianCoord _coord;
+  int _coord;
   double _x;
   double _y;
   double _z;

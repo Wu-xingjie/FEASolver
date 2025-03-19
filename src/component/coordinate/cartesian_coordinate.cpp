@@ -20,7 +20,7 @@ void CartesianCoord::setVEC(const vec_3 &vec1, const vec_3 &vec2,
   _vec3 = vec3;
 }
 
-void CartesianCoord::setID(const int &id) { _coord_id = id; }
+// void CartesianCoord::setID(const int &id) { _coord_id = id; }
 
 CartesianCoord::CartesianCoord(const CartesianCoord &p) {
   _coord_id = p._coord_id;
