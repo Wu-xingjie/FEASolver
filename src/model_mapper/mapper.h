@@ -3,7 +3,10 @@
 
 namespace MAPPER {
 class FileParser {
- public:
- private:
+public:
+  FileParser() = default;
+  ~FileParser() = default;
+private:
+
 };
-}  // namespace MAPPER
+} // namespace MAPPER
