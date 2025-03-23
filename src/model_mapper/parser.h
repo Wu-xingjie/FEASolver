@@ -11,7 +11,6 @@ public:
   // 解析文件
   void ParserFile(const std::string &file_address);
   std::vector<std::vector<boost::any>> &GetData();
-  std::string a{"sadf"};
 
 protected:
   // 判断字符串是否为一个数

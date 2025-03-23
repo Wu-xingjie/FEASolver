@@ -1,15 +1,14 @@
 #include "parser.h"
-#include "fstream"
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <fstream>
 #include <iostream>
 namespace MAPPER {
 void Parser::ParserFile(const std::string &file_address) {
-  std::cout << "a" << std::endl;
   std::fstream file;
   file.open(file_address, std::ios_base::in);
   if (file.is_open()) {
-    while (!file.good()) {
+    while (file.good()) {
       std::string line;
       std::getline(file, line);
       std::vector<std::string> line_devided = DevideLine(line);
@@ -21,7 +20,10 @@ void Parser::ParserFile(const std::string &file_address) {
           temp_content.push_back(elem);
         }
       }
+      _file_data.push_back(temp_content);
     }
+  } else {
+    std::cout << "file open failed!" << std::endl;
   }
 }
 
@@ -37,7 +39,7 @@ bool Parser::IsNumber(const std::string &l) {
 }
 
 void Parser::RemoveBlack(std::string &word) {
-  word.erase(std::remove(word.begin(), word.end(), '\0'), word.end());
+  word.erase(std::remove(word.begin(), word.end(), ' '), word.end());
 }
 
 std::vector<std::string> Parser::DevideLine(const std::string &line) {
