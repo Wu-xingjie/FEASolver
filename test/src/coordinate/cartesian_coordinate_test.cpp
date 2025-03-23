@@ -1,4 +1,4 @@
-#include "coordinate/cartesian_coordinate.h"
+#include "component/coordinate/cartesian_coordinate.h"
 
 #include <iostream>
 int main() {

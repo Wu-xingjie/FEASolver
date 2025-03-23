@@ -2,8 +2,10 @@
 #include "fstream"
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 namespace MAPPER {
 void Parser::ParserFile(const std::string &file_address) {
+  std::cout << "a" << std::endl;
   std::fstream file;
   file.open(file_address, std::ios_base::in);
   if (file.is_open()) {
@@ -52,5 +54,8 @@ std::vector<std::string> Parser::DevideLine(const std::string &line) {
   }
   RemoveBlack(word);
   result.push_back(word);
+  return result;
 }
+
+std::vector<std::vector<boost::any>> &Parser::GetData() { return _file_data; }
 } // namespace MAPPER

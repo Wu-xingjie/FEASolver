@@ -10,6 +10,7 @@ if (Eigen3_FOUND)
     find_package(Boost REQUIRED)
     if (Boost_FOUND)
         message(">>>Boost FOUND!!")
+        # set(boost ${Boost})
         # 添加子目录
         add_subdirectory(src)
         add_subdirectory(tool)

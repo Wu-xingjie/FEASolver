@@ -1,5 +1,5 @@
 #pragma once
-#include "elemen_base.h"
+#include "component/element/elemen_base.h"
 #include "fea_model/fea_model.h"
 
 namespace COMPONENT {

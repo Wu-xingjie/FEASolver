@@ -20,11 +20,16 @@ foreach(elem_test ${test_lists})
     target_link_libraries(${elem_name} elem)
     target_link_libraries(${elem_name} mat)
     target_link_libraries(${elem_name} prop)
+    target_link_libraries(${elem_name} mapper)
+    target_link_libraries(${elem_name} ${BOOST_LIBS})
+
 
     target_include_directories(${elem_name} PUBLIC ${Eigen3_INC_DIRS})
-    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/tool)
-    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/coordinate)
-    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component)
+    target_include_directories(${elem_name} PUBLIC ${BOOST_INCLUDE_DIRS})
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/model_mapper)
+    message("mapper:${CMAKE_SOURCE_DIR}/src/model_mapper")
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
+    # target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component)
 
     # 创建可执行程序存放目录
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/test/${elem_dir})
