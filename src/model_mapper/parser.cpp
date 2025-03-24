@@ -1,4 +1,5 @@
 #include "parser.h"
+
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <fstream>
@@ -12,12 +13,19 @@ void Parser::ParserFile(const std::string &file_address) {
       std::string line;
       std::getline(file, line);
       std::vector<std::string> line_devided = DevideLine(line);
-      std::vector<boost::any> temp_content;
-      for (auto &elem : line_devided) {
-        if (IsNumber(elem)) {
-          temp_content.push_back(boost::lexical_cast<double>(elem));
+      std::array<boost::any, 10> temp_content;
+      // for (auto &elem : line_devided) {
+      //   if (IsNumber(elem)) {
+      //     temp_content.push_back(boost::lexical_cast<double>(elem));
+      //   } else {
+      //     temp_content.push_back(elem);
+      //   }
+      // }
+      for (int i = 0; i < line_devided.size(); i++) {
+        if (IsNumber(line_devided.at(i))) {
+          temp_content.at(i) = boost::lexical_cast<double>(line_devided.at(i));
         } else {
-          temp_content.push_back(elem);
+          temp_content.at(i) = line_devided.at(i);
         }
       }
       _file_data.push_back(temp_content);
@@ -59,5 +67,7 @@ std::vector<std::string> Parser::DevideLine(const std::string &line) {
   return result;
 }
 
-std::vector<std::vector<boost::any>> &Parser::GetData() { return _file_data; }
-} // namespace MAPPER
+std::vector<std::array<boost::any, 10>> &Parser::GetData() {
+  return _file_data;
+}
+}  // namespace MAPPER

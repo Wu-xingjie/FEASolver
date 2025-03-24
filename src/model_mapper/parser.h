@@ -2,6 +2,7 @@
 #include <boost/any.hpp>
 #include <string>
 #include <vector>
+#include <array>
 namespace MAPPER {
 // 文件解析器，负责解析文件信息
 class Parser {
@@ -10,7 +11,7 @@ public:
   ~Parser() = default;
   // 解析文件
   void ParserFile(const std::string &file_address);
-  std::vector<std::vector<boost::any>> &GetData();
+  std::vector<std::array<boost::any,10>> &GetData();
 
 protected:
   // 判断字符串是否为一个数
@@ -21,6 +22,6 @@ protected:
   std::vector<std::string> DevideLine(const std::string &line);
 
 private:
-  std::vector<std::vector<boost::any>> _file_data;
+  std::vector<std::array<boost::any,10>> _file_data;
 };
 } // namespace MAPPER
