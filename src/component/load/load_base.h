@@ -1,7 +1,7 @@
 #pragma once
 #include "id_manager/id_mananger.h"
 
-namespace LOAD {
+namespace COMPONENT {
 class LoadBase {
  public:
   LoadBase() { _id = TOOL::IdManager(TOOL::LOAD); }
@@ -12,4 +12,4 @@ class LoadBase {
  protected:
   int _id;
 };
-}  // namespace LOAD
+}  // namespace COMPONENT

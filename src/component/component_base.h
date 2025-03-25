@@ -9,7 +9,5 @@ class CompBase {
  public:
   CompBase() = default;
   ~CompBase() = default;
-
-  virtual void GenerateComponent(const file_data& src_data) = 0;
 };
 }  // namespace COMPONENT
