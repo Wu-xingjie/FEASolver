@@ -12,38 +12,38 @@ namespace MAPPER {
 class FileParser;
 
 // 文件信息到有限元模型的注册表
-template <typename T>
+// template <typename T>
 class File2ModelRegister {
- public:
+public:
   File2ModelRegister() = default;
   ~File2ModelRegister() = default;
   // 定义有参构造函数，以此实现注册
-  File2ModelRegister(std::string comp_name,
-                     boost::shared_ptr<COMPONENT::CompBase> comp) {
+  File2ModelRegister(
+      std::string comp_name,
+      std::function<boost::shared_ptr<COMPONENT::CompBase>()> creator) {
     try {
-      if (comp) {
-        throw comp_name + "注册时发生错误 !";
+      if (creator) {
+        std::cout << ">>>>[ERROR]: " << comp_name << std::endl;
+        throw ">>>>注册时发生错误 !";
       }
-      static_assert(std::is_base_of<COMPONENT::CompBase, T>::value,
-                    "CompBase is not base of " + comp_name);
-      _file_to_model.insert(
-          std::make_pair<std::string, boost::shared_ptr<COMPONENT::CompBase>>(
-              comp_name, comp));
-    } catch (const std::exception& e) {
+      // static_assert(std::is_base_of<COMPONENT::CompBase, T>::value,
+      //               "CompBase is not base of " + comp_name);
+      _file_to_model[comp_name] = creator;
+    } catch (const std::exception &e) {
       std::cerr << e.what() << '\n';
     }
   }
 
   // 将解析器设置为友元从而允许解析器访问映射表
 
-  friend class FileParser;
-
- private:
+  // private:
   // 文件到元件的映射表
-  static std::map<std::string, boost::shared_ptr<COMPONENT::CompBase>>
+  static std::map<std::string,
+                  std::function<boost::shared_ptr<COMPONENT::CompBase>()>>
       _file_to_model;
 };
-template <typename T>
-std::map<std::string, boost::shared_ptr<COMPONENT::CompBase>>
-    File2ModelRegister<T>::_file_to_model;
-}  // namespace MAPPER
+
+std::map<std::string, std::function<boost::shared_ptr<COMPONENT::CompBase>()>>
+    File2ModelRegister::_file_to_model;
+
+} // namespace MAPPER
