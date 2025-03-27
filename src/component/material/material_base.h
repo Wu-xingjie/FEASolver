@@ -1,5 +1,5 @@
 #pragma once
-#include "component_base.h"
+#include "component/component_base.h"
 #include "src_inc_dir.h"
 namespace COMPONENT {
 class MaterialBase : public CompBase {
@@ -7,7 +7,7 @@ class MaterialBase : public CompBase {
   MaterialBase() { _id = TOOL::IdManager(TOOL::id_type::MATERIAL); }
   ~MaterialBase() = default;
   
-  virtual void GenerateComponent(const file_data& src_data) = 0;
+  // virtual void GenerateComponent(const file_data& src_data) = 0;
 
  protected:
   int _id;

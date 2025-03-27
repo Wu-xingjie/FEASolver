@@ -23,9 +23,4 @@ void MAT1::SetMaterial(double E, double G, double NU) {
 
 Mat1Data MAT1::GetMaterial() { return _mat1_data; }
 
-// 注册MAT1
-MAPPER::File2ModelRegister _Mat1Register("MAT1", [&]() {
-  return boost::make_shared<MAT1>();
-});
-
 } // namespace COMPONENT

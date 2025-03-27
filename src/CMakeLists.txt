@@ -1,5 +1,6 @@
 message("************** src start ***************")
 add_subdirectory(component)
+add_subdirectory(component_factory)
 add_subdirectory(fea_model)
 add_subdirectory(matrix_generator)
 add_subdirectory(model_mapper)
