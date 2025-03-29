@@ -1,31 +1,37 @@
 #pragma once
 #include <assert.h>
-
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
+#include <functional>
 #include <iostream>
 #include <map>
 #include <string>
 
 #include "component_factory/factory_base.h"
-// 文件到元件的映射表
-static std::map<std::string,
-                std::function<boost::shared_ptr<FACTORY::FactoryBase>()>>
-    _file_to_model;
 namespace MAPPER {
+// using func_ptr = std::function<boost::shared_ptr<FACTORY::FactoryBase>()>;
+using func_ptr = boost::shared_ptr<FACTORY::FactoryBase>;
+using comp_map = std::map<std::string, func_ptr>;
 
-// 文件信息到有限元模型的注册表
-// template <typename T>
+template <typename T> struct RegisterTool;
+// 注册器调用接口
+class Register {
+public:
+  Register() = default;
+  ~Register() = default;
 
-class File2ModelRegister {
- public:
-  File2ModelRegister() = default;
-  // 定义有参构造函数，以此实现注册
-  File2ModelRegister(
-      std::string comp_name,
-      std::function<boost::shared_ptr<FACTORY::FactoryBase>()> comp);
+  template <typename T> friend struct RegisterTool;
+
+  // private:
+  static comp_map _file_to_comp;
 };
-// template <typename T>
-// std::map<std::string, std::function<boost::shared_ptr<FACTORY::FactoryBase>()>>
-//     File2ModelRegister::_file_to_model;
-}  // namespace MAPPER
+// 静态成员变量初始化
+comp_map Register::_file_to_comp;
+
+// 通过构造RegisterDatas对象实现注册器内添加数据
+template <typename T> struct RegisterTool {
+  RegisterTool(const std::string &name) {
+    Register::_file_to_comp[name] = boost::make_shared<T>();
+  }
+};
+} // namespace MAPPER
