@@ -5,9 +5,11 @@
 
 namespace FACTORY {
 class Mat1Factory : public FactoryBase {
- public:
+public:
   Mat1Factory() = default;
   ~Mat1Factory() = default;
   boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
 };
-}  // namespace FACTORY
+// 注册Mat1Factory
+extern MAPPER::RegisterTool<Mat1Factory> _MAT1REGISTER("MAT1");
+} // namespace FACTORY

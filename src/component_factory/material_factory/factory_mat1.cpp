@@ -4,11 +4,8 @@
 
 namespace FACTORY {
 boost::shared_ptr<COMPONENT::CompBase> Mat1Factory::CreateComp() {
-  auto comp = boost::make_shared<COMPONENT::MAT1>();
-  return comp;
+  return boost::make_shared<COMPONENT::MAT1>();
 }
-// 注册MAT1
-// MAPPER::File2ModelRegister _MAT1REGIST("MAT1", [] {
-//   return boost::make_shared<Mat1Factory>();
-// });
-}  // namespace FACTORY
+// 注册Mat1Factory
+// MAPPER::RegisterTool<Mat1Factory> _MAT1REGISTER("MAT1");
+} // namespace FACTORY

@@ -3,13 +3,14 @@
 #include "src_inc_dir.h"
 namespace COMPONENT {
 class MaterialBase : public CompBase {
- public:
+public:
   MaterialBase() { _id = TOOL::IdManager(TOOL::id_type::MATERIAL); }
-  ~MaterialBase() = default;
-  
-  // virtual void GenerateComponent(const file_data& src_data) = 0;
+  virtual ~MaterialBase() = default;
 
- protected:
+  virtual void SetComp(const file_data &datas) = 0;
+  virtual int GetID() = 0;
+
+protected:
   int _id;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT
