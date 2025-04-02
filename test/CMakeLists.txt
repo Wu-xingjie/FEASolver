@@ -26,7 +26,7 @@ foreach(elem_test ${test_lists})
     target_link_libraries(${elem_name} ${BOOST_LIBS})
 
 
-    target_include_directories(${elem_name} PUBLIC ${Eigen3_INC_DIRS})
+    target_include_directories(${elem_name} INTERFACE ${Eigen3_INC_DIRS})
     target_include_directories(${elem_name} PUBLIC ${BOOST_INCLUDE_DIRS})
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/model_mapper)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
