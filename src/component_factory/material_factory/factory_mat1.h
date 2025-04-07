@@ -10,6 +10,4 @@ public:
   ~Mat1Factory() = default;
   boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
 };
-// 注册Mat1Factory
-extern MAPPER::RegisterTool<Mat1Factory> _MAT1REGISTER("MAT1");
 } // namespace FACTORY

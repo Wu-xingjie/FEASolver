@@ -6,6 +6,11 @@ namespace FACTORY {
 boost::shared_ptr<COMPONENT::CompBase> Mat1Factory::CreateComp() {
   return boost::make_shared<COMPONENT::MAT1>();
 }
-// 注册Mat1Factory
-// MAPPER::RegisterTool<Mat1Factory> _MAT1REGISTER("MAT1");
-} // namespace FACTORY
+}  // namespace FACTORY
+
+// struct RegistMat1Factory {
+//   RegistMat1Factory(const std::string& name) {
+//     MAPPER::RegistComp<FACTORY::Mat1Factory>(name);
+//   }
+// };
+// static RegistMat1Factory _RegistMat1Factory("MAT1");
