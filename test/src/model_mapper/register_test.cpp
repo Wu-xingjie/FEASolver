@@ -3,11 +3,9 @@
 #include <iostream>
 
 #include "component_factory/material_factory/factory_mat1.h"
-
-MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
+#include "regist_list.h"
 
 int main() {
-  // MAPPER::RegistComp<FACTORY::Mat1Factory>("MAT1");
   if (!MAPPER::_file_to_comp.empty()) {
     auto fac = MAPPER::_file_to_comp.at("MAT1");
     auto mat1 = fac->CreateComp();
