@@ -1,0 +1,8 @@
+message("-------------- model start -------------")
+file(GLOB_RECURSE MODEL *.cpp)
+add_library(FEAmodel SHARED ${MODEL})
+target_include_directories(FEAmodel PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(FEAmodel PUBLIC ${CMAKE_SOURCE_DIR}/tool)
+target_include_directories(FEAmodel PUBLIC ${BOOST_INCLUDE_DIRS})
+target_link_libraries(FEAmodel ${Boost_LIBS})
+message("-------------- model end   -------------")

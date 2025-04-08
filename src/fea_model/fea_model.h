@@ -18,12 +18,14 @@ class Model {
   Model() = default;
   ~Model() = default;
 
+  void InsertComp(const boost::shared_ptr<COMPONENT::CompBase> p);
+
  private:
-  std::vector<boost::shared_ptr<COMPONENT::Node>> _node;         // 节点库
-  std::vector<boost::shared_ptr<COMPONENT::ElemBase>> _element;  // 单元库
-  std::vector<boost::shared_ptr<COMPONENT::CoordBase>> _coord;   // 坐标系库
-  std::vector<boost::shared_ptr<COMPONENT::LoadBase>> _load;     // 载荷库
-  std::vector<boost::shared_ptr<COMPONENT::PropertyBase>> _prop; // 属性库
-  std::vector<boost::shared_ptr<COMPONENT::MaterialBase>> _mat;  // 材料库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _node;         // 节点库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _element;  // 单元库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _coord;   // 坐标系库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _load;     // 载荷库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _prop;  // 属性库
+  std::vector<boost::shared_ptr<COMPONENT::CompBase>> _mat;   // 材料库
 };
 }  // namespace MODEL

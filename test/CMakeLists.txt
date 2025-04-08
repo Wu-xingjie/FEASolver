@@ -22,6 +22,8 @@ foreach(elem_test ${test_lists})
     target_link_libraries(${elem_name} prop)
     target_link_libraries(${elem_name} mapper)
     target_link_libraries(${elem_name} factory)
+    target_link_libraries(${elem_name} FEAmodel)
+
 
     target_link_libraries(${elem_name} ${BOOST_LIBS})
 
@@ -31,12 +33,13 @@ foreach(elem_test ${test_lists})
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/model_mapper)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component_factory)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/FEAmodel)
 
     # 创建可执行程序存放目录
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/test/${elem_dir})
     # 将可执行程序放入制定的目录下
     set_target_properties(${elem_name} PROPERTIES
                              RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${elem_dir})
-    set(CMAKE_BUILD_TYPE debug)
+    set(CMAKE_BUILD_TYPE Debug)
 endforeach()
 message("************** test end   **************")
