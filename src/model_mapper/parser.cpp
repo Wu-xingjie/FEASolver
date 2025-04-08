@@ -14,13 +14,6 @@ void Parser::ParserFile(const std::string &file_address) {
       std::getline(file, line);
       std::vector<std::string> line_devided = DevideLine(line);
       std::array<boost::any, 10> temp_content;
-      // for (auto &elem : line_devided) {
-      //   if (IsNumber(elem)) {
-      //     temp_content.push_back(boost::lexical_cast<double>(elem));
-      //   } else {
-      //     temp_content.push_back(elem);
-      //   }
-      // }
       for (int i = 0; i < line_devided.size(); i++) {
         if (IsNumber(line_devided.at(i))) {
           temp_content.at(i) = boost::lexical_cast<double>(line_devided.at(i));
@@ -57,6 +50,9 @@ std::vector<std::string> Parser::DevideLine(const std::string &line) {
     if (c != ',') {
       word.push_back(c);
     } else {
+      if (IsEmpty(word)) {
+        word = "null";
+      }
       RemoveBlack(word);
       result.push_back(word);
       word.clear();
@@ -70,4 +66,39 @@ std::vector<std::string> Parser::DevideLine(const std::string &line) {
 std::vector<std::array<boost::any, 10>> &Parser::GetData() {
   return _file_data;
 }
+
+bool Parser::IsEmpty(const std::string &data) {
+  bool result = true;
+  for (auto &c : data) {
+    if (c != ' ') {
+      result = false;
+      break;
+    }
+  }
+  return result;
+}
+
+void Parser::DividedByComp() {
+  cards comp;
+  for (int i = 0; i < _file_data.size() - 1; i++) {
+    auto curline = _file_data.at(i);
+    auto nexline = _file_data.at(i + 1);
+    comp.push_back(curline);
+    if (boost::any_cast<std::string>(nexline.at(0)) != "continue") {
+      _comp_data.push_back(comp);
+      comp.clear();
+    }
+  }
+  // 处理最后一行
+  auto lasline = _file_data.back();
+  if (boost::any_cast<std::string>(lasline.at(0)) != "continue") {
+    comp.push_back(lasline);
+    _comp_data.push_back(comp);
+    comp.clear();
+  } else {
+    // comp.push_back(lasline);
+    _comp_data.back().push_back(lasline);
+  }
+}
+
 }  // namespace MAPPER
