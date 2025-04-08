@@ -4,10 +4,9 @@
 #include <string>
 #include <vector>
 namespace MAPPER {
+using cards = std::vector<std::array<boost::any, 10>>;
 // 文件解析器，负责解析文件信息
 class Parser {
-  using cards = std::vector<std::array<boost::any, 10>>;
-
  public:
   Parser() = default;
   ~Parser() = default;
