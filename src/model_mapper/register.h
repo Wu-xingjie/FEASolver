@@ -16,10 +16,6 @@ using fac = boost::shared_ptr<FACTORY::FactoryBase>;
 using comp_map = std::map<std::string, fac>;
 
 static comp_map _file_to_comp;
-// template <typename T>
-// void RegistComp(const std::string& name) {
-//   _file_to_comp[name] = boost::make_shared<T>();
-// }
 template<typename T>
 struct Regist{
   Regist(const std::string& name){

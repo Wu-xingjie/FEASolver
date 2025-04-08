@@ -13,7 +13,8 @@ public:
 
   virtual void SetComp(const file_data &datas) = 0;
   virtual int GetID() = 0;
-
+  virtual comp_type Type() = 0;
+  
 protected:
   int _id;
 };
