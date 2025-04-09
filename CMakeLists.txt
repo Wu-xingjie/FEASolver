@@ -22,5 +22,5 @@ else()
     message(FATAL_ERROR "Eigen3 NOT FOUND!")
 endif()
 
-set(CMAKE_BUILD_TYPE debug)
+set(CMAKE_BUILD_TYPE Debug)
 message("cmake_build_type: ${CMAKE_BUILD_TYPE}")

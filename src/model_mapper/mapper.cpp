@@ -1,5 +1,5 @@
 #include "mapper.h"
-
+#include "regist_list.h"
 namespace MAPPER {
 void FileToMapper::mapper(MODEL::Model& model,
                           const std::vector<cards>& file_model) {
