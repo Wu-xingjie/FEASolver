@@ -9,7 +9,6 @@
 #include <string>
 
 #include "component_factory/factory_base.h"
-#include "component_factory/material_factory/factory_mat1.h"
 
 namespace MAPPER {
 using fac = boost::shared_ptr<FACTORY::FactoryBase>;

@@ -96,8 +96,8 @@ void Parser::DividedByComp() {
     _comp_data.push_back(comp);
     comp.clear();
   } else {
-    // comp.push_back(lasline);
-    _comp_data.back().push_back(lasline);
+    comp.push_back(lasline);
+    _comp_data.push_back(comp);
   }
 }
 
