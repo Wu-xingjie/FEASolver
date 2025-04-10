@@ -16,8 +16,6 @@ typedef Eigen::Vector3d vec_3;
 class Node : public CompBase {
  public:
   Node() { _type = comp_type::node; };
-  Node(const double &x, const double &y, const double &z, const int &c)
-      : _x(x), _y(y), _z(z), _coord(c) {}
   ~Node() = default;
   // 拷贝构造
   Node(const Node &n);
