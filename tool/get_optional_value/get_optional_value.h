@@ -15,8 +15,6 @@ void GetOptValue(const boost::optional<T>& p, T& target) {
     } else {
       throw "无效optional指针";
     }
-  } catch (const char* e) {
-    std::cerr << "[ERROR]" << e << '\n';
   }
 }
 
