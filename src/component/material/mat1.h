@@ -16,8 +16,8 @@ struct Mat1Data {
 };
 
 class MAT1 : public MaterialBase {
- public:
-  MAT1() : MaterialBase() { _type = comp_type::mat; }
+public:
+  MAT1() = default;
   ~MAT1() = default;
   MAT1(const MAT1 &p);
 
@@ -29,7 +29,7 @@ class MAT1 : public MaterialBase {
   virtual int GetID() override { return _id; }
   virtual comp_type Type() override { return _type; }
 
- private:
+private:
   Mat1Data _mat1_data;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT

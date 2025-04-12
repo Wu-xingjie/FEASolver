@@ -12,7 +12,7 @@ struct ProdData {
 
 class PROD : public PropertyBase {
 public:
-  PROD() : PropertyBase() { _type = comp_type::prop; }
+  PROD() = default;
   ~PROD() = default;
   PROD(const PROD &p);
 

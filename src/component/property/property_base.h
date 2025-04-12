@@ -7,7 +7,7 @@
 namespace COMPONENT {
 class PropertyBase : public CompBase {
 public:
-  PropertyBase() = default;
+  PropertyBase() { _type = comp_type::prop; };
   ~PropertyBase() = default;
 
   virtual void SetComp(const file_data &datas) = 0;
