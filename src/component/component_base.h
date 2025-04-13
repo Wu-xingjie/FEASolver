@@ -1,5 +1,4 @@
 #pragma once
-#include "fea_model/fea_model.h"
 #include <array>
 #include <boost/any.hpp>
 #include <vector>
@@ -17,8 +16,6 @@ public:
   virtual int GetID() = 0;
   virtual void SetComp(const file_data &datas) = 0;
   virtual comp_type Type() = 0;
-
-  virtual void GenerateK(const MODEL::Model &model) = 0;
 
 protected:
   // 记录元件类型

@@ -9,6 +9,6 @@ MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
 // 节点注册
 MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 // 属性注册
-MAPPER::Regist<FACTORY::ProdFactory> _NodeFactoryREGIST("PROD");
+MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
 // 单元注册
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("ROD");

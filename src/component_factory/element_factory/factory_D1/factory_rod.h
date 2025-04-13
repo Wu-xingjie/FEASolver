@@ -7,6 +7,6 @@ class RodFactory : public FactoryBase {
 public:
   RodFactory() = default;
   ~RodFactory() = default;
-  boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
+  virtual boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
 };
 } // namespace FACTORY

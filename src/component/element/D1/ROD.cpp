@@ -11,9 +11,9 @@ void ROD::SetComp(const file_data &datas) {
   _G2 = boost::any_cast<int>(card[4]);
 }
 
-void GenerateK(const MODEL::Model &model) {
-  std::cout << "暂未处理杆单元刚度矩阵" << std::endl;
-}
+// void GenerateK(const MODEL::Model &model) {
+//   std::cout << "暂未处理杆单元刚度矩阵" << std::endl;
+// }
 
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 

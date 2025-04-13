@@ -8,6 +8,6 @@ class ProdFactory : public FactoryBase {
 public:
   ProdFactory() = default;
   ~ProdFactory() = default;
-  boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
+  virtual boost::shared_ptr<COMPONENT::CompBase> CreateComp() override;
 };
 } // namespace FACTORY

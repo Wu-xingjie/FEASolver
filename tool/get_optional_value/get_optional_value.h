@@ -3,8 +3,7 @@
 #include <iostream>
 
 namespace TOOL {
-template <typename T>
-void GetOptValue(const boost::optional<T>& p, T& target) {
+template <typename T> void GetOptValue(const boost::optional<T> &p, T &target) {
   try {
     if (p) {
       if (p.has_value()) {
@@ -15,7 +14,9 @@ void GetOptValue(const boost::optional<T>& p, T& target) {
     } else {
       throw "无效optional指针";
     }
+  } catch (const char *e) {
+    std::cout << e << std::endl;
   }
 }
 
-}  // namespace TOOL
+} // namespace TOOL

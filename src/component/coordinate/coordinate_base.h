@@ -1,10 +1,10 @@
 #pragma once
-#include "id_manager/id_mananger.h"
 #include "model_mapper/register.h"
 #include <array>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <eigen3/Eigen/Dense>
+#include "component/component_base.h"
 
 namespace COMPONENT {
 typedef Eigen::Vector3d vec_3;
