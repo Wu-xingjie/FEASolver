@@ -5,20 +5,16 @@
 namespace COMPONENT {
 class CartesianCoord : public CoordBase {
 public:
-  CartesianCoord() : CoordBase() {}
-  CartesianCoord(const vec_3 &origin, const vec_3 &vec1, const vec_3 &vec2,
-                 const vec_3 &vec3, const bool &assign_id = true)
-      : CoordBase(origin, vec1, vec2, vec3, assign_id) {}
+  CartesianCoord() = default;
   ~CartesianCoord() = default;
-  // 拷贝构造
+
   CartesianCoord(const CartesianCoord &p);
-  // get
-  int getID();
-  vec_3 getORIGIN();
-  std::array<vec_3, 3> getVEC();
-  // set
-  void setORIGIN(const vec_3 &vec);
-  void setVEC(const vec_3 &vec1, const vec_3 &vec2, const vec_3 &vec3);
-  // void setID(const int &id);
+
+  int GetID() override;
+  vec_3 getORIGIN() override;
+  std::array<vec_3, 3> getVEC() override;
+
+  void SetComp(const file_data &datas) override;
+  comp_type Type() override;
 };
 } // namespace COMPONENT

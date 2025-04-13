@@ -2,22 +2,18 @@
 #include "geometry_tool/length_node_to_node.h"
 
 namespace COMPONENT {
-void ROD::SetNode(const int &g1, const int &g2) {
-  _G1 = g1;
-  _G2 = g2;
+
+void ROD::SetComp(const file_data &datas) {
+  auto card = datas.front();
+  _id = boost::any_cast<int>(card[1]);
+  _pid = boost::any_cast<int>(card[2]);
+  _G1 = boost::any_cast<int>(card[3]);
+  _G2 = boost::any_cast<int>(card[4]);
 }
 
-void ROD::SetProperty(const int &p) { _property = p; }
-
-// void ROD::GenerateK() {
-//   double E = _property.GetProperty()._mat.GetMaterial()._E;
-//   double A = _property.GetProperty()._a;
-//   double L = TOOL::LenNode2Node(_G1, _G2);
-//   // clang-format off
-//   _loc_k << E * A / L, -E * A / L,
-//            -E * A / L, E * A / L;
-//   // clang-format on
-// }
+void GenerateK(const MODEL::Model &model) {
+  std::cout << "暂未处理杆单元刚度矩阵" << std::endl;
+}
 
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 

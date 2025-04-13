@@ -1,14 +1,14 @@
 #pragma once
-#include "id_manager/id_mananger.h"
-#include <eigen3/Eigen/Dense>
+#include "component_base.h"
 #include "model_mapper/register.h"
-#include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/shared_ptr.hpp>
+#include <eigen3/Eigen/Dense>
 
 namespace COMPONENT {
-class ElemBase {
+class ElemBase : public CompBase {
 public:
-  ElemBase() { _id = TOOL::IdManager(TOOL::id_type::ELEMENT); };
+  ElemBase() { _type = comp_type::element; };
   ~ElemBase() = default;
 
 protected:
