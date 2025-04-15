@@ -15,7 +15,7 @@ int main() {
   // 文件映射到文件模型
   MAPPER::FileToMapper mapper;
   mapper.mapper(model,comp_datas);
-  
 
+  
   return 0;
 }

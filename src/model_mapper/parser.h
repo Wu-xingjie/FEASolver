@@ -24,6 +24,8 @@ class Parser {
  protected:
   // 判断字符串是否为一个数
   bool IsNumber(const std::string &l);
+  // 判断字符串是否为一个整数
+  bool IsInt(const std::string& l);
   // 去除字符串中的空格
   void RemoveBlack(std::string &word);
   // 将字符串解析为多个子字符串

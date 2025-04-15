@@ -11,10 +11,10 @@ public:
   int GetID() override { return _id; }
   comp_type Type() override { return _type; }
 
-  void SetComp(const file_data &datas);
+  virtual void SetComp(const file_data &datas) override;
 
   // 生成单元刚度矩阵
-  // virtual void GenerateK(const MODEL::Model &model) override;
+  virtual void GenerateK(const MODEL::Model &model) override;
   // 获取单元刚度矩阵
   Eigen::Matrix2d GetK();
 

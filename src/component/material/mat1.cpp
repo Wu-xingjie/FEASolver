@@ -30,17 +30,26 @@ MAT1::MAT1(const MAT1 &p) {
 Mat1Data MAT1::GetMaterial() { return _mat1_data; }
 
 void MAT1::SetComp(const file_data &datas) {
-  if (!datas.front().at(2).empty()) {
+  if (!datas.front().at(1).empty()) {
     _id = boost::any_cast<int>(datas.front().at(1));
   }
   if (!datas.front().at(2).empty()) {
-    _mat1_data._E = boost::any_cast<double>(datas.front().at(2));
+    try {
+      _mat1_data._E = boost::any_cast<int>(datas.front().at(2));
+    } catch (const std::exception &e) {
+    }
   }
   if (!datas.front().at(3).empty()) {
-    _mat1_data._NU = boost::any_cast<double>(datas.front().at(2));
+    try {
+      _mat1_data._NU = boost::any_cast<int>(datas.front().at(3));
+    } catch (const std::exception &e) {
+    }
   }
   if (!datas.front().at(4).empty()) {
-    _mat1_data._G = boost::any_cast<double>(datas.front().at(2));
+    try {
+      _mat1_data._G = boost::any_cast<int>(datas.front().at(4));
+    } catch (const std::exception &e) {
+    }
   }
 }
 }  // namespace COMPONENT

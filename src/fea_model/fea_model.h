@@ -4,12 +4,13 @@
 #include <string>
 #include <vector>
 
-#include "component/coordinate/coordinate_base.h"
-#include "component/element/elemen_base.h"
-#include "component/load/load_base.h"
-#include "component/material/material_base.h"
-#include "component/node/node.h"
-#include "component/property/property_base.h"
+#include "component/component_base.h"
+// #include "component/coordinate/coordinate_base.h"
+// #include "component/element/elemen_base.h"
+// #include "component/load/load_base.h"
+// #include "component/material/material_base.h"
+// #include "component/node/node.h"
+// #include "component/property/property_base.h"
 
 namespace MODEL {
 // 设计一个网格类，负责作为容器管理整个有限元模型的网格信息

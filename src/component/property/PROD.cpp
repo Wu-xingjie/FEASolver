@@ -16,7 +16,7 @@ void PROD::SetComp(const file_data &datas) {
   auto card = datas.front();
   _id = boost::any_cast<int>(card.at(1));
   _prod_data._mid = boost::any_cast<int>(card.at(2));
-  _prod_data._a = boost::any_cast<int>(card.at(3));
+  _prod_data._a = boost::any_cast<double>(card.at(3));
 }
 
 ProdData PROD::GetProperty() { return _prod_data; }

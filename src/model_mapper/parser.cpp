@@ -16,7 +16,12 @@ void Parser::ParserFile(const std::string &file_address) {
       std::array<boost::any, 10> temp_content;
       for (int i = 0; i < line_devided.size(); i++) {
         if (IsNumber(line_devided.at(i))) {
-          temp_content.at(i) = boost::lexical_cast<double>(line_devided.at(i));
+          if (IsInt(line_devided.at(i))) {
+            temp_content.at(i) = boost::lexical_cast<int>(line_devided.at(i));
+          } else {
+            temp_content.at(i) =
+                boost::lexical_cast<double>(line_devided.at(i));
+          }
         } else {
           temp_content.at(i) = line_devided.at(i);
         }
@@ -37,6 +42,20 @@ bool Parser::IsNumber(const std::string &l) {
     }
   }
   return is_number;
+}
+
+bool Parser::IsInt(const std::string &l) {
+  bool result = true;
+  if (IsNumber(l)) {
+    for (auto &i : l) {
+      if (i == '.') {
+        result = false;
+      }
+    }
+  } else {
+    result = false;
+  }
+  return result;
 }
 
 void Parser::RemoveBlack(std::string &word) {

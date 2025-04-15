@@ -22,7 +22,7 @@ class Node : public CompBase {
 
   int GetID() override { return _id; }
   // 设置节点坐标
-  void SetComp(const file_data &datas) override;
+  virtual void SetComp(const file_data &datas) override;
   comp_type Type() override { return _type; }
   // 获取节点坐标
   vec_3 get_location() const;
