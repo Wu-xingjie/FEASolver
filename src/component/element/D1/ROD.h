@@ -4,12 +4,9 @@
 
 namespace COMPONENT {
 class ROD : public ElemBase {
-public:
-  ROD() = default;
+ public:
+  ROD() { _elem_type = ElemBase::elem_type::rod; };
   ~ROD() = default;
-
-  int GetID() override { return _id; }
-  comp_type Type() override { return _type; }
 
   virtual void SetComp(const file_data &datas) override;
 
@@ -17,8 +14,9 @@ public:
   virtual void GenerateK(const MODEL::Model &model) override;
   // 获取单元刚度矩阵
   Eigen::Matrix2d GetK();
+  virtual elem_type ElemType() { return _elem_type; }
 
-private:
+ private:
   // 杆单元节点
   int _G1;
   int _G2;
@@ -27,4 +25,4 @@ private:
   // 运用PETSC库中的矩阵来实现单元刚度矩阵
   Eigen::Matrix2d _loc_k;
 };
-} // namespace COMPONENT
+}  // namespace COMPONENT

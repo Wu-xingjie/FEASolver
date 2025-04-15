@@ -16,9 +16,7 @@ public:
   ~PROD() = default;
   PROD(const PROD &p);
 
-  // 设置对应属性参数
-  int GetID() { return _id; }
-  comp_type Type() { return _type; }
+  // 设置属性参数
   void SetComp(const file_data &datas);
 
   // 返回对应属性参数

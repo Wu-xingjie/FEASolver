@@ -21,11 +21,12 @@ void Node::SetComp(const file_data &datas) {
       throw "节点设置时输入数据为空！";
     }
     auto card = datas.front();
-    _id = boost::any_cast<int>(datas.at(1));
-    _coord = boost::any_cast<int>(datas.at(2));
-    _x = boost::any_cast<double>(datas.at(3));
-    _y = boost::any_cast<double>(datas.at(4));
-    _z = boost::any_cast<double>(datas.at(5));
+
+    _id = boost::any_cast<int>(card.at(1));
+    _coord = boost::any_cast<int>(card.at(2));
+    _x = boost::any_cast<double>(card.at(3));
+    _y = boost::any_cast<double>(card.at(4));
+    _z = boost::any_cast<double>(card.at(5));
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
   }

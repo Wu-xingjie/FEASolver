@@ -1,5 +1,7 @@
 #include "ROD.h"
+
 #include "geometry_tool/length_node_to_node.h"
+#include "model_tool/get_comp_by_id.h"
 
 namespace COMPONENT {
 
@@ -12,9 +14,11 @@ void ROD::SetComp(const file_data &datas) {
 }
 
 void ROD::GenerateK(const MODEL::Model &model) {
-  std::cout << "暂未处理杆单元刚度矩阵" << std::endl;
+  // 获取节点
+  auto N1 = TOOL::GetCompById(model, _type, _G1);
+  auto N2 = TOOL::GetCompById(model, _type, _G2);
 }
 
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 
-} // namespace COMPONENT
+}  // namespace COMPONENT

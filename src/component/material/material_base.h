@@ -11,11 +11,6 @@ public:
   MaterialBase() { _type = comp_type::mat; };
   virtual ~MaterialBase() = default;
 
-  virtual void SetComp(const file_data &datas) = 0;
-  virtual int GetID() = 0;
-  virtual comp_type Type() = 0;
 
-protected:
-  int _id;
 };
 } // namespace COMPONENT

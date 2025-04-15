@@ -21,7 +21,7 @@ class Model {
 
   void InsertComp(const boost::shared_ptr<COMPONENT::CompBase> p);
 
- private:
+ 
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _node;         // 节点库
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _element;  // 单元库
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _coord;   // 坐标系库

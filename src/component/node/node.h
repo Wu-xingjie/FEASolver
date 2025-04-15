@@ -20,17 +20,14 @@ class Node : public CompBase {
   // 拷贝构造
   Node(const Node &n);
 
-  int GetID() override { return _id; }
   // 设置节点坐标
   virtual void SetComp(const file_data &datas) override;
-  comp_type Type() override { return _type; }
   // 获取节点坐标
   vec_3 get_location() const;
   // 获取节点坐标系
   int GetCoord() const;
 
  private:
-  int _id;
   int _coord;
   double _x;
   double _y;

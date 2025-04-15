@@ -26,8 +26,6 @@ public:
 
   // 获取各向同性材料数据
   Mat1Data GetMaterial();
-  virtual int GetID() override { return _id; }
-  virtual comp_type Type() override { return _type; }
 
 private:
   Mat1Data _mat1_data;

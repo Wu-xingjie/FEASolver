@@ -14,8 +14,10 @@ int main() {
       if (!elem.at(i).empty()) {
         if (elem.at(i).type() == typeid(std::string)) {
           std::cout << boost::any_cast<std::string>(elem.at(i)) << " ";
-        } else {
+        } else if (elem.at(i).type() == typeid(double)) {
           std::cout << boost::any_cast<double>(elem.at(i)) << " ";
+        }else{
+          std::cout << boost::any_cast<int>(elem.at(i)) << " ";
         }
       }
     }
@@ -33,8 +35,10 @@ int main() {
         if (!elem.at(i).empty()) {
           if (elem.at(i).type() == typeid(std::string)) {
             std::cout << boost::any_cast<std::string>(elem.at(i)) << " ";
-          } else {
+          } else if (elem.at(i).type() == typeid(double)){
             std::cout << boost::any_cast<double>(elem.at(i)) << " ";
+          }else{
+            std::cout << boost::any_cast<int>(elem.at(i)) << " ";
           }
         }
       }
