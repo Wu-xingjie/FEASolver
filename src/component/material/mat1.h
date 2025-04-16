@@ -25,7 +25,7 @@ public:
   virtual void SetComp(const file_data &datas) override;
 
   // 获取各向同性材料数据
-  Mat1Data GetMaterial();
+  virtual Mat1Data GetMaterial() override;
 
 private:
   Mat1Data _mat1_data;

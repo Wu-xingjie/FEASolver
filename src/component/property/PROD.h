@@ -20,7 +20,7 @@ public:
   void SetComp(const file_data &datas);
 
   // 返回对应属性参数
-  ProdData GetProperty();
+  virtual ProdData GetProperty() override;
 
 private:
   ProdData _prod_data;

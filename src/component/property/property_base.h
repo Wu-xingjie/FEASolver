@@ -10,6 +10,7 @@ public:
   PropertyBase() { _type = comp_type::prop; };
   ~PropertyBase() = default;
 
-  virtual void SetComp(const file_data &datas) = 0;
+  virtual ProdData GetProperty() = 0;
+  
 };
 } // namespace COMPONENT

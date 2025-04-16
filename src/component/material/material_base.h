@@ -11,6 +11,6 @@ public:
   MaterialBase() { _type = comp_type::mat; };
   virtual ~MaterialBase() = default;
 
-
+  virtual Mat1Data GetMaterial() = 0;
 };
 } // namespace COMPONENT

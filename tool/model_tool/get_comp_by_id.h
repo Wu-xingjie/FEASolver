@@ -1,10 +1,10 @@
 #include "component/element/elemen_base.h"
 #include "fea_model/fea_model.h"
 namespace TOOL {
-boost::shared_ptr<COMPONENT::ElemBase> GetCompById(
+boost::shared_ptr<COMPONENT::CompBase> GetCompById(
     const MODEL::Model& model, const COMPONENT::CompBase::comp_type& type,
     const int& id) {
-  boost::shared_ptr<COMPONENT::ElemBase> result;
+  boost::shared_ptr<COMPONENT::CompBase> result;
   // 获取特定类型
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> comps;
   switch (type) {
