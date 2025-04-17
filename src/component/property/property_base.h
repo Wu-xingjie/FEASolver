@@ -1,16 +1,17 @@
 #pragma once
-#include "model_mapper/register.h"
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include <eigen3/Eigen/Dense>
 
+#include "model_mapper/register.h"
+
 namespace COMPONENT {
 class PropertyBase : public CompBase {
-public:
+ public:
   PropertyBase() { _type = comp_type::prop; };
   ~PropertyBase() = default;
-
-  virtual ProdData GetProperty() = 0;
-  
+  // 获取截面面积
+  virtual double GetCrossArea() = 0;
+  virtual int GetMatId() = 0;
 };
-} // namespace COMPONENT
+}  // namespace COMPONENT

@@ -2,7 +2,20 @@
 
 namespace COMPONENT {
 
-Mat1Data::Mat1Data(const Mat1Data &p) {
+// Mat1Data::Mat1Data(const Mat1Data &p) {
+//   if (p._E.is_initialized()) {
+//     _E = p._E;
+//   }
+//   if (p._G.is_initialized()) {
+//     _G = p._G;
+//   }
+//   if (p._NU.is_initialized()) {
+//     _NU = p._NU;
+//   }
+// }
+
+MAT1::MAT1(const MAT1 &p) {
+  _id = p._id;
   if (p._E.is_initialized()) {
     _E = p._E;
   }
@@ -14,20 +27,31 @@ Mat1Data::Mat1Data(const Mat1Data &p) {
   }
 }
 
-MAT1::MAT1(const MAT1 &p) {
-  _id = p._id;
-  if (p._mat1_data._E.is_initialized()) {
-    _mat1_data._E = p._mat1_data._E;
+boost::optional<double> MAT1::GetE() {
+  boost::optional<double> result;
+  if (_E.is_initialized()) {
+    *result = _E.get();
   }
-  if (p._mat1_data._G.is_initialized()) {
-    _mat1_data._G = p._mat1_data._G;
-  }
-  if (p._mat1_data._NU.is_initialized()) {
-    _mat1_data._NU = p._mat1_data._NU;
-  }
+  return result;
 }
 
-Mat1Data MAT1::GetMaterial() { return _mat1_data; }
+boost::optional<double> MAT1::GetNU() {
+  boost::optional<double> result;
+  if (_NU.is_initialized()) {
+    *result = _NU.get();
+  }
+  return result;
+}
+
+boost::optional<double> MAT1::GetG() {
+  boost::optional<double> result;
+  if (_G.is_initialized()) {
+    *result = _G.get();
+  }
+  return result;
+}
+
+// Mat1Data MAT1::GetMaterial() { return _mat1_data; }
 
 void MAT1::SetComp(const file_data &datas) {
   if (!datas.front().at(1).empty()) {
@@ -35,19 +59,19 @@ void MAT1::SetComp(const file_data &datas) {
   }
   if (!datas.front().at(2).empty()) {
     try {
-      _mat1_data._E = boost::any_cast<int>(datas.front().at(2));
+      _E = boost::any_cast<int>(datas.front().at(2));
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(3).empty()) {
     try {
-      _mat1_data._NU = boost::any_cast<int>(datas.front().at(3));
+      _NU = boost::any_cast<int>(datas.front().at(3));
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(4).empty()) {
     try {
-      _mat1_data._G = boost::any_cast<int>(datas.front().at(4));
+      _G = boost::any_cast<int>(datas.front().at(4));
     } catch (const std::exception &e) {
     }
   }
