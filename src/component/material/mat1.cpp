@@ -30,7 +30,7 @@ MAT1::MAT1(const MAT1 &p) {
 boost::optional<double> MAT1::GetE() {
   boost::optional<double> result;
   if (_E.is_initialized()) {
-    *result = _E.get();
+    result = _E.get();
   }
   return result;
 }
@@ -38,7 +38,7 @@ boost::optional<double> MAT1::GetE() {
 boost::optional<double> MAT1::GetNU() {
   boost::optional<double> result;
   if (_NU.is_initialized()) {
-    *result = _NU.get();
+    result = _NU.get();
   }
   return result;
 }
@@ -46,7 +46,7 @@ boost::optional<double> MAT1::GetNU() {
 boost::optional<double> MAT1::GetG() {
   boost::optional<double> result;
   if (_G.is_initialized()) {
-    *result = _G.get();
+    result = _G.get();
   }
   return result;
 }
@@ -59,19 +59,19 @@ void MAT1::SetComp(const file_data &datas) {
   }
   if (!datas.front().at(2).empty()) {
     try {
-      _E = boost::any_cast<int>(datas.front().at(2));
+      _E = boost::any_cast<double>(datas.front().at(2));
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(3).empty()) {
     try {
-      _NU = boost::any_cast<int>(datas.front().at(3));
+      _NU = boost::any_cast<double>(datas.front().at(3));
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(4).empty()) {
     try {
-      _G = boost::any_cast<int>(datas.front().at(4));
+      _G = boost::any_cast<double>(datas.front().at(4));
     } catch (const std::exception &e) {
     }
   }

@@ -34,6 +34,7 @@ foreach(elem_test ${test_lists})
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component_factory)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/FEAmodel)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/tool)
 
     # 创建可执行程序存放目录
     file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build/test/${elem_dir})

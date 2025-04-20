@@ -9,19 +9,19 @@ std::array<double, 3> DealENuG(boost::optional<double> E,
   std::array<double, 3> result;
   try {
     if (E.is_initialized() && NU.is_initialized() && !G.is_initialized()) {
-      *G = E.get() / (2.0 * (1.0 + NU.get()));
+      G = E.get() / (2.0 * (1.0 + NU.get()));
       result[0] = E.get();
       result[1] = NU.get();
       result[2] = G.get();
     } else if (!E.is_initialized() && NU.is_initialized() &&
                G.is_initialized()) {
-      *E = G.get() * (2.0 * (1.0 + NU.get()));
+      E = G.get() * (2.0 * (1.0 + NU.get()));
       result[0] = E.get();
       result[1] = NU.get();
       result[2] = G.get();
     } else if (E.is_initialized() && !NU.is_initialized() &&
                G.is_initialized()) {
-      *NU = E.get() / (2 * G.get()) - 1.0;
+      NU = E.get() / (2 * G.get()) - 1.0;
       result[0] = E.get();
       result[1] = NU.get();
       result[2] = G.get();

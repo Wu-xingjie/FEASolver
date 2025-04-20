@@ -23,13 +23,17 @@ void Node::SetComp(const file_data &datas) {
     auto card = datas.front();
 
     _id = boost::any_cast<int>(card.at(1));
-    _coord = boost::any_cast<int>(card.at(2));
+    if (card.at(2).type() == typeid(std::string)) {
+      _coord = 0;
+    } else {
+      _coord = boost::any_cast<int>(card.at(2));
+    }
     _x = boost::any_cast<double>(card.at(3));
     _y = boost::any_cast<double>(card.at(4));
     _z = boost::any_cast<double>(card.at(5));
-  } catch (const std::exception &e) {
-    std::cerr << e.what() << '\n';
+  } catch (const char *e) {
+    std::cerr << e << '\n';
   }
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT

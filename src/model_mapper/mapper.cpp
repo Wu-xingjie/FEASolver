@@ -1,5 +1,5 @@
 #include "mapper.h"
-
+#include <iostream>
 #include "regist_list.h"
 namespace MAPPER {
 void FileToMapper::mapper(MODEL::Model& model,
@@ -20,7 +20,7 @@ void FileToMapper::mapper(MODEL::Model& model,
         }
       }
     } catch (const std::exception& e) {
-      std::cerr << e.what() << '\n';
+      std::cout << e.what() << '\n';
     }
   }
 }

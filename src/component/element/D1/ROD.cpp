@@ -1,8 +1,8 @@
 #include "ROD.h"
-
 #include "component/material/material_base.h"
 #include "component/property/property_base.h"
 #include "geometry_tool/length_node_to_node.h"
+#include "component/node/node.h"
 #include "model_tool/deal_E_NU_G.h"
 #include "model_tool/get_comp_by_id.h"
 
@@ -38,7 +38,8 @@ void ROD::GenerateK(const MODEL::Model &model) {
     loc_cord.y() = N2_datas.y() - N1_datas.y();
     loc_cord.z() = N2_datas.z() - N1_datas.z();
     // 杆单元长度
-    double l = TOOL::LenNode2Node(*N1, *N2);
+    double l = TOOL::LenNode2Node(N1, N2);
+    // double l = 2.0;
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);
     auto base_prop = boost::dynamic_pointer_cast<PropertyBase>(comp_prop);
@@ -57,7 +58,7 @@ void ROD::GenerateK(const MODEL::Model &model) {
     auto NU = base_mat->GetNU();
     auto G = base_mat->GetG();
     auto mat_info = TOOL::DealENuG(E, NU, G);
-    if (mat_info.empty()){
+    if (mat_info.empty()) {
       throw "材料获取失败";
     }
     // 生成单元刚度矩阵
@@ -72,4 +73,4 @@ void ROD::GenerateK(const MODEL::Model &model) {
 
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT
