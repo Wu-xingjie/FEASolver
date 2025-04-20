@@ -16,5 +16,11 @@ public:
 
   void SetComp(const file_data &datas) override;
   comp_type Type() override;
+  GeneralCoord GetGeneralCoord() override;
+
+private:
+  int _N1;
+  int _N2;
+  int _N3;
 };
 } // namespace COMPONENT
