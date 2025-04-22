@@ -1,6 +1,18 @@
 #include "fea_model.h"
 
+#include "component/coordinate/global_coordinate.h"
 namespace MODEL {
+
+Model::Model() {
+  // 创建全局坐标系
+  std::vector<std::array<boost::any, 10>> datas;
+  std::array<boost::any, 10> arr_data{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  datas.push_back(arr_data);
+  auto gc = boost::make_shared<COMPONENT::CoordBase>();
+  gc->SetComp(datas);
+  _coord.push_back(gc);
+}
+
 void Model::InsertComp(const boost::shared_ptr<COMPONENT::CompBase> p) {
   auto comp_type = p->Type();
   switch (comp_type) {
