@@ -9,14 +9,8 @@ public:
   ~CartesianCoord() = default;
 
   CartesianCoord(const CartesianCoord &p);
-
-  int GetID() override;
-  vec_3 getORIGIN() override;
-  std::array<vec_3, 3> getVEC() override;
-
   void SetComp(const file_data &datas) override;
-  comp_type Type() override;
-  GeneralCoord GetGeneralCoord() override;
+  void TransToGeneralCoord() override;
 
 private:
   int _N1;
