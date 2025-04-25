@@ -1,7 +1,7 @@
 #include "global_coordinate.h"
 
 namespace COMPONENT {
-void GlobalCoord::SetComp(const file_data &datas) {
+GlobalCoord::GlobalCoord() {
   _id = 0;
   GeneralCoord temp;
   temp._coord_origin << 0, 0, 0;
@@ -11,4 +11,7 @@ void GlobalCoord::SetComp(const file_data &datas) {
   temp._coord_flag = true;
   _general_coord = temp;
 }
-}  // namespace COMPONENT
+void GlobalCoord::SetComp(const file_data &datas) {
+  std::cout << "[INFO]:该坐标系为全局坐标系" << std::endl;
+}
+} // namespace COMPONENT
