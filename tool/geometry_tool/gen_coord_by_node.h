@@ -1,3 +1,4 @@
+#pragma once
 #include "component/coordinate/coordinate_base.h"
 #include "component/node/node.h"
 #include "fea_model/fea_model.h"

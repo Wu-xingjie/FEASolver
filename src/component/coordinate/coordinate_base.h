@@ -20,7 +20,9 @@ struct GeneralCoord {
     _vec2 = p._vec2;
     _vec3 = p._vec3;
     _coord_flag = p._coord_flag;
+    _dim_type = gen_coord_type::dim3;
   }
+  enum class gen_coord_type { dim1, dim3 };
   // 坐标原点
   vec_3 _coord_origin;
   // 标记一般坐标系是否被创建
@@ -29,6 +31,7 @@ struct GeneralCoord {
   vec_3 _vec1;
   vec_3 _vec2;
   vec_3 _vec3;
+  gen_coord_type _dim_type;
 };
 
 // 坐标系基类

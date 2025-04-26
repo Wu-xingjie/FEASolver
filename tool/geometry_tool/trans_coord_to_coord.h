@@ -1,3 +1,4 @@
+#pragma once
 #include "component/coordinate/coordinate_base.h"
 namespace TOOL {
 // 获取坐标系obj到坐标系base的坐标变换矩阵
