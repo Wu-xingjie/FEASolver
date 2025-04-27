@@ -7,6 +7,6 @@ add_library(tool SHARED ${tls})
 target_link_libraries(tool node)
 
 #设置目标头文件目录
-target_include_directories(tool PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(tool PUBLIC ${CMAKE_SOURCE_DIR}/test)
 target_include_directories(tool PUBLIC ${CMAKE_SOURCE_DIR}/src)
 message("************** tool end   **************")

@@ -1,3 +1,4 @@
+#pragma once
 #include "register.h"
 #include "component_factory/material_factory/factory_mat1.h"
 #include "component_factory/property_factory/factory_prod.h"

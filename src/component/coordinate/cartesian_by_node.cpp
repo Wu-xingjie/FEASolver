@@ -21,7 +21,7 @@ CartesianCoord::CartesianCoord(const CartesianCoord &p) {
 void CartesianCoord::TransToGeneralCoord() {
   GeneralCoord result;
   // TODO: 转换该坐标系为一般坐标系
-  return result;
+  // return result;
 }
 
 }  // namespace COMPONENT

@@ -1,8 +1,8 @@
 #include "ROD.h"
 #include "component/material/material_base.h"
+#include "component/node/node.h"
 #include "component/property/property_base.h"
 #include "geometry_tool/length_node_to_node.h"
-#include "component/node/node.h"
 #include "model_tool/deal_E_NU_G.h"
 #include "model_tool/get_comp_by_id.h"
 
@@ -38,7 +38,7 @@ void ROD::GenerateK(const MODEL::Model &model) {
     loc_cord.y() = N2_datas.y() - N1_datas.y();
     loc_cord.z() = N2_datas.z() - N1_datas.z();
     // 杆单元长度
-    double l = TOOL::LenNode2Node(N1, N2);
+    double l = TOOL::LenNode2Node(model, N1, N2);
     // double l = 2.0;
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);

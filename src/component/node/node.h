@@ -7,7 +7,7 @@
 #include <string>
 
 #include "component/component_base.h"
-#include "id_manager/id_mananger.h"
+// #include "id_manager/id_mananger.h"
 #include "model_mapper/register.h"
 
 namespace COMPONENT {

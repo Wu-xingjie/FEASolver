@@ -1,4 +1,4 @@
-#include "component/coordinate/cartesian_coordinate.h"
+#include "component/coordinate/cartesian_by_node.h"
 #include "geometry_tool/length_node_to_node.h"
 
 int main() {

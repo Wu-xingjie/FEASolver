@@ -1,7 +1,7 @@
 #pragma once
 
 #include "coordinate_base.h"
-#include "id_manager/id_mananger.h"
+// #include "id_manager/id_mananger.h"
 namespace COMPONENT {
 class CartesianCoord : public CoordBase {
 public:
