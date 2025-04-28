@@ -11,7 +11,10 @@ namespace COMPONENT {
 //   temp._coord_flag = true;
 //   _general_coord = temp;
 // }
-void GlobalCoord::SetComp(const file_data &datas) {
-  std::cout << "[INFO]:该坐标系为全局坐标系" << std::endl;
-}
-} // namespace COMPONENT
+// void GlobalCoord::SetComp(const file_data &datas) {
+//   std::cout << "[INFO]:该坐标系为全局坐标系" << std::endl;
+// }
+// void GlobalCoord::SetComp(const file_data &datas) {
+//   std::cout << "[INFO]:该坐标系为全局坐标系" << std::endl;
+// }
+}  // namespace COMPONENT

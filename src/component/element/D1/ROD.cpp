@@ -39,7 +39,6 @@ void ROD::GenerateK(const MODEL::Model &model) {
     loc_cord.z() = N2_datas.z() - N1_datas.z();
     // 杆单元长度
     double l = TOOL::LenNode2Node(model, N1, N2);
-    // double l = 2.0;
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);
     auto base_prop = boost::dynamic_pointer_cast<PropertyBase>(comp_prop);
