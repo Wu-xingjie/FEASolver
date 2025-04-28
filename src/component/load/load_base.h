@@ -1,15 +1,12 @@
 #pragma once
-#include "id_manager/id_mananger.h"
+#include "component/component_base.h"
 
 namespace COMPONENT {
-class LoadBase {
+class LoadBase : public CompBase {
  public:
-  LoadBase() { _id = TOOL::IdManager(TOOL::LOAD); }
-  ~LoadBase() = default;
+  LoadBase() { _type = comp_type::load; }
+  virtual ~LoadBase() = default;
 
-  virtual int GetID() = 0;
-
- protected:
-  int _id;
+  virtual void SetComp(const file_data &datas) = 0;
 };
 }  // namespace COMPONENT

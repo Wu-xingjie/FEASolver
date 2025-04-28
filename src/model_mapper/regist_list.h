@@ -13,3 +13,4 @@ MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
 // 单元注册
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
+//TODO:坐标系暂未注册
