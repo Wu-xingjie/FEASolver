@@ -4,6 +4,7 @@
 #include "component_factory/property_factory/factory_prod.h"
 #include "component_factory/node_factory/factory_node.h"
 #include "component_factory/element_factory/factory_D1/factory_rod.h"
+#include "component_factory/coordinate_factory/factory_cartesian_by_node.h"
 
 // 材料注册
 MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
@@ -11,6 +12,7 @@ MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
 MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 // 属性注册
 MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
-// 单元注册
+// 单元注册 
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
-//TODO:坐标系暂未注册
+// 坐标系注册
+MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1C");
