@@ -34,6 +34,9 @@ void Model::InsertComp(const boost::shared_ptr<COMPONENT::CompBase> p) {
   case COMPONENT::CompBase::comp_type::node:
     _node.push_back(p);
     break;
+  case COMPONENT::CompBase::comp_type::constrain:
+    _constrain.push_back(p);
+    break;
 
   default:
     break;

@@ -1,5 +1,5 @@
 message("============== component start ==============")
-add_subdirectory(boundary)
+add_subdirectory(constrained)
 add_subdirectory(coordinate)
 add_subdirectory(element)
 add_subdirectory(load)
