@@ -1,32 +1,31 @@
 #pragma once
 #include "eigen3/Eigen/Dense"
 #include "load_base.h"
-namespace LOAD {
+#include <array>
+namespace COMPONENT {
 // 定义作用在节点上的静态集中载荷
 class ConcentratedForce : public LoadBase {
- public:
-  ConcentratedForce() : LoadBase() {}
-  ~ConcentratedForce() = default;
-  // 拷贝构造函数
-  ConcentratedForce(const ConcentratedForce& p);
-  // 获取对象id
-  int GetID();
+public:
+  ConcentratedForce() { _load_type = LoadBase::load_type::concentrated_force; }
+  virtual ~ConcentratedForce() = default;
   // 获取载荷坐标系id
-  int GetCoordId();
+  int GetCoordId() { return _coord_id; }
   // 获取载荷大小
-  Eigen::Vector3d GetConstratedForce();
-  // 设置节点id
-  void SetNodeId(const int& id);
-  // 设置载荷坐标系id
-  void SetCoordId(const int& id);
-  void SetConstratedForce(const double& mag_x, const double& mag_y,
-                          const double& mag_z);
+  double GetConstratedForce() { return _scale; };
+  // 获取载荷方向
+  std::array<double, 3> GetVec() {
+    std::array<double, 3> result{_x, _y, _z};
+    return result;
+  }
+  void SetComp(const file_data &datas) override;
+  void GenLoadVec(const MODEL::Model &model) override;
 
- private:
-  int _nid;       // 节点id
-  int _coord_id;  // 载荷坐标系id
-  double _mag_x;  // 载荷在指定坐标系下的x分量
-  double _mag_y;  // 载荷在指定坐标系下的y分量
-  double _mag_z;  // 载荷在指定坐标系下的z分量
+private:
+  int _nid;                  // 节点id
+  int _coord_id;             // 载荷坐标系id
+  double _scale;             // 力的大小
+  double _x;                 // 载荷x方向
+  double _y;                 // 载荷y方向
+  double _z;                 // 载荷z方向
 };
-}  // namespace LOAD
+} // namespace COMPONENT
