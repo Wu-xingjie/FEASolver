@@ -6,6 +6,7 @@
 #include "component_factory/element_factory/factory_D1/factory_rod.h"
 #include "component_factory/coordinate_factory/factory_cartesian_by_node.h"
 #include "component_factory/load_factory/factory_concentrated_force.h"
+#include "component_factory/constrain_factory/factory_single_point_constrain.h"
 
 // 材料注册
 MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
@@ -20,3 +21,4 @@ MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1
 // 载荷注册
 MAPPER::Regist<FACTORY::ConcentratedForceFactory> _ConcentratedForceFactoryREGIST("FORCE");
 // 约束注册
+MAPPER::Regist<FACTORY::SinglePointConstrainFactory> _SinglePointConstrainFactoryREGIST("SPC");

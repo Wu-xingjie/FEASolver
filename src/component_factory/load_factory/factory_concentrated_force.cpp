@@ -1,4 +1,4 @@
-#include "factory_force.h"
+#include "factory_concentrated_force.h"
 
 #include "model_mapper/register.h"
 
