@@ -1,4 +1,5 @@
 #include "cartesian_by_node.h"
+#include "geometry_tool/gen_coord_by_node.h"
 
 namespace COMPONENT {
 
@@ -18,10 +19,10 @@ CartesianCoord::CartesianCoord(const CartesianCoord &p) {
   _general_coord._vec3 = p._general_coord._vec3;
 }
 
-void CartesianCoord::TransToGeneralCoord() {
-  GeneralCoord result;
-  // TODO: 转换该坐标系为一般坐标系
+void CartesianCoord::TransToGeneralCoord(const MODEL::Model &model) {
+  _general_coord = *TOOL::NodesToCoord(model, _N1, _N2, _N3);
+
   // return result;
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT

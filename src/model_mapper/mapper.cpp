@@ -1,11 +1,10 @@
 #include "mapper.h"
-#include <iostream>
 #include "regist_list.h"
+#include <iostream>
 namespace MAPPER {
-void FileToMapper::mapper(MODEL::Model& model,
-
-                          const std::vector<cards>& file_model) {
-  for (auto& i : file_model) {
+void FileToMapper::mapper(MODEL::Model &model,
+                          const std::vector<cards> &file_model) {
+  for (auto &i : file_model) {
     try {
       auto comp_name = boost::any_cast<std::string>(i.front().at(0));
       // 根据注册表获取相应的元件工厂
@@ -19,9 +18,9 @@ void FileToMapper::mapper(MODEL::Model& model,
           model.InsertComp(comp);
         }
       }
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
       std::cout << e.what() << '\n';
     }
   }
 }
-}  // namespace MAPPER
+} // namespace MAPPER

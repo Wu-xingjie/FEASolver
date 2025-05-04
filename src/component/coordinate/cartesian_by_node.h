@@ -10,7 +10,7 @@ public:
 
   CartesianCoord(const CartesianCoord &p);
   void SetComp(const file_data &datas) override;
-  void TransToGeneralCoord() override;
+  void TransToGeneralCoord(const MODEL::Model &model) override;
 
 private:
   int _N1;

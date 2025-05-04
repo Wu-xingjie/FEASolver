@@ -1,12 +1,12 @@
 #pragma once
+#include "component/component_base.h"
+#include "fea_model/fea_model.h"
+#include "model_mapper/register.h"
 #include <array>
 #include <boost/make_shared.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <eigen3/Eigen/Dense>
-
-#include "component/component_base.h"
-#include "model_mapper/register.h"
 
 namespace COMPONENT {
 typedef Eigen::Vector3d vec_3;
@@ -36,7 +36,7 @@ struct GeneralCoord {
 
 // 坐标系基类
 class CoordBase : public CompBase {
- public:
+public:
   CoordBase() { _type = comp_type::coord; };
   virtual ~CoordBase() = default;
 
@@ -56,10 +56,10 @@ class CoordBase : public CompBase {
   virtual void SetComp(const file_data &datas) = 0;
   GeneralCoord GetGeneralCoord() { return _general_coord; }
   // 创建易于求解器计算的坐标系（原点坐标+三个vector构成的坐标轴）
-  virtual void TransToGeneralCoord() = 0;
+  virtual void TransToGeneralCoord(const MODEL::Model &model) = 0;
 
- protected:
+protected:
   int _id;
   GeneralCoord _general_coord;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT

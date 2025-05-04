@@ -32,7 +32,7 @@ void SinglePointConstrains::SetComp(const file_data &datas) {
     SPC temp_spc;
     temp_spc._node = boost::any_cast<int>(card.at(2 + 3 * i));
     temp_spc._component = boost::any_cast<int>(card.at(3 + 3 * i));
-    temp_spc._value = boost::any_cast<int>(card.at(4 + 3 * i));
+    temp_spc._value = boost::any_cast<double>(card.at(4 + 3 * i));
     _spc.push_back(temp_spc);
   }
 }

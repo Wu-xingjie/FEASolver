@@ -3,27 +3,42 @@
 #include "is_nodes_collinear.h"
 #include "model_tool/get_comp_by_id.h"
 namespace TOOL {
-boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
-    const MODEL::Model &model, const COMPONENT::Node &n1,
-    const COMPONENT::Node &n2, const COMPONENT::Node &n3) {
+boost::shared_ptr<COMPONENT::GeneralCoord>
+NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2,
+             const int &nid3) {
   auto gen_coord = boost::make_shared<COMPONENT::GeneralCoord>();
   // 一：通过节点获取各自对应的坐标系
+  auto comp_n1 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto n1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n1);
+  if (!n1) {
+    throw "[ERROR]:func(GetCompById)->获取节点1失败!";
+  }
+  auto comp_n2 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto n2 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n2);
+  if (!n2) {
+    throw "[ERROR]:func(GetCompById)->获取节点2失败!";
+  }
+  auto comp_n3 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto n3 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n3);
+  if (!n3) {
+    throw "[ERROR]:func(GetCompById)->获取节点3失败!";
+  }
   auto comp_coord1 =
-      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n1.GetCoord());
+      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n1->GetCoord());
   auto base_coord1 =
       boost::dynamic_pointer_cast<COMPONENT::CoordBase>(comp_coord1);
   if (!base_coord1) {
     throw "[ERROR]: NodesToCoord中base_coord1转换失败!";
   }
   auto comp_coord2 =
-      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n2.GetCoord());
+      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n2->GetCoord());
   auto base_coord2 =
       boost::dynamic_pointer_cast<COMPONENT::CoordBase>(comp_coord2);
   if (!base_coord2) {
     throw "[ERROR]: NodesToCoord中base_coord2转换失败!";
   }
   auto comp_coord3 =
-      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n3.GetCoord());
+      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n3->GetCoord());
   auto base_coord3 =
       boost::dynamic_pointer_cast<COMPONENT::CoordBase>(comp_coord3);
   if (!base_coord3) {
@@ -37,9 +52,9 @@ boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
   }
 
   // 二：将各个节点变换到全局坐标系下
-  auto loc_n1 = n1.get_location();
-  auto loc_n2 = n2.get_location();
-  auto loc_n3 = n3.get_location();
+  auto loc_n1 = n1->get_location();
+  auto loc_n2 = n2->get_location();
+  auto loc_n3 = n3->get_location();
   auto global_coord = boost::make_shared<COMPONENT::GlobalCoord>();
   auto trans_matrix_n1 = TransCoordToCoord(global_coord, base_coord1);
   auto trans_matrix_n2 = TransCoordToCoord(global_coord, base_coord2);
@@ -75,20 +90,29 @@ boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
   return gen_coord;
 }
 
-boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
-    const MODEL::Model &model, const COMPONENT::Node &n1,
-    const COMPONENT::Node &n2) {
+boost::shared_ptr<COMPONENT::GeneralCoord>
+NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2) {
   auto gen_coord = boost::make_shared<COMPONENT::GeneralCoord>();
   // 一：通过节点获取各自对应的坐标系
+  auto comp_n1 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto n1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n1);
+  if (!n1) {
+    throw "[ERROR]:func(GetCompById)->获取节点1失败!";
+  }
+  auto comp_n2 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto n2 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n2);
+  if (!n2) {
+    throw "[ERROR]:func(GetCompById)->获取节点2失败!";
+  }
   auto comp_coord1 =
-      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n1.GetCoord());
+      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n1->GetCoord());
   auto base_coord1 =
       boost::dynamic_pointer_cast<COMPONENT::CoordBase>(comp_coord1);
   if (!base_coord1) {
     throw "[ERROR]: NodesToCoord中base_coord1转换失败!";
   }
   auto comp_coord2 =
-      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n2.GetCoord());
+      GetCompById(model, COMPONENT::CompBase::comp_type::coord, n2->GetCoord());
   auto base_coord2 =
       boost::dynamic_pointer_cast<COMPONENT::CoordBase>(comp_coord2);
   if (!base_coord2) {
@@ -101,8 +125,8 @@ boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
   }
 
   // 二：将各个节点变换到全局坐标系下
-  auto loc_n1 = n1.get_location();
-  auto loc_n2 = n2.get_location();
+  auto loc_n1 = n1->get_location();
+  auto loc_n2 = n2->get_location();
   auto global_coord = boost::make_shared<COMPONENT::GlobalCoord>();
   auto trans_matrix_n1 = TransCoordToCoord(global_coord, base_coord1);
   auto trans_matrix_n2 = TransCoordToCoord(global_coord, base_coord2);
@@ -119,4 +143,4 @@ boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
   return gen_coord;
 }
 
-}  // namespace TOOL
+} // namespace TOOL

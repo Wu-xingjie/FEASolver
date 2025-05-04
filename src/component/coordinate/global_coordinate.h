@@ -20,7 +20,7 @@ class GlobalCoord : public CoordBase {
   virtual void SetComp(const file_data &datas) override {
     std::cout << "[INFO]:该坐标系为全局坐标系" << std::endl;
   }
-  virtual void TransToGeneralCoord() override {
+  virtual void TransToGeneralCoord(const MODEL::Model &model) override {
     std::cout << "[WARRING]>>>该坐标系为全局坐标,不需要进行转换" << std::endl;
   }
 };
