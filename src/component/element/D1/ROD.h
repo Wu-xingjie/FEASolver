@@ -22,7 +22,7 @@ class ROD : public ElemBase {
   int _G2;
   // 杆单元属性
   int _pid;
-  // 运用PETSC库中的矩阵来实现单元刚度矩阵
+  // 局部坐标系下的单元刚度矩阵
   Eigen::Matrix2d _loc_k;
 };
 }  // namespace COMPONENT
