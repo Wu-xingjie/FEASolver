@@ -1,7 +1,9 @@
 #include "ROD.h"
+
 #include "component/material/material_base.h"
 #include "component/node/node.h"
 #include "component/property/property_base.h"
+#include "geometry_tool/gen_coord_by_node.h"
 #include "geometry_tool/length_node_to_node.h"
 #include "model_tool/deal_E_NU_G.h"
 #include "model_tool/get_comp_by_id.h"
@@ -72,4 +74,15 @@ void ROD::GenerateK(const MODEL::Model &model) {
 
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 
-} // namespace COMPONENT
+Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
+  Eigen::MatrixXd global_k = Eigen::MatrixXd::Zero(2, 2);
+  // 获取局部坐标系和全局坐标系
+  auto loc_coord = *TOOL::NodesToCoord(model, _G1, _G2);
+  auto global_coord =
+      boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
+  // 获取局部坐标系到全局坐标系的坐标变换矩阵
+  auto trans_matrix = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  return global_k;
+}
+
+}  // namespace COMPONENT

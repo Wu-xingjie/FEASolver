@@ -3,9 +3,9 @@
 #include "is_nodes_collinear.h"
 #include "model_tool/get_comp_by_id.h"
 namespace TOOL {
-boost::shared_ptr<COMPONENT::GeneralCoord>
-NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2,
-             const int &nid3) {
+boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
+    const MODEL::Model &model, const int &nid1, const int &nid2,
+    const int &nid3) {
   auto gen_coord = boost::make_shared<COMPONENT::GeneralCoord>();
   // 一：通过节点获取各自对应的坐标系
   auto comp_n1 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
@@ -90,8 +90,8 @@ NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2,
   return gen_coord;
 }
 
-boost::shared_ptr<COMPONENT::GeneralCoord>
-NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2) {
+boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
+    const MODEL::Model &model, const int &nid1, const int &nid2) {
   auto gen_coord = boost::make_shared<COMPONENT::GeneralCoord>();
   // 一：通过节点获取各自对应的坐标系
   auto comp_n1 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
@@ -143,4 +143,4 @@ NodesToCoord(const MODEL::Model &model, const int &nid1, const int &nid2) {
   return gen_coord;
 }
 
-} // namespace TOOL
+}  // namespace TOOL
