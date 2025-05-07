@@ -3,6 +3,7 @@
 #include "component/material/material_base.h"
 #include "component/node/node.h"
 #include "component/property/property_base.h"
+#include "geometry_tool/cos_of_vectors.h"
 #include "geometry_tool/gen_coord_by_node.h"
 #include "geometry_tool/length_node_to_node.h"
 #include "model_tool/deal_E_NU_G.h"
@@ -75,14 +76,25 @@ void ROD::GenerateK(const MODEL::Model &model) {
 Eigen::Matrix2d ROD::GetK() { return _loc_k; }
 
 Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
-  Eigen::MatrixXd global_k = Eigen::MatrixXd::Zero(2, 2);
-  // 获取局部坐标系和全局坐标系
-  auto loc_coord = *TOOL::NodesToCoord(model, _G1, _G2);
+  Eigen::MatrixXd global_k = Eigen::MatrixXd::Zero(6, 6);
+  // 获取全局坐标系和单元局部坐标系
   auto global_coord =
       boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
-  // 获取局部坐标系到全局坐标系的坐标变换矩阵
-  auto trans_matrix = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  auto loc_coord = TOOL::NodesToCoord(model, _G1, _G2);
+  auto vec_loc = loc_coord->_vec1;
+  // 获取单元坐标系向量和全局坐标系之间的方向余弦
+  auto cos_l_x = TOOL::CosOfVecs(global_coord._vec1, vec_loc);
+  auto cos_l_y = TOOL::CosOfVecs(global_coord._vec2, vec_loc);
+  auto cos_l_z = TOOL::CosOfVecs(global_coord._vec3, vec_loc);
+  // 创建变换矩阵
+  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(6, 2);
+  // clang-format off
+  trans_matrix << cos_l_x, cos_l_y, cos_l_z, 0.0    , 0.0    , 0.0   ,
+                  0.0    , 0.0    , 0.0    , cos_l_x, cos_l_y, cos_l_z;
+  // clang-format on
+  // 获取全局坐标系下的单元刚度举证
+  global_k = trans_matrix.inverse() * _loc_k * trans_matrix;
   return global_k;
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT

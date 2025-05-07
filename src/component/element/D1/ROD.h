@@ -4,8 +4,11 @@
 
 namespace COMPONENT {
 class ROD : public ElemBase {
- public:
-  ROD() { _elem_type = ElemBase::elem_type::rod; };
+public:
+  ROD() {
+    _elem_type = ElemBase::elem_type::rod;
+    _num_node = 2;
+  };
   ~ROD() = default;
 
   virtual void SetComp(const file_data &datas) override;
@@ -17,7 +20,7 @@ class ROD : public ElemBase {
   virtual Eigen::MatrixXd GetGlobalK(const MODEL::Model &model) override;
   virtual elem_type ElemType() { return _elem_type; }
 
- private:
+private:
   // 杆单元节点
   int _G1;
   int _G2;
@@ -26,4 +29,4 @@ class ROD : public ElemBase {
   // 局部坐标系下的单元刚度矩阵
   Eigen::Matrix2d _loc_k;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT

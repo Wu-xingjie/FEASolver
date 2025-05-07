@@ -1,9 +1,7 @@
 #pragma once
-
 #include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
-
 #include "component/component_base.h"
 
 namespace MODEL {
