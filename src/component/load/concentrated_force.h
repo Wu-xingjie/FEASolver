@@ -19,13 +19,15 @@ public:
   }
   void SetComp(const file_data &datas) override;
   void GenLoadVec(const MODEL::Model &model) override;
+  Eigen::VectorXd GetGLobalLoad(const MODEL::Model &model) override;
+  std::vector<int> GetNodes() override { return {_nid}; };
 
 private:
-  int _nid;                  // 节点id
-  int _coord_id;             // 载荷坐标系id
-  double _scale;             // 力的大小
-  double _x;                 // 载荷x方向
-  double _y;                 // 载荷y方向
-  double _z;                 // 载荷z方向
+  int _nid;      // 节点id
+  int _coord_id; // 载荷坐标系id
+  double _scale; // 力的大小
+  double _x;     // 载荷x方向
+  double _y;     // 载荷y方向
+  double _z;     // 载荷z方向
 };
 } // namespace COMPONENT

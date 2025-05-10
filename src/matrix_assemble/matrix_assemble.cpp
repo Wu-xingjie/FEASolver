@@ -1,6 +1,6 @@
 #include "matrix_assemble.h"
-
 #include "component/element/elemen_base.h"
+#include "component/load/load_base.h"
 
 namespace ASSEMBLE {
 
@@ -66,7 +66,32 @@ void MatrixAssemble::AssembleK() {
   }
 }
 
+void MatrixAssemble::AssembleLoad() {
+  for (auto load : _model._load) {
+    // 获取载荷
+    auto base_load = boost::dynamic_pointer_cast<COMPONENT::LoadBase>(load);
+    if (!base_load) {
+      throw "[ERROR]:func(AssembleLoad): 无法获得载荷！";
+    }
+    auto global_load = base_load->GetGLobalLoad(_model);
+    auto nodes = base_load->GetNodes();
 
+    // 创建单元刚度矩阵维度到自由度的映射关系
+    std::map<int, std::string> load_idx2dof;
+    std::vector<std::string> xyz{"x", "y", "z"};
+    for (int i = 0; i < nodes.size(); i++) {
+      for (int j = 1; j < 4; j++) {
+        auto val = std::to_string(nodes.at(i)) + "_" + xyz.at(j - 1);
+        load_idx2dof[3 * i + j] = val;
+      }
+    }
+    // 给全局载荷列阵赋值
+    for (int i = 0; i < global_load.rows(); i++) {
+      std::string dof_load = load_idx2dof.at(i + 1);
+      int global_load_idx = _dof2idx.at(dof_load);
+      _vector_f(global_load_idx) += global_load(i);
+    }
+  }
+}
 
-
-}  // namespace ASSEMBLE
+} // namespace ASSEMBLE

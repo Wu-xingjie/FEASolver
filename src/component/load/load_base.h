@@ -12,6 +12,8 @@ public:
   virtual void SetComp(const file_data &datas) = 0;
   virtual void GenLoadVec(const MODEL::Model &model) = 0;
   virtual Eigen::VectorXd GetLoadVec() { return _load_vec; }
+  virtual Eigen::VectorXd GetGLobalLoad(const MODEL::Model &model) = 0;
+  virtual std::vector<int> GetNodes() = 0;
 
 protected:
   Eigen::VectorXd _load_vec; // 载荷对应的载荷向量

@@ -4,7 +4,7 @@
 
 namespace COMPONENT {
 class ROD : public ElemBase {
- public:
+public:
   ROD() { _elem_type = ElemBase::elem_type::rod; };
   ~ROD() = default;
 
@@ -18,7 +18,7 @@ class ROD : public ElemBase {
   virtual elem_type ElemType() { return _elem_type; }
   std::vector<int> GetNodes() { return {_G1, _G2}; }
 
- private:
+private:
   // 杆单元节点
   int _G1;
   int _G2;
@@ -27,4 +27,4 @@ class ROD : public ElemBase {
   // 局部坐标系下的单元刚度矩阵
   Eigen::Matrix2d _loc_k;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT
