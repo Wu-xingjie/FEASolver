@@ -24,6 +24,8 @@ foreach(elem_test ${test_lists})
     target_link_libraries(${elem_name} factory)
     target_link_libraries(${elem_name} FEAmodel)
     target_link_libraries(${elem_name} constrain)
+    target_link_libraries(${elem_name} matrix_assemble)
+
 
 
     target_link_libraries(${elem_name} ${BOOST_LIBS})
@@ -36,6 +38,7 @@ foreach(elem_test ${test_lists})
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component/constrained)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/component_factory)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/FEAmodel)
+    target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/src/matrix_assemble)
     target_include_directories(${elem_name} PUBLIC ${CMAKE_SOURCE_DIR}/tool)
 
     # 创建可执行程序存放目录

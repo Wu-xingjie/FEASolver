@@ -1,6 +1,6 @@
 #pragma once
 #include <eigen3/Eigen/Dense>
-
+#include <map>
 #include "fea_model/fea_model.h"
 namespace ASSEMBLE {
 class MatrixAssemble {
@@ -17,8 +17,8 @@ public:
   // 组装总体载荷列阵
   void AssembleLoad();
 
-private:
-  int _dof;                            // 模型自由度
+  
+  int _dof{0};                            // 模型自由度
   std::map<std::string, int> _dof2idx; // 总体坐标系自由度到维度的映射关系
   MODEL::Model _model;                 // 模型库
   Eigen::MatrixXd _matrix_k;           // 刚度矩阵

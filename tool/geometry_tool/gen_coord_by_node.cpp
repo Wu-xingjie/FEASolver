@@ -99,7 +99,7 @@ boost::shared_ptr<COMPONENT::GeneralCoord> NodesToCoord(
   if (!n1) {
     throw "[ERROR]:func(GetCompById)->获取节点1失败!";
   }
-  auto comp_n2 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid1);
+  auto comp_n2 = GetCompById(model, COMPONENT::CompBase::comp_type::node, nid2);
   auto n2 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_n2);
   if (!n2) {
     throw "[ERROR]:func(GetCompById)->获取节点2失败!";

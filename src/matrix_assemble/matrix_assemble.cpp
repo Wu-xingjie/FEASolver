@@ -2,25 +2,36 @@
 #include "component/constrained/single_point_constrained.h"
 #include "component/element/elemen_base.h"
 #include "component/load/load_base.h"
-
+#include <boost/lexical_cast.hpp>
+#include <set>
 namespace ASSEMBLE {
 
 MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
   _model = model;
+
+  std::set<int> _node_used;
   for (auto elem : _model._element) {
     auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
     if (!base_elem) {
       throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
     }
-    _dof += 3 * base_elem->GetNodes().size();
+    auto ns = base_elem->GetNodes();
+    for (auto n : ns) {
+      _node_used.insert(n);
+    }
+  }
+  _dof += 3 * _node_used.size();
+  std::vector<int> vec_node_used;
+  for (auto elem : _node_used) {
+    vec_node_used.push_back(elem);
   }
   _matrix_k = Eigen::MatrixXd::Zero(_dof, _dof);
   _vector_f = Eigen::VectorXd::Zero(_dof, 1);
   std::vector<std::string> xyz{"x", "y", "z"};
-  for (int i = 0; i < _dof / 3; i++) {
-    for (int j = 1; j < 4; j++) {
-      std::string k = std::to_string(i) + "_" + xyz.at(j - 1);
-      _dof2idx[k] = 3 * i + j;
+  for (int i = 1; i < _node_used.size() + 1; i++) {
+    for (int j = 0; j < 3; j++) {
+      std::string k = std::to_string(vec_node_used.at(i - 1)) + "_" + xyz.at(j);
+      _dof2idx[k] = 3 * (i - 1) + j;
     }
   }
 }
@@ -32,6 +43,8 @@ void MatrixAssemble::AssembleK() {
       throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
     }
     auto elem_matrix = base_elem->GetGlobalK(_model);
+    std::cout << "elem_matrix:" << std::endl;
+    std::cout << elem_matrix << std::endl;
 
     // 获取单元节点号和单元刚度矩阵的维度
     auto em_col = elem_matrix.cols();
@@ -44,10 +57,10 @@ void MatrixAssemble::AssembleK() {
     // 创建单元刚度矩阵维度到自由度的映射关系
     std::map<int, std::string> elem_idx2dof;
     std::vector<std::string> xyz{"x", "y", "z"};
-    for (int i = 0; i < nodes.size(); i++) {
-      for (int j = 1; j < 4; j++) {
-        auto k = std::to_string(nodes.at(i)) + "_" + xyz.at(j - 1);
-        elem_idx2dof[3 * i + j] = k;
+    for (int i = 1; i < nodes.size() + 1; i++) {
+      for (int j = 0; j < 3; j++) {
+        auto k = std::to_string(nodes.at(i - 1)) + "_" + xyz.at(j);
+        elem_idx2dof[3 * (i - 1) + j] = k;
       }
     }
 
@@ -55,13 +68,13 @@ void MatrixAssemble::AssembleK() {
     for (int r = 0; r < em_row; r++) {
       for (int c = 0; c < em_col; c++) {
         // 获取单元刚度矩阵元素对应的自由度
-        std::string r_elem_dof = elem_idx2dof.at(r + 1);
-        std::string c_elem_dof = elem_idx2dof.at(c + 1);
+        std::string r_elem_dof = elem_idx2dof.at(r);
+        std::string c_elem_dof = elem_idx2dof.at(c);
         // 获取总体刚度矩阵中该元素对应的位置
         int r_k_idx = _dof2idx.at(r_elem_dof);
         int c_k_idx = _dof2idx.at(c_elem_dof);
         // 将该元素加到总体刚度矩阵上
-        _matrix_k(r_k_idx, c_k_idx) += elem_matrix(r + 1, c + 1);
+        _matrix_k(r_k_idx, c_k_idx) += elem_matrix(r, c);
       }
     }
   }
@@ -107,10 +120,12 @@ void MatrixAssemble::AddConstrain() {
 
     // 获取被约束的自由度
     auto vec_spc = base_constrain->GetConstrain();
+    std::vector<std::string> xyz{"x", "y", "z"};
     std::vector<std::string> constrianed_dof;
     for (auto spc : vec_spc) {
       for (auto elem : spc._component) {
-        std::string dof = std::to_string(spc._node) + "_" + elem;
+        int xyz_idx = boost::lexical_cast<int>(elem);
+        std::string dof = std::to_string(spc._node) + "_" + xyz.at(xyz_idx - 1);
         constrianed_dof.push_back(dof);
       }
     }

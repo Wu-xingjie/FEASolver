@@ -82,6 +82,7 @@ Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
       boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
   auto loc_coord = TOOL::NodesToCoord(model, _G1, _G2);
   auto vec_loc = loc_coord->_vec1;
+  std::cout << vec_loc << std::endl;
   // 获取单元坐标系向量和全局坐标系之间的方向余弦
   auto cos_l_x = TOOL::CosOfVecs(global_coord._vec1, vec_loc);
   auto cos_l_y = TOOL::CosOfVecs(global_coord._vec2, vec_loc);
@@ -92,8 +93,13 @@ Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
   trans_matrix << cos_l_x, cos_l_y, cos_l_z, 0.0    , 0.0    , 0.0   ,
                   0.0    , 0.0    , 0.0    , cos_l_x, cos_l_y, cos_l_z;
   // clang-format on
+
+  std::cout << "trans_matrix:" << trans_matrix << std::endl;
+  std::cout << "_loc_k:" << _loc_k << std::endl;
+  
+
   // 获取全局坐标系下的单元刚度举证
-  global_k = trans_matrix.inverse() * _loc_k * trans_matrix;
+  global_k = trans_matrix * _loc_k * trans_matrix.transpose();
   return global_k;
 }
 

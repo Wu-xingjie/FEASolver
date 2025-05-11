@@ -17,7 +17,7 @@ void ConcentratedForce::SetComp(const file_data &datas) {
 void ConcentratedForce::GenLoadVec(const MODEL::Model &model) {
   // 通过节点个数判断载荷列阵的维度
   int num_node = model._node.size();
-  _load_vec = Eigen::VectorXd::Zero(num_node);
+  _load_vec = Eigen::VectorXd::Zero(6*num_node);
   // 设置载荷向量
   _load_vec[6 * num_node - 6] = _scale * _x;
   _load_vec[6 * num_node - 5] = _scale * _y;
