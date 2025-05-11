@@ -1,4 +1,5 @@
 #include "matrix_assemble.h"
+#include "component/constrained/single_point_constrained.h"
 #include "component/element/elemen_base.h"
 #include "component/load/load_base.h"
 
@@ -90,6 +91,39 @@ void MatrixAssemble::AssembleLoad() {
       std::string dof_load = load_idx2dof.at(i + 1);
       int global_load_idx = _dof2idx.at(dof_load);
       _vector_f(global_load_idx) += global_load(i);
+    }
+  }
+}
+
+void MatrixAssemble::AddConstrain() {
+  for (auto constrain : _model._constrain) {
+    // 获取约束
+    auto base_constrain =
+        boost::dynamic_pointer_cast<COMPONENT::SinglePointConstrains>(
+            constrain);
+    if (!base_constrain) {
+      throw "[ERROR]:func(AddConstrain): 无法获取约束";
+    }
+
+    // 获取被约束的自由度
+    auto vec_spc = base_constrain->GetConstrain();
+    std::vector<std::string> constrianed_dof;
+    for (auto spc : vec_spc) {
+      for (auto elem : spc._component) {
+        std::string dof = std::to_string(spc._node) + "_" + elem;
+        constrianed_dof.push_back(dof);
+      }
+    }
+
+    // 置0法：
+    // 将总体刚度矩阵中被约束自由度对应行和列的非对角元素设为0,对角元素设置为1
+    // 载荷列阵中对应自由度元素设置为0
+    for (auto dof : constrianed_dof) {
+      int idx = _dof2idx.at(dof);
+      _matrix_k.row(idx).setZero();
+      _matrix_k.col(idx).setZero();
+      _matrix_k(idx, idx) = 1;
+      _vector_f(idx) = 0;
     }
   }
 }
