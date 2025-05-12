@@ -6,4 +6,6 @@ target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src/compon
 target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/tool)
 target_include_directories(matrix_assemble PUBLIC ${BOOST_INCLUDE_DIRS})
 target_link_libraries(matrix_assemble ${Boost_LIBS})
+target_link_libraries(matrix_assemble tool)
+
 message("-------------- assemble end   -------------")

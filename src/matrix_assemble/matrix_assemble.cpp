@@ -1,9 +1,12 @@
 #include "matrix_assemble.h"
+
+#include <boost/lexical_cast.hpp>
+#include <set>
+
 #include "component/constrained/single_point_constrained.h"
 #include "component/element/elemen_base.h"
 #include "component/load/load_base.h"
-#include <boost/lexical_cast.hpp>
-#include <set>
+#include "matrix_tool/delete_row_or_col.h"
 namespace ASSEMBLE {
 
 MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
@@ -43,8 +46,6 @@ void MatrixAssemble::AssembleK() {
       throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
     }
     auto elem_matrix = base_elem->GetGlobalK(_model);
-    std::cout << "elem_matrix:" << std::endl;
-    std::cout << elem_matrix << std::endl;
 
     // 获取单元节点号和单元刚度矩阵的维度
     auto em_col = elem_matrix.cols();
@@ -143,4 +144,36 @@ void MatrixAssemble::AddConstrain() {
   }
 }
 
-} // namespace ASSEMBLE
+Eigen::MatrixXd MatrixAssemble::RemoveExtraMatrixDof() {
+  // 去除刚度矩阵多余自由度
+  Eigen::MatrixXd result;
+  result = TOOL::DelRowOrCol(TOOL::RowOrCol::both, _extro_dof, _matrix_k);
+  std::cout << "result_k:" << std::endl << result << std::endl;
+  return result;
+}
+
+Eigen::VectorXd MatrixAssemble::RemoveExtraLoadDof() {
+  // 去除载荷列阵多余自由度
+  Eigen::VectorXd result;
+  result = TOOL::DelRowOrCol(_extro_dof, _vector_f);
+  std::cout << "result_f:" << std::endl << result << std::endl;
+  return result;
+}
+
+void MatrixAssemble::GetExtraDof() {
+  int dof = _matrix_k.cols();
+  for (int i = 0; i < dof; i++) {
+    bool is_extro = true;
+    auto col = _matrix_k.col(i);
+    for (auto elem : col) {
+      if (std::abs(elem) > 1e-16) {
+        is_extro = false;
+      }
+    }
+    if (is_extro) {
+      _extro_dof.push_back(i);
+    }
+  }
+}
+
+}  // namespace ASSEMBLE

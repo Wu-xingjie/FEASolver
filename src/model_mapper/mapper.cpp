@@ -1,12 +1,20 @@
 #include "mapper.h"
-#include "regist_list.h"
+
+#include <exception>
 #include <iostream>
+
+#include "regist_list.h"
 namespace MAPPER {
 void FileToMapper::mapper(MODEL::Model &model,
                           const std::vector<cards> &file_model) {
   for (auto &i : file_model) {
     try {
       auto comp_name = boost::any_cast<std::string>(i.front().at(0));
+      auto comp_name_idx = _file_to_comp.find(comp_name);
+      if (comp_name_idx == _file_to_comp.end()) {
+        throw std::runtime_error("[ERROR]:func(mapper)>>发现未处理的关键字: " +
+                                 comp_name);
+      }
       // 根据注册表获取相应的元件工厂
       auto comp_fac = _file_to_comp.at(comp_name);
       // 创建并给元件赋值
@@ -23,4 +31,4 @@ void FileToMapper::mapper(MODEL::Model &model,
     }
   }
 }
-} // namespace MAPPER
+}  // namespace MAPPER
