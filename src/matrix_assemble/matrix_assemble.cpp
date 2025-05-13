@@ -148,7 +148,6 @@ Eigen::MatrixXd MatrixAssemble::RemoveExtraMatrixDof() {
   // 去除刚度矩阵多余自由度
   Eigen::MatrixXd result;
   result = TOOL::DelRowOrCol(TOOL::RowOrCol::both, _extro_dof, _matrix_k);
-  std::cout << "result_k:" << std::endl << result << std::endl;
   return result;
 }
 
@@ -156,7 +155,6 @@ Eigen::VectorXd MatrixAssemble::RemoveExtraLoadDof() {
   // 去除载荷列阵多余自由度
   Eigen::VectorXd result;
   result = TOOL::DelRowOrCol(_extro_dof, _vector_f);
-  std::cout << "result_f:" << std::endl << result << std::endl;
   return result;
 }
 
@@ -171,7 +169,7 @@ void MatrixAssemble::GetExtraDof() {
       }
     }
     if (is_extro) {
-      _extro_dof.push_back(i);
+      _extro_dof.insert(i);
     }
   }
 }

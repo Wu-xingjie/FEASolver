@@ -1,48 +1,56 @@
 #include "delete_row_or_col.h"
 
+#include <iostream>
+#include <map>
 namespace TOOL {
-Eigen::MatrixXd DelRowOrCol(const RowOrCol& tap, const std::vector<int>& idxs,
+Eigen::MatrixXd DelRowOrCol(const RowOrCol& tap, const std::set<int>& idxs,
                             const Eigen::MatrixXd& matrix) {
-  Eigen::MatrixXd result = matrix;
-  int col = result.cols();
-  int row = result.rows();
-  for (auto idx : idxs) {
-    //   删除列
-    if (tap == RowOrCol::col or tap == RowOrCol::both) {
-      if (idx == 0) {
-        result << result.rightCols(col - 1);
-      } else if (idx == col - 1) {
-        result << result.leftCols(col - 1);
-      } else {
-        result << result.leftCols(idx - 1), result.rightCols(col - idx);
-      }
+  // 初始化结果矩阵
+  int col = matrix.cols();
+  int row = matrix.rows();
+  int extro_dof_num = idxs.size();
+  Eigen::MatrixXd result =
+      Eigen::MatrixXd::Zero(row - extro_dof_num, col - extro_dof_num);
+  // 创建原始矩阵自由度到结果矩阵自由度之间的映射
+  std::map<int, int> origin_result_idx;
+  int result_idx = 0;
+  for (int origin_idx = 0; origin_idx < col; origin_idx++) {
+    auto extro_idx_pos = idxs.find(origin_idx);
+    if (extro_idx_pos != idxs.end()) {
+      continue;
     }
-    // 删除行
-    if (tap == RowOrCol::row or tap == RowOrCol::both) {
-      if (idx == 0) {
-        result << result.rightCols(row - 1);
-      } else if (idx == row - 1) {
-        result << result.leftCols(row - 1);
-      } else {
-        result << result.leftCols(idx - 1), result.rightCols(row - idx);
-      }
+    origin_result_idx[result_idx] = origin_idx;
+    result_idx++;
+  }
+  // 给结果矩阵赋值
+  for (int r = 0; r < row - extro_dof_num; r++) {
+    for (int c = 0; c < row - extro_dof_num; c++) {
+      result(r, c) = matrix(origin_result_idx.at(r), origin_result_idx.at(c));
     }
   }
   return result;
 }
 
-Eigen::VectorXd DelRowOrCol(const std::vector<int>& idxs,
+Eigen::VectorXd DelRowOrCol(const std::set<int>& idxs,
                             const Eigen::VectorXd& v) {
-  Eigen::VectorXd result = v;
-  int num = v.size();
-  for (auto idx : idxs) {
-    if (idx == 0) {
-      result << result.tail(num - 1);
-    } else if (idx == num - 1) {
-      result << result.head(num - 1);
-    } else {
-      result << result.head(idx - 1), result.tail(num - idx);
+  // 初始化结果矩阵
+  int v_size = v.size();
+  int extro_dof_num = idxs.size();
+  Eigen::VectorXd result = Eigen::VectorXd::Zero(v_size - extro_dof_num);
+  // 创建原始矩阵自由度到结果矩阵自由度之间的映射
+  std::map<int, int> origin_result_idx;
+  int result_idx = 0;
+  for (int origin_idx = 0; origin_idx < v_size; origin_idx++) {
+    auto extro_idx_pos = idxs.find(origin_idx);
+    if (extro_idx_pos != idxs.end()) {
+      continue;
     }
+    origin_result_idx[result_idx] = origin_idx;
+    result_idx++;
+  }
+  // 给结果矩阵赋值
+  for (int r = 0; r < v_size - extro_dof_num; r++) {
+    result(r) = v(origin_result_idx.at(r));
   }
   return result;
 }

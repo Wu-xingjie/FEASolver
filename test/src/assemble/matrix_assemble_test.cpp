@@ -37,19 +37,7 @@ int main() {
   matrix_assemble.AssembleLoad();
   matrix_assemble.AddConstrain();
 
-  //   计算结果
-
-  // Eigen::Matrix4d test;
-  // test << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 65.9736;
-  // Eigen::Vector4d test_f;
-  // test_f << 0, 0, 0, 1000;
-  // std::cout << "test:" << std::endl;
-  // std::cout << test << std::endl;
-  // std::cout << "inverse test:" << std::endl;
-  // std::cout << test.inverse() << std::endl;
-  // std::cout << "test节点位移:" << std::endl;
-  // std::cout << test.inverse() * test_f << std::endl;
-
+  // 计算结果
   matrix_assemble.GetExtraDof();
   auto K = matrix_assemble.RemoveExtraMatrixDof();
   auto f = matrix_assemble.RemoveExtraLoadDof();

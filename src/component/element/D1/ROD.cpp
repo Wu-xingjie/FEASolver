@@ -88,11 +88,19 @@ Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
   auto cos_l_z = TOOL::CosOfVecs(global_coord._vec3, vec_loc);
   // 创建变换矩阵
   Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(6, 2);
-  // clang-format off
-  trans_matrix << cos_l_x, cos_l_y, cos_l_z, 0.0    , 0.0    , 0.0   ,
-                  0.0    , 0.0    , 0.0    , cos_l_x, cos_l_y, cos_l_z;
-  // clang-format on  
-
+  trans_matrix(0,0) = cos_l_x;
+  trans_matrix(1,0) = cos_l_y;
+  trans_matrix(2,0) = cos_l_z;
+  trans_matrix(3,0) = 0;
+  trans_matrix(4,0) = 0;
+  trans_matrix(5,0) = 0;
+  trans_matrix(0,1) = 0;
+  trans_matrix(1,1) = 0;
+  trans_matrix(2,1) = 0;
+  trans_matrix(3,1) = cos_l_x;
+  trans_matrix(4,1) = cos_l_y;
+  trans_matrix(5,1) = cos_l_z;
+  
   // 获取全局坐标系下的单元刚度举证
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
   return global_k;
