@@ -59,21 +59,27 @@ void MAT1::SetComp(const file_data &datas) {
   }
   if (!datas.front().at(2).empty()) {
     try {
-      _E = boost::any_cast<double>(datas.front().at(2));
+      if (datas.front().at(2).type() != typeid(std::string)) {
+        _E = boost::any_cast<double>(datas.front().at(2));
+      }
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(3).empty()) {
     try {
-      _NU = boost::any_cast<double>(datas.front().at(3));
+      if (datas.front().at(3).type() != typeid(std::string)) {
+        _G = boost::any_cast<double>(datas.front().at(3));
+      }
     } catch (const std::exception &e) {
     }
   }
   if (!datas.front().at(4).empty()) {
     try {
-      _G = boost::any_cast<double>(datas.front().at(4));
+      if (datas.front().at(4).type() != typeid(std::string)) {
+        _NU = boost::any_cast<double>(datas.front().at(4));
+      }
     } catch (const std::exception &e) {
     }
   }
 }
-}  // namespace COMPONENT
+} // namespace COMPONENT

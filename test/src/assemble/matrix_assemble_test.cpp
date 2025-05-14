@@ -6,10 +6,14 @@
 #include "component/element/D1/ROD.h"
 #include "component/load/load_base.h"
 #include "mapper.h"
-int main() {
+int main(int argv, char *argc[]) {
+  if (argv != 2) {
+    std::cout << "[ERROR]:func(main)>>> 输入参数错误!" << std::endl;
+    return 1;
+  }
+
   // 输入文件地址
-  std::string inpfile_addr =
-      "/home/wxj/workspace/FEASolver/file/test_file/parser_test.bdf";
+  std::string inpfile_addr = argc[1];
   // 解析文件
   MAPPER::Parser parser;
   parser.ParserFile(inpfile_addr);
@@ -25,6 +29,8 @@ int main() {
     auto base_elem =
         boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
     base_elem->GenerateK(model);
+    std::cout << "global_k:" << std::endl
+              << base_elem->GetGlobalK(model) << std::endl;
   }
   for (auto comp_load : model._load) {
     auto base_load =
@@ -38,6 +44,11 @@ int main() {
   matrix_assemble.AddConstrain();
 
   // 计算结果
+  std::cout << "_matrix_k:" << std::endl;
+  std::cout << matrix_assemble._matrix_k << std::endl;
+  std::cout << "_vector_f:" << std::endl;
+  std::cout << matrix_assemble._vector_f << std::endl;
+
   matrix_assemble.GetExtraDof();
   auto K = matrix_assemble.RemoveExtraMatrixDof();
   auto f = matrix_assemble.RemoveExtraLoadDof();
