@@ -11,9 +11,9 @@ namespace COMPONENT {
 class ElemBase : public CompBase {
  public:
   ElemBase() { _type = comp_type::element; };
-  ~ElemBase() = default;
+  virtual ~ElemBase() = default;
 
-  enum class elem_type { rod };
+  enum class elem_type { rod, bar };
   virtual void SetComp(const file_data &datas) = 0;
   virtual elem_type ElemType() = 0;
   virtual std::vector<int> GetNodes() = 0;

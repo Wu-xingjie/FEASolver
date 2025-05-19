@@ -6,7 +6,7 @@ namespace COMPONENT {
 class ROD : public ElemBase {
 public:
   ROD() { _elem_type = ElemBase::elem_type::rod; };
-  ~ROD() = default;
+  virtual ~ROD() = default;
 
   virtual void SetComp(const file_data &datas) override;
 
