@@ -2,18 +2,6 @@
 
 namespace COMPONENT {
 
-// Mat1Data::Mat1Data(const Mat1Data &p) {
-//   if (p._E.is_initialized()) {
-//     _E = p._E;
-//   }
-//   if (p._G.is_initialized()) {
-//     _G = p._G;
-//   }
-//   if (p._NU.is_initialized()) {
-//     _NU = p._NU;
-//   }
-// }
-
 MAT1::MAT1(const MAT1 &p) {
   _id = p._id;
   if (p._E.is_initialized()) {
@@ -27,31 +15,19 @@ MAT1::MAT1(const MAT1 &p) {
   }
 }
 
-boost::optional<double> MAT1::GetE() {
-  boost::optional<double> result;
+std::map<std::string, boost::any> MAT1::GetMatDate() {
+  std::map<std::string, boost::any> datas;
   if (_E.is_initialized()) {
-    result = _E.get();
+    datas["E"] = _E.get();
   }
-  return result;
-}
-
-boost::optional<double> MAT1::GetNU() {
-  boost::optional<double> result;
   if (_NU.is_initialized()) {
-    result = _NU.get();
+    datas["NU"] = _NU.get();
   }
-  return result;
-}
-
-boost::optional<double> MAT1::GetG() {
-  boost::optional<double> result;
   if (_G.is_initialized()) {
-    result = _G.get();
+    datas["G"] = _G.get();
   }
-  return result;
+  return datas;
 }
-
-// Mat1Data MAT1::GetMaterial() { return _mat1_data; }
 
 void MAT1::SetComp(const file_data &datas) {
   if (!datas.front().at(1).empty()) {
@@ -82,4 +58,4 @@ void MAT1::SetComp(const file_data &datas) {
     }
   }
 }
-} // namespace COMPONENT
+}  // namespace COMPONENT

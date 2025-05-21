@@ -48,18 +48,19 @@ void ROD::GenerateK(const MODEL::Model &model) {
     if (!base_prop) {
       throw "属性基类获取失败";
     }
-    double A = base_prop->GetCrossArea();
-    int MID = base_prop->GetMatId();
+    auto prop_datas = base_prop->GetPropDate();
+    int MID = boost::any_cast<int>(prop_datas.at("mid"));
+    double A = boost::any_cast<double>(prop_datas.at("a"));
+
     // 获取单元材料
     auto comp_mat = TOOL::GetCompById(model, CompBase::comp_type::mat, MID);
     auto base_mat = boost::dynamic_pointer_cast<MaterialBase>(comp_mat);
     if (!base_mat) {
       throw "材料基类获取失败";
     }
-    auto E = base_mat->GetE();
-    auto NU = base_mat->GetNU();
-    auto G = base_mat->GetG();
-    auto mat_info = TOOL::DealENuG(E, NU, G);
+
+    auto mat_data = base_mat->GetMatDate();
+    auto mat_info = TOOL::DealENuG(mat_data);
     if (mat_info.empty()) {
       throw "材料获取失败";
     }
@@ -88,22 +89,22 @@ Eigen::MatrixXd ROD::GetGlobalK(const MODEL::Model &model) {
   auto cos_l_z = TOOL::CosOfVecs(global_coord._vec3, vec_loc);
   // 创建变换矩阵
   Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(6, 2);
-  trans_matrix(0,0) = cos_l_x;
-  trans_matrix(1,0) = cos_l_y;
-  trans_matrix(2,0) = cos_l_z;
-  trans_matrix(3,0) = 0;
-  trans_matrix(4,0) = 0;
-  trans_matrix(5,0) = 0;
-  trans_matrix(0,1) = 0;
-  trans_matrix(1,1) = 0;
-  trans_matrix(2,1) = 0;
-  trans_matrix(3,1) = cos_l_x;
-  trans_matrix(4,1) = cos_l_y;
-  trans_matrix(5,1) = cos_l_z;
-  
+  trans_matrix(0, 0) = cos_l_x;
+  trans_matrix(1, 0) = cos_l_y;
+  trans_matrix(2, 0) = cos_l_z;
+  trans_matrix(3, 0) = 0;
+  trans_matrix(4, 0) = 0;
+  trans_matrix(5, 0) = 0;
+  trans_matrix(0, 1) = 0;
+  trans_matrix(1, 1) = 0;
+  trans_matrix(2, 1) = 0;
+  trans_matrix(3, 1) = cos_l_x;
+  trans_matrix(4, 1) = cos_l_y;
+  trans_matrix(5, 1) = cos_l_z;
+
   // 获取全局坐标系下的单元刚度举证
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
   return global_k;
 }
 
-} // namespace COMPONENT
+}  // namespace COMPONENT

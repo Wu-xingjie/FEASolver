@@ -10,23 +10,23 @@ namespace COMPONENT {
 //   int _mid;
 // };
 
-class PBAR : public PropertyBase {
- public:
-  PBAR() = default;
-  ~PBAR() = default;
+// class PBAR : public PropertyBase {
+//  public:
+//   PBAR() = default;
+//   ~PBAR() = default;
 
-  // 设置属性参数
-  void SetComp(const file_data &datas);
+//   // 设置属性参数
+//   void SetComp(const file_data &datas);
 
-  virtual double GetCrossArea() override { return _a; }
+//   // virtual double GetCrossArea() override { return _a; }
 
-  virtual int GetMatId() override { return _mid; }
+//   // virtual int GetMatId() override { return _mid; }
 
- private:
-  int _mid;
-  double _a;
-  double _I1;
-  double _I2;
-  double _J;
-};
+//  private:
+//   int _mid;
+//   double _a;
+//   double _I1;
+//   double _I2;
+//   double _J;
+// };
 }  // namespace COMPONENT

@@ -1,15 +1,8 @@
 #pragma once
 #include "property_base.h"
+#include <boost/any.hpp>
 
 namespace COMPONENT {
-// 打包杆单元属性参数
-// struct ProdData {
-//   ProdData() = default;
-//   ProdData(const ProdData &p);
-//   double _a; // 截面面积
-//   int _mid;
-// };
-
 class PROD : public PropertyBase {
  public:
   PROD() = default;
@@ -19,13 +12,10 @@ class PROD : public PropertyBase {
   // 设置属性参数
   void SetComp(const file_data &datas);
 
-  virtual double GetCrossArea() override { return _a; }
-
-  virtual int GetMatId() override { return _mid; }
+  virtual std::map<std::string, boost::any> GetPropDate() override;
 
  private:
-  // ProdData _prod_data;
   double _a;  // 截面面积
-  int _mid;
+  int _mid;   // 材料id
 };
 }  // namespace COMPONENT

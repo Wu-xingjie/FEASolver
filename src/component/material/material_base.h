@@ -12,8 +12,6 @@ class MaterialBase : public CompBase {
   MaterialBase() { _type = comp_type::mat; };
   virtual ~MaterialBase() = default;
 
-  virtual boost::optional<double> GetE() = 0;
-  virtual boost::optional<double> GetNU() = 0;
-  virtual boost::optional<double> GetG() = 0;
+  virtual std::map<std::string, boost::any> GetMatDate() = 0;
 };
 }  // namespace COMPONENT
