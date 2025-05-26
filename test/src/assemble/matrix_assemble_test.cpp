@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "component/element/D1/ROD.h"
+#include "component/element/D1/BAR.h"
 #include "component/load/load_base.h"
 #include "mapper.h"
 int main(int argv, char *argc[]) {

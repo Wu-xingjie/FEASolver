@@ -2,11 +2,14 @@
 #include "register.h"
 #include "component_factory/material_factory/factory_mat1.h"
 #include "component_factory/property_factory/factory_prod.h"
+#include "component_factory/property_factory/factory_pbar.h"
 #include "component_factory/node_factory/factory_node.h"
 #include "component_factory/element_factory/factory_D1/factory_rod.h"
+#include "component_factory/element_factory/factory_D1/factory_cbar.h"
 #include "component_factory/coordinate_factory/factory_cartesian_by_node.h"
 #include "component_factory/load_factory/factory_concentrated_force.h"
 #include "component_factory/constrain_factory/factory_single_point_constrain.h"
+
 
 // 材料注册
 MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
@@ -14,8 +17,10 @@ MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
 MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 // 属性注册
 MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
+MAPPER::Regist<FACTORY::ProdFactory> _PbarFactoryREGIST("PBAR");
 // 单元注册 
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
+MAPPER::Regist<FACTORY::RodFactory> _BarFactoryREGIST("CBAR");
 // 坐标系注册
 MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1C");
 // 载荷注册

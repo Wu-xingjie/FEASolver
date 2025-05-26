@@ -18,7 +18,7 @@ class BAR : public ElemBase {
   int _pid;
   int _G1;
   int _G2;
-  std::array<double, 3> _origin_vec;
+  Eigen::Vector3d _origin_vec;
   Eigen::MatrixXd _loc_k;
 };
 }  // namespace COMPONENT

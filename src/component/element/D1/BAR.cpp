@@ -3,14 +3,17 @@
 #include <cmath>
 #include <exception>
 
+#include "component/coordinate/global_coordinate.h"
+#include "geometry_tool/gen_coord_by_node.h"
 #include "geometry_tool/length_node_to_node.h"
 #include "model_tool/deal_E_NU_G.h"
 #include "model_tool/get_comp_by_id.h"
+
 namespace COMPONENT {
 
 BAR::BAR() {
   _elem_type = ElemBase::elem_type::bar;
-  _loc_k = Eigen::MatrixXd::Zero(12);
+  _loc_k = Eigen::MatrixXd::Zero(12,12);
 }
 
 void BAR::SetComp(const file_data& datas) {
@@ -19,6 +22,7 @@ void BAR::SetComp(const file_data& datas) {
   _pid = boost::any_cast<int>(card.at(2));
   _G1 = boost::any_cast<int>(card.at(3));
   _G2 = boost::any_cast<int>(card.at(4));
+  _origin_vec = Eigen::Vector3d::Zero(3);
   _origin_vec[0] = boost::any_cast<double>(card.at(5));
   _origin_vec[1] = boost::any_cast<double>(card.at(6));
   _origin_vec[2] = boost::any_cast<double>(card.at(7));
@@ -134,6 +138,42 @@ void BAR::GenerateK(const MODEL::Model& model) {
   } catch (const char* e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
+}
+
+Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
+  // 获取全局坐标系
+  auto global_coord =
+      boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
+  // 获取单元局部坐标系
+  // x轴
+  auto coord_x = TOOL::NodesToCoord(model, _G1, _G2)->_vec1;
+  // z轴
+  auto coord_z = coord_x.cross(_origin_vec);
+  // y轴
+  auto coord_y = coord_z.cross(coord_x);
+
+  // 获取局部坐标系到全局坐标系的坐标变换矩阵
+  // 坐标原点
+  auto comp_N1 = TOOL::GetCompById(model, CompBase::comp_type::node, _G1);
+  auto N1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N1);
+  if (!N1) {
+    throw std::runtime_error("[ERROR]:func(BAR::GenerateK)>>>节点1获取失败");
+  }
+  auto N1_datas = N1->get_location();
+  // 创建局部坐标系的一般坐标系
+  GeneralCoord loc_coord;
+  loc_coord._coord_origin = N1_datas;
+  loc_coord._vec1 = coord_x;
+  loc_coord._vec2 = coord_y;
+  loc_coord._vec3 = coord_z;
+  loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
+  // 获取坐标变换矩阵
+  auto trans_matrix = TOOL::TransCoordToCoord(global_coord, loc_coord);
+
+  // 全局坐标系下单元刚度矩阵
+  Eigen::MatrixXd global_k;
+  global_k = trans_matrix * _loc_k * trans_matrix.transpose();
+  return global_k;
 }
 
 }  // namespace COMPONENT
