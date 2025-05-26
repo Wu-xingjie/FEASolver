@@ -29,7 +29,8 @@ void Parser::ParserFile(const std::string &file_address) {
       _file_data.push_back(temp_content);
     }
   } else {
-    std::cout << "file open failed!" << std::endl;
+    throw std::runtime_error(
+        "[ERROR]:func(Parser::ParserFile)>>>节点1获取失败");
   }
 }
 
