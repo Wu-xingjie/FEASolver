@@ -13,7 +13,7 @@ namespace COMPONENT {
 
 BAR::BAR() {
   _elem_type = ElemBase::elem_type::bar;
-  _loc_k = Eigen::MatrixXd::Zero(12,12);
+  _loc_k = Eigen::MatrixXd::Zero(12, 12);
 }
 
 void BAR::SetComp(const file_data& datas) {
@@ -62,10 +62,10 @@ void BAR::GenerateK(const MODEL::Model& model) {
     }
     auto prop_datas = base_prop->GetPropDate();
     int mid = boost::any_cast<int>(prop_datas.at("mid"));
-    int a = boost::any_cast<int>(prop_datas.at("a"));
-    int I1 = boost::any_cast<int>(prop_datas.at("I1"));
-    int I2 = boost::any_cast<int>(prop_datas.at("I2"));
-    int J = boost::any_cast<int>(prop_datas.at("J"));
+    double a = boost::any_cast<double>(prop_datas.at("a"));
+    double I1 = boost::any_cast<double>(prop_datas.at("I1"));
+    double I2 = boost::any_cast<double>(prop_datas.at("I2"));
+    double J = boost::any_cast<double>(prop_datas.at("J"));
 
     // 获取单元材料
     auto comp_mat = TOOL::GetCompById(model, CompBase::comp_type::mat, mid);
@@ -168,10 +168,17 @@ Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
   loc_coord._vec3 = coord_z;
   loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
   // 获取坐标变换矩阵
-  auto trans_matrix = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(12, 12);
+  trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
+  trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
+  trans_matrix.block<3, 3>(6, 6) = trans_matrix_block;
+  trans_matrix.block<3, 3>(9, 9) = trans_matrix_block;
 
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
+  std::cout << "trans_matrix:" << std::endl << trans_matrix << std::endl;
+
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
   return global_k;
 }

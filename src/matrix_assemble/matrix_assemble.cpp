@@ -23,18 +23,18 @@ MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
       _node_used.insert(n);
     }
   }
-  _dof += 3 * _node_used.size();
+  _dof += 6 * _node_used.size();
   std::vector<int> vec_node_used;
   for (auto elem : _node_used) {
     vec_node_used.push_back(elem);
   }
   _matrix_k = Eigen::MatrixXd::Zero(_dof, _dof);
   _vector_f = Eigen::VectorXd::Zero(_dof, 1);
-  std::vector<std::string> xyz{"x", "y", "z"};
+  std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
   for (int i = 1; i < _node_used.size() + 1; i++) {
-    for (int j = 0; j < 3; j++) {
+    for (int j = 0; j < 6; j++) {
       std::string k = std::to_string(vec_node_used.at(i - 1)) + "_" + xyz.at(j);
-      _dof2idx[k] = 3 * (i - 1) + j;
+      _dof2idx[k] = 6 * (i - 1) + j;
     }
   }
 }
@@ -57,11 +57,11 @@ void MatrixAssemble::AssembleK() {
 
     // 创建单元刚度矩阵维度到自由度的映射关系
     std::map<int, std::string> elem_idx2dof;
-    std::vector<std::string> xyz{"x", "y", "z"};
+    std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
     for (int i = 1; i < nodes.size() + 1; i++) {
-      for (int j = 0; j < 3; j++) {
+      for (int j = 0; j < 6; j++) {
         auto k = std::to_string(nodes.at(i - 1)) + "_" + xyz.at(j);
-        elem_idx2dof[3 * (i - 1) + j] = k;
+        elem_idx2dof[6 * (i - 1) + j] = k;
       }
     }
 
@@ -89,24 +89,26 @@ void MatrixAssemble::AssembleLoad() {
       throw "[ERROR]:func(AssembleLoad): 无法获得载荷！";
     }
     auto global_load = base_load->GetGLobalLoad(_model);
+    std::cout << "global_load: " << std::endl << global_load << std::endl;
     auto nodes = base_load->GetNodes();
 
-    // 创建单元刚度矩阵维度到自由度的映射关系
+    // 创建载荷列阵维度到自由度的映射关系
     std::map<int, std::string> load_idx2dof;
-    std::vector<std::string> xyz{"x", "y", "z"};
+    std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
     for (int i = 0; i < nodes.size(); i++) {
-      for (int j = 1; j < 4; j++) {
+      for (int j = 1; j < 7; j++) {
         auto val = std::to_string(nodes.at(i)) + "_" + xyz.at(j - 1);
-        load_idx2dof[3 * i + j] = val;
+        load_idx2dof[6 * i + j] = val;
       }
     }
     // 给全局载荷列阵赋值
-    for (int i = 0; i < global_load.rows(); i++) {
+    for (int i = 0; i < global_load.size(); i++) {
       std::string dof_load = load_idx2dof.at(i + 1);
       int global_load_idx = _dof2idx.at(dof_load);
       _vector_f(global_load_idx) += global_load(i);
     }
   }
+  std::cout << "_vector_f: " << std::endl << _vector_f << std::endl;
 }
 
 void MatrixAssemble::AddConstrain() {
@@ -121,7 +123,7 @@ void MatrixAssemble::AddConstrain() {
 
     // 获取被约束的自由度
     auto vec_spc = base_constrain->GetConstrain();
-    std::vector<std::string> xyz{"x", "y", "z"};
+    std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
     std::vector<std::string> constrianed_dof;
     for (auto spc : vec_spc) {
       for (auto elem : spc._component) {

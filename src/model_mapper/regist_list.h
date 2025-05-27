@@ -17,10 +17,10 @@ MAPPER::Regist<FACTORY::Mat1Factory> _Mat1FactoryREGIST("MAT1");
 MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 // 属性注册
 MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
-MAPPER::Regist<FACTORY::ProdFactory> _PbarFactoryREGIST("PBAR");
+MAPPER::Regist<FACTORY::PbarFactory> _PbarFactoryREGIST("PBAR");
 // 单元注册 
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
-MAPPER::Regist<FACTORY::RodFactory> _BarFactoryREGIST("CBAR");
+MAPPER::Regist<FACTORY::CBARFactory> _BarFactoryREGIST("CBAR");
 // 坐标系注册
 MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1C");
 // 载荷注册
