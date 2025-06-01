@@ -44,7 +44,7 @@ void MAT1::SetComp(const file_data &datas) {
   if (!datas.front().at(3).empty()) {
     try {
       if (datas.front().at(3).type() != typeid(std::string)) {
-        _G = boost::any_cast<double>(datas.front().at(3));
+        _NU = boost::any_cast<double>(datas.front().at(3));
       }
     } catch (const std::exception &e) {
     }
@@ -52,7 +52,7 @@ void MAT1::SetComp(const file_data &datas) {
   if (!datas.front().at(4).empty()) {
     try {
       if (datas.front().at(4).type() != typeid(std::string)) {
-        _NU = boost::any_cast<double>(datas.front().at(4));
+        _G = boost::any_cast<double>(datas.front().at(4));
       }
     } catch (const std::exception &e) {
     }

@@ -1,6 +1,6 @@
 #include "deal_E_NU_G.h"
 namespace TOOL {
-// 根据E,NU,G三者之间的关系通过任意两个已知数推出另外一个未知数
+// 根据E,NU,G三者之间的关系通过任意两个已知数推出另外一个未知数,返回为[E,NU,G]
 std::array<double, 3> DealENuG(std::map<std::string, boost::any> datas) {
   std::array<double, 3> result;
   // 获取datas中E，NU，G的数据

@@ -163,9 +163,9 @@ Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
   // 创建局部坐标系的一般坐标系
   GeneralCoord loc_coord;
   loc_coord._coord_origin = N1_datas;
-  loc_coord._vec1 = coord_x;
-  loc_coord._vec2 = coord_y;
-  loc_coord._vec3 = coord_z;
+  loc_coord._vec1 = coord_x.normalized();
+  loc_coord._vec2 = coord_y.normalized();
+  loc_coord._vec3 = coord_z.normalized();
   loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
   // 获取坐标变换矩阵
   auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
