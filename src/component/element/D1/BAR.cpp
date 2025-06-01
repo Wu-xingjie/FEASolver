@@ -16,7 +16,7 @@ BAR::BAR() {
   _loc_k = Eigen::MatrixXd::Zero(12, 12);
 }
 
-void BAR::SetComp(const file_data& datas) {
+void BAR::SetComp(const file_data &datas) {
   auto card = datas.front();
   _id = boost::any_cast<int>(card.at(1));
   _pid = boost::any_cast<int>(card.at(2));
@@ -28,7 +28,7 @@ void BAR::SetComp(const file_data& datas) {
   _origin_vec[2] = boost::any_cast<double>(card.at(7));
 }
 
-void BAR::GenerateK(const MODEL::Model& model) {
+void BAR::GenerateK(const MODEL::Model &model) {
   // 获取节点信息
   try {
     // 获取节点
@@ -135,12 +135,12 @@ void BAR::GenerateK(const MODEL::Model& model) {
 
     _loc_k(11, 11) = 4 * E * I2 / l;
 
-  } catch (const char* e) {
+  } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
+Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model &model) {
   // 获取全局坐标系
   auto global_coord =
       boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
@@ -166,9 +166,14 @@ Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
   loc_coord._vec1 = coord_x.normalized();
   loc_coord._vec2 = coord_y.normalized();
   loc_coord._vec3 = coord_z.normalized();
+  std::cout << "_vec1: " << std::endl << loc_coord._vec1 << std::endl;
+  std::cout << "_vec2: " << std::endl << loc_coord._vec2 << std::endl;
+  std::cout << "_vec3: " << std::endl << loc_coord._vec3 << std::endl;
   loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
   // 获取坐标变换矩阵
   auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  std::cout << "trans_matrix_block:" << std::endl
+            << trans_matrix_block << std::endl;
   Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(12, 12);
   trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
   trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
@@ -180,7 +185,8 @@ Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model& model) {
   std::cout << "trans_matrix:" << std::endl << trans_matrix << std::endl;
 
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
+  std::cout << "global_k:" << std::endl << global_k << std::endl;
   return global_k;
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT

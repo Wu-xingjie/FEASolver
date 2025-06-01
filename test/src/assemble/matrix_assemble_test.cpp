@@ -30,8 +30,6 @@ int main(int argv, char *argc[]) {
     auto base_elem =
         boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
     base_elem->GenerateK(model);
-    std::cout << "global_k:" << std::endl
-              << base_elem->GetGlobalK(model) << std::endl;
   }
   for (auto comp_load : model._load) {
     auto base_load =

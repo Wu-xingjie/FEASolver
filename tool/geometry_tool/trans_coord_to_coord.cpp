@@ -2,9 +2,9 @@
 
 #include "cos_of_vectors.h"
 namespace TOOL {
-Eigen::Matrix3d TransCoordToCoord(
-    const boost::shared_ptr<COMPONENT::CoordBase> base,
-    const boost::shared_ptr<COMPONENT::CoordBase> obj) {
+Eigen::Matrix3d
+TransCoordToCoord(const boost::shared_ptr<COMPONENT::CoordBase> base,
+                  const boost::shared_ptr<COMPONENT::CoordBase> obj) {
   Eigen::Matrix3d trans_matrix;
   // 获取两个坐标系的一般坐标系
   auto gen_base = base->GetGeneralCoord();
@@ -36,9 +36,8 @@ Eigen::Matrix3d TransCoordToCoord(
   return trans_matrix;
 }
 
-Eigen::Matrix3d TransCoordToCoord(
-    const COMPONENT::GeneralCoord& base,
-    const COMPONENT::GeneralCoord& obj) {
+Eigen::Matrix3d TransCoordToCoord(const COMPONENT::GeneralCoord &base,
+                                  const COMPONENT::GeneralCoord &obj) {
   Eigen::Matrix3d trans_matrix;
   if (!base._coord_flag && !obj._coord_flag) {
     throw "[ERROR]: coord_to_coord函数中有一个坐标系没初始化!";
@@ -67,4 +66,4 @@ Eigen::Matrix3d TransCoordToCoord(
   return trans_matrix;
 }
 
-}  // namespace TOOL
+} // namespace TOOL
