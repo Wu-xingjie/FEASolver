@@ -7,7 +7,7 @@ public:
   LoadBase() { _type = comp_type::load; }
   virtual ~LoadBase() = default;
   // 标记载荷类型
-  enum class load_type { concentrated_force };
+  enum class load_type { concentrated_force,concentrated_moment};
   load_type _load_type;
   virtual void SetComp(const file_data &datas) = 0;
   virtual void GenLoadVec(const MODEL::Model &model) = 0;
