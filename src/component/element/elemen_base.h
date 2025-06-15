@@ -9,11 +9,11 @@
 
 namespace COMPONENT {
 class ElemBase : public CompBase {
- public:
+public:
   ElemBase() { _type = comp_type::element; };
   virtual ~ElemBase() = default;
 
-  enum class elem_type { rod, bar };
+  enum class elem_type { rod, bar, tri3 };
   virtual void SetComp(const file_data &datas) = 0;
   virtual elem_type ElemType() = 0;
   virtual std::vector<int> GetNodes() = 0;
@@ -21,7 +21,7 @@ class ElemBase : public CompBase {
   // 将局部坐标系下的单元刚度矩阵转换到全局坐标系下
   virtual Eigen::MatrixXd GetGlobalK(const MODEL::Model &model) = 0;
 
- protected:
+protected:
   elem_type _elem_type;
 };
-}  // namespace COMPONENT
+} // namespace COMPONENT
