@@ -25,6 +25,17 @@ void Tri3::SetComp(const file_data &datas) {
   _G3 = boost::any_cast<int>(card.at(5));
 }
 
+boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(
+    const Eigen::Matrix3d &matrix, const char &lab) {
+  auto result = boost::make_shared<double>();
+  if (lab == 'x') {
+    *result = matrix(2, 3) - matrix(3, 3);
+  } else if (lab == 'y') {
+    *result = matrix(3, 2) - matrix(2, 2);
+  }
+  return result;
+}
+
 void Tri3::GenerateK(const MODEL::Model &model) {
   try {
     // 获取节点
@@ -108,4 +119,4 @@ void Tri3::GenerateK(const MODEL::Model &model) {
   }
 }
 
-} // namespace COMPONENT
+}  // namespace COMPONENT
