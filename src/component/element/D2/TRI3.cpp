@@ -25,13 +25,14 @@ void Tri3::SetComp(const file_data &datas) {
   _G3 = boost::any_cast<int>(card.at(5));
 }
 
-boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(
-    const Eigen::Matrix3d &matrix, const char &lab) {
+boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(const vec_3 &n1,
+                                                         const vec_3 &n2,
+                                                         const char &lab) {
   auto result = boost::make_shared<double>();
   if (lab == 'x') {
-    *result = matrix(2, 3) - matrix(3, 3);
+    *result = n1(2) - n2(2);
   } else if (lab == 'y') {
-    *result = matrix(3, 2) - matrix(2, 2);
+    *result = n2(1) - n1(1);
   }
   return result;
 }
@@ -54,7 +55,7 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto comp_N3 = TOOL::GetCompById(model, CompBase::comp_type::node, _G3);
     auto N3 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N3);
     if (!N3) {
-      throw std::runtime_error("[ERROR]:func(Tri3::GenerateK)>>>节点2获取失败");
+      throw std::runtime_error("[ERROR]:func(Tri3::GenerateK)>>>节点3获取失败");
     }
     auto N3_datas = N3->get_location();
 
@@ -114,9 +115,32 @@ void Tri3::GenerateK(const MODEL::Model &model) {
       double G2 = mat_info2.at(2);
     }
 
+    // =============== 板弯行为 ===============
+    // 物理矩阵
+    Eigen::MatrixXd D = Eigen::MatrixXd::Zero(6, 6);
+    D(0, 0) = 1 / E2;
+    D(1, 1) = 1 / E2;
+    D(2, 2) = 1 / E2;
+    D(1, 2) = -NU2 / E2;
+    D(2, 1) = -NU2 / E2;
+    D(1, 3) = -NU2 / E2;
+    D(3, 1) = -NU2 / E2;
+    D(3, 2) = -NU2 / E2;
+    D(2, 3) = -NU2 / E2;
+    D(4, 4) = 1 / G2;
+    D(5, 5) = 1 / G2;
+    D(6, 6) = 1 / G2;
+
+    // 去除厚度方向变量的位移-应变矩阵
+    Eigen::MatrixXd B = Eigen::MatrixXd::Zero(6, 6);
+    auto B02 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    if (B02) {
+      B(0, 2) = *B02;
+    }
+    
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT
