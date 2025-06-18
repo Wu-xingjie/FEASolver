@@ -37,6 +37,22 @@ boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(const vec_3 &n1,
   return result;
 }
 
+void Tri3::SetBValue(Eigen::MatrixXd &B, const int &r, const int &c,
+                     const char &p, const boost::shared_ptr<double> val) {
+  if (!val) {
+    throw std::runtime_error(
+        "[ERROR]:func(Tri3::SetBValue)>>>传入的矩阵元素值无效!");
+  }
+  if (p == '+') {
+    B(r, c) = *val;
+  } else if (p == '-') {
+    B(r, c) = *val * -1;
+  } else {
+    throw std::runtime_error(
+        "[ERROR]:func(Tri3::SetBValue)>>>传入参数正负号有误!");
+  }
+}
+
 void Tri3::GenerateK(const MODEL::Model &model) {
   try {
     // 获取节点
@@ -131,16 +147,42 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     D(5, 5) = 1 / G2;
     D(6, 6) = 1 / G2;
 
-    // 去除厚度方向变量的位移-应变矩阵
-    Eigen::MatrixXd B = Eigen::MatrixXd::Zero(6, 6);
-    auto B02 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
-    if (B02) {
-      B(0, 2) = *B02;
-    }
+    // 因为位移-应变矩阵(B)后两行存在x和y的函数，前四行求过偏导数后都是常数矩阵。
+    // 而且应变-应力矩阵(D)除了左上角4*4子矩阵和右下角2*2子矩阵以外都是零矩阵
+    // 所以，将矩阵B按照前四行和后两行分别处理
     
+    // 给位移-应变矩阵前四行赋值
+    Eigen::MatrixXd B1 = Eigen::MatrixXd::Zero(4, 9);
+    auto B02 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    SetBValue(B1, 0, 2, '+', B02);
+    auto B05 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
+    SetBValue(B1, 0, 5, '+', B05);
+    auto B08 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
+    SetBValue(B1, 0, 8, '+', B08);
+    auto B11 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
+    SetBValue(B1, 1, 1, '-', B11);
+    auto B14 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
+    SetBValue(B1, 1, 4, '-', B14);
+    auto B17 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
+    SetBValue(B1, 1, 7, '-', B17);
+    auto B31 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    SetBValue(B1, 3, 1, '-', B31);
+    auto B32 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
+    SetBValue(B1, 3, 2, '+', B32);
+    auto B34 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
+    SetBValue(B1, 3, 4, '-', B34);
+    auto B35 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
+    SetBValue(B1, 3, 5, '+', B35);
+    auto B37 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
+    SetBValue(B1, 3, 7, '-', B37);
+    auto B38 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
+    SetBValue(B1, 3, 8, '+', B38);
+
+
+
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-} // namespace COMPONENT
+}  // namespace COMPONENT

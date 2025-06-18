@@ -4,7 +4,7 @@
 
 namespace COMPONENT {
 class Tri3 : public ElemBase {
-public:
+ public:
   Tri3();
   virtual ~Tri3() = default;
 
@@ -14,16 +14,19 @@ public:
   virtual void GenerateK(const MODEL::Model &model) override;
   virtual Eigen::MatrixXd GetGlobalK(const MODEL::Model &model) override;
 
-protected:
+ protected:
   // 计算三节点三角形单元形函数（面积坐标）的偏导数
-  boost::shared_ptr<double>
-  AreaCoordPartialDerivate(const vec_3 &n1, const vec_3 &n2, const char &lab);
+  boost::shared_ptr<double> AreaCoordPartialDerivate(const vec_3 &n1,
+                                                     const vec_3 &n2,
+                                                     const char &lab);
+  void SetBValue(Eigen::MatrixXd &B, const int &r, const int &c, const char &p,
+                 const boost::shared_ptr<double> val);
 
-private:
+ private:
   int _pid;
   int _G1;
   int _G2;
   int _G3;
   Eigen::MatrixXd _loc_k;
 };
-} // namespace COMPONENT
+}  // namespace COMPONENT
