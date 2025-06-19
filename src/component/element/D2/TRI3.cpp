@@ -132,25 +132,28 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     }
 
     // =============== 板弯行为 ===============
-    // 物理矩阵
-    Eigen::MatrixXd D = Eigen::MatrixXd::Zero(6, 6);
-    D(0, 0) = 1 / E2;
-    D(1, 1) = 1 / E2;
-    D(2, 2) = 1 / E2;
-    D(1, 2) = -NU2 / E2;
-    D(2, 1) = -NU2 / E2;
-    D(1, 3) = -NU2 / E2;
-    D(3, 1) = -NU2 / E2;
-    D(3, 2) = -NU2 / E2;
-    D(2, 3) = -NU2 / E2;
-    D(4, 4) = 1 / G2;
-    D(5, 5) = 1 / G2;
-    D(6, 6) = 1 / G2;
 
     // 因为位移-应变矩阵(B)后两行存在x和y的函数，前四行求过偏导数后都是常数矩阵。
     // 而且应变-应力矩阵(D)除了左上角4*4子矩阵和右下角2*2子矩阵以外都是零矩阵
     // 所以，将矩阵B按照前四行和后两行分别处理
-    
+
+    // 物理矩阵
+    Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(4, 4);
+    D1(0, 0) = 1 / E2;
+    D1(1, 1) = 1 / E2;
+    D1(2, 2) = 1 / E2;
+    D1(1, 2) = -NU2 / E2;
+    D1(2, 1) = -NU2 / E2;
+    D1(1, 3) = -NU2 / E2;
+    D1(3, 1) = -NU2 / E2;
+    D1(3, 2) = -NU2 / E2;
+    D1(2, 3) = -NU2 / E2;
+    D1(4, 4) = 1 / G2;
+
+    Eigen::MatrixXd D2 = Eigen::MatrixXd::Zero(2, 2);
+    D2(5, 5) = 1 / G2;
+    D2(6, 6) = 1 / G2;
+
     // 给位移-应变矩阵前四行赋值
     Eigen::MatrixXd B1 = Eigen::MatrixXd::Zero(4, 9);
     auto B02 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
@@ -178,7 +181,13 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto B38 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
     SetBValue(B1, 3, 8, '+', B38);
 
+    auto V1 = B1.inverse() * D1 * B1;
 
+    // 给位移-应变矩阵后两行对应的应变能矩阵
+    Eigen::MatrixXd V2 = Eigen::MatrixXd::Zero(9, 9);
+
+    
+    
 
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
