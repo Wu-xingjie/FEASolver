@@ -3,6 +3,9 @@
 #include <boost/make_shared.hpp>
 #include <regex>
 
+// 解析元函数的正则表达式：((\d(\.\d)?\*[xyz](\^\d)?)|((\d)(\.\d)?)|([xyz](\^\d)?))
+// 4*x^3*(5*y^2+6*y*(2*x+3*x))+7*(8.3+3*x^2*(3+x))+4.3+x^5
+
 namespace MATH {
 FuncModel::FuncModel(const std::string &func) { Recrusion(func); }
 
