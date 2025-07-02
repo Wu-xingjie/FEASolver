@@ -1,17 +1,18 @@
 #include "gauss_integral.h"
+
+#include <boost/make_shared.hpp>
 #include <regex>
+
+#include "func_expr/func_cal.h"
 namespace TOOL {
-std::vector<std::string> GaussIntegral(const int &num_r,
-                                       const std::vector<std::string> &func) {
-  std::vector<std::string> result;
-  for (std::string elem : func) {
-    // 1.检测函数各项系数合法性（是否包含除去符号*以外的其他符号）
-    for(auto c : elem){
-        
-    }
-    // 2.分离字符和数字
-    // 3.权重因子*各项数字系数*积分点的n次方
-  }
+boost::shared_ptr<double> GaussIntegral(const std::string& func,
+                                        const double& idx_up,
+                                        const double& idx_low,
+                                        const int& num_r,
+                                        const int& num_integal) {
+  auto result = boost::make_shared<double>();
+  // 获取采样点和权值
+  // 
   return result;
 }
-} // namespace TOOL
+}  // namespace TOOL
