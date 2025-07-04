@@ -4,7 +4,7 @@
 
 #include "exprtk.hpp"
 namespace TOOL {
-double FuncCal(const std::string &func, double x, double y = 0.0, double z = 0.0) {
+double FuncCal(const std::string &func, double x, double y, double z) {
   //   定义符号表
   exprtk::symbol_table<double> sym_talbe;
   //   增加变量
