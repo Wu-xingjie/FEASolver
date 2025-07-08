@@ -1,7 +1,9 @@
 #include "is_nodes_collinear.h"
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
+
 #include "cos_of_vectors.h"
 #define PI 3.14159
 namespace TOOL {
@@ -13,11 +15,12 @@ bool IsNodesCollinear(std::vector<Eigen::Vector3d> points) {
   }
   // auto vec1 = points.at(1) - points.at(0);
   for (int i = 0; i < points.size() - 2; i++) {
-    auto vec_front = points.at(i + 2) - points.at(i + 1);
-    auto vec_back = points.at(i + 1) - points.at(i + 2);
+    auto vec_front = points.at(i + 2) - points.at(i);
+    auto vec_back = points.at(i + 1) - points.at(i);
     //   计算夹角
-    auto theta = CosOfVecs(vec_back, vec_front);
-    if ((theta > 1.0e-11) || ((theta - PI) > 1.0e-11)) {
+    auto cos_theta = CosOfVecs(vec_back, vec_front);
+    // if ((cos_theta > 1.0e-11) || ((cos_theta - 3.1415926) > 1.0e-11)) {
+    if (std::abs(std::abs(cos_theta) - 1.0) > 1e-11) {
       result = false;
     }
   }
