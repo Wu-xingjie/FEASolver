@@ -186,6 +186,8 @@ namespace COMPONENT {
 //     // 给位移-应变矩阵后两行对应的应变能矩阵
 //     Eigen::MatrixXd V2 = Eigen::MatrixXd::Zero(9, 9);
 //     // TODO:等高斯积分计算函数编写好之后再处理
+    
+
 
 //   } catch (const char *e) {
 //     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';

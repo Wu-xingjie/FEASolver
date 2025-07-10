@@ -21,15 +21,15 @@ std::map<int, std::vector<std::vector<double>>> plane_samp_point_map = {
 std::map<int, std::vector<double>> plane_weight_map = {
     {1, {1.0}}, {3, {0.333333, 0.333333, 0.333333}}};
 
-boost::shared_ptr<double> TriGaussIntegral(
-    const std::string& func, const std::vector<Eigen::Vector2d>& points,
-    const int& num_intergral_point, const double& t) {
+boost::shared_ptr<double>
+TriGaussIntegral(const std::string &func,
+                 const std::vector<Eigen::Vector2d> &points,
+                 const int &num_intergral_point, const double &t) {
   auto result = boost::make_shared<double>();
   // 根据积分点个数确定参考域积分点
   if (num_intergral_point != 1 and num_intergral_point != 3) {
-    throw std::runtime_error(
-        "[ERROR]:func(TOOL::TriGaussIntegral)>>>"
-        "暂只支持平面内一个或三个积分点的高斯积分!");
+    throw std::runtime_error("[ERROR]:func(TOOL::TriGaussIntegral)>>>"
+                             "暂只支持平面内一个或三个积分点的高斯积分!");
   }
   auto plane_sample = plane_samp_point_map.at(num_intergral_point);
   auto plane_weight = plane_weight_map.at(num_intergral_point);
@@ -38,18 +38,16 @@ boost::shared_ptr<double> TriGaussIntegral(
 
   // 计算三点构成的物理域面积
   if (points.size() != 3) {
-    throw std::runtime_error(
-        "[ERROR]:func(TOOL::TriGaussIntegral)>>>"
-        "物理域顶点信息不充足!");
+    throw std::runtime_error("[ERROR]:func(TOOL::TriGaussIntegral)>>>"
+                             "物理域顶点信息不充足!");
   }
   auto point_1 = points.at(0);
   auto point_2 = points.at(1);
   auto point_3 = points.at(2);
   auto area = AreaOfThreePoints(point_1, point_2, point_3);
   if (!area) {
-    throw std::runtime_error(
-        "[ERROR]:func(TOOL::TriGaussIntegral)>>>"
-        "计算物理域面积失败!");
+    throw std::runtime_error("[ERROR]:func(TOOL::TriGaussIntegral)>>>"
+                             "计算物理域面积失败!");
   }
 
   // 生成P矩阵(P矩阵参考理论推导草稿)
@@ -68,11 +66,15 @@ boost::shared_ptr<double> TriGaussIntegral(
   vector_q(1) = point_3(0) * point_1(1) - point_3(1) * point_1(0);
   // 生成Jacob矩阵
   auto matrix_p_inv = matrix_p.inverse();
+  double v00 = matrix_p_inv(0, 0);
+  double v01 = matrix_p_inv(0, 1);
+  double v10 = matrix_p_inv(1, 0);
+  double v11 = matrix_p_inv(1, 1);
   Eigen::Matrix3d matrix_jacob = Eigen::Matrix3d::Zero(3, 3);
-  matrix_jacob(0, 0) = -matrix_p_inv(0, 0) * (*area);
-  matrix_jacob(0, 1) = -matrix_p_inv(0, 1) * (*area);
-  matrix_jacob(1, 0) = -matrix_p_inv(1, 0) * (*area);
-  matrix_jacob(1, 1) = -matrix_p_inv(1, 1) * (*area);
+  matrix_jacob(0, 0) = -matrix_p_inv(0, 0) * (*area)*2.0;
+  matrix_jacob(0, 1) = -matrix_p_inv(0, 1) * (*area)*2.0;
+  matrix_jacob(1, 0) = -matrix_p_inv(1, 0) * (*area)*2.0;
+  matrix_jacob(1, 1) = -matrix_p_inv(1, 1) * (*area)*2.0;
   matrix_jacob(2, 2) = t * 0.5;
   auto det_jacob = matrix_jacob.determinant();
 
@@ -80,7 +82,9 @@ boost::shared_ptr<double> TriGaussIntegral(
   std::vector<Eigen::Vector2d> phy_plane_samples;
   for (auto elem : plane_sample) {
     Eigen::Vector2d temp{elem.at(0), elem.at(1)};
-    auto phy_plane_sample = matrix_p_inv * (vector_q - (*area) * temp);
+    auto phy_plane_sample = matrix_p_inv * (vector_q - 2.0*(*area) * temp);
+    double phy_plane_sample0 = phy_plane_sample(0);
+    double phy_plane_sample1 = phy_plane_sample(1);
     phy_plane_samples.push_back(phy_plane_sample);
   }
   // 物理域下厚度方向的积分点
@@ -89,18 +93,14 @@ boost::shared_ptr<double> TriGaussIntegral(
     phy_t_samples.push_back(0.5 * t * elem);
   }
 
-  // 计算积分点处函数值
-  std::vector<double> func_samp;
-  for (int i = 0; i < num_intergral_point; i++) {
-    func_samp.push_back(FuncCal(func, phy_plane_samples.at(i)(0),
-                                phy_plane_samples.at(i)(1),
-                                phy_t_samples.at(i)));
-  }
   // 计算高斯积分
   for (int i = 0; i < num_intergral_point; i++) {
-    *result +=
-        plane_weight.at(i) * t_weight.at(i) * func_samp.at(i) * det_jacob;
+    for (int j = 0; j < num_intergral_point; j++) {
+      double val = FuncCal(func, phy_plane_samples.at(i)(0),
+                           phy_plane_samples.at(i)(1), phy_t_samples.at(j));
+      *result += plane_weight.at(i) * t_weight.at(j) * val * det_jacob;
+    }
   }
   return result;
 }
-}  // namespace TOOL
+} // namespace TOOL
