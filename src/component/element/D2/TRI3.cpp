@@ -211,16 +211,198 @@ void Tri3::GenerateK(const MODEL::Model &model) {
       throw std::runtime_error(
           "[ERROR]:func(Tri3::GenerateK)>>>面积坐标求偏导异常！");
     }
+
     auto E00 = (std::pow(*L1_x, 2) + std::pow(*L1_y, 2)) * t * (*area);
     SetElemOfMatrixB(V2, 0, 0, '+', boost::make_shared<double>(E00));
+
     auto expr_E01 =
-        "-" + std::to_string(*L1_y) + "(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+        "-" + std::to_string(*L1_y) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
     auto E01 = TOOL::TriGaussIntegral(expr_E01, {p_1, p_2, p_3}, 3, t);
     SetElemOfMatrixB(V2, 0, 1, '+', E01);
+    SetElemOfMatrixB(V2, 1, 0, '+', E01);
+
+    auto expr_E02 =
+        std::to_string(*L1_x) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+    auto E02 = TOOL::TriGaussIntegral(expr_E02, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 0, 2, '+', E02);
+    SetElemOfMatrixB(V2, 2, 0, '+', E02);
+
+    auto E03 = (*L1_x) * (*L2_x) + (*L1_y) * (*L2_y);
+    SetElemOfMatrixB(V2, 0, 3, '+', boost::make_shared<double>(E03));
+    SetElemOfMatrixB(V2, 3, 0, '+', boost::make_shared<double>(E03));
+
+    auto expr_E04 =
+        "-" + std::to_string(*L1_y) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E04 = TOOL::TriGaussIntegral(expr_E04, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 0, 4, '+', E04);
+    SetElemOfMatrixB(V2, 4, 0, '+', E04);
+
+    auto expr_E05 =
+        std::to_string(*L1_x) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E05 = TOOL::TriGaussIntegral(expr_E05, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 0, 5, '+', E05);
+    SetElemOfMatrixB(V2, 5, 0, '+', E05);
+
+    auto E06 = (*L1_x) * (*L3_x) + (*L1_y) * (*L3_y);
+    SetElemOfMatrixB(V2, 0, 6, '+', boost::make_shared<double>(E06));
+    SetElemOfMatrixB(V2, 6, 0, '+', boost::make_shared<double>(E06));
+
+    auto expr_E07 =
+        "-" + std::to_string(*L1_y) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E07 = TOOL::TriGaussIntegral(expr_E07, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 0, 7, '+', E07);
+    SetElemOfMatrixB(V2, 7, 0, '+', E07);
+
+    auto expr_E08 =
+        std::to_string(*L1_x) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E08 = TOOL::TriGaussIntegral(expr_E08, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 0, 8, '+', E08);
+    SetElemOfMatrixB(V2, 8, 0, '+', E08);
+
+    auto expr_E11 = TOOL::AreaFuncExpr(p_2, p_3) + "^2";
+    auto E11 = TOOL::TriGaussIntegral(expr_E11, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 1, 1, '+', E11);
+
+    auto expr_E13 =
+        "-" + std::to_string(*L2_y) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+    auto E13 = TOOL::TriGaussIntegral(expr_E13, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 1, 3, '+', E13);
+    SetElemOfMatrixB(V2, 3, 1, '+', E13);
+
+    auto expr_E14 =
+        TOOL::AreaFuncExpr(p_2, p_3) + "*" + TOOL::AreaFuncExpr(p_3, p_1);
+    auto E14 = TOOL::TriGaussIntegral(expr_E14, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 1, 4, '+', E14);
+    SetElemOfMatrixB(V2, 4, 1, '+', E14);
+
+    auto expr_E16 =
+        "-" + std::to_string(*L3_y) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+    auto E16 = TOOL::TriGaussIntegral(expr_E16, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 1, 6, '+', E16);
+    SetElemOfMatrixB(V2, 6, 1, '+', E16);
+
+    auto expr_E17 =
+        TOOL::AreaFuncExpr(p_2, p_3) + "*" + TOOL::AreaFuncExpr(p_1, p_2);
+    auto E17 = TOOL::TriGaussIntegral(expr_E17, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 1, 7, '+', E17);
+    SetElemOfMatrixB(V2, 7, 1, '+', E17);
+
+    auto expr_E22 = TOOL::AreaFuncExpr(p_2, p_3) + "^2";
+    auto E22 = TOOL::TriGaussIntegral(expr_E22, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 2, 2, '+', E22);
+
+    auto expr_E23 =
+        std::to_string(*L2_x) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+    auto E23 = TOOL::TriGaussIntegral(expr_E23, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 2, 3, '+', E23);
+    SetElemOfMatrixB(V2, 3, 2, '+', E23);
+
+    auto expr_E25 =
+        TOOL::AreaFuncExpr(p_2, p_3) + "*" + TOOL::AreaFuncExpr(p_3, p_1);
+    auto E25 = TOOL::TriGaussIntegral(expr_E25, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 2, 5, '+', E25);
+    SetElemOfMatrixB(V2, 5, 2, '+', E25);
+
+    auto expr_E26 =
+        std::to_string(*L3_x) + "*(" + TOOL::AreaFuncExpr(p_2, p_3) + ")";
+    auto E26 = TOOL::TriGaussIntegral(expr_E26, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 2, 6, '+', E26);
+    SetElemOfMatrixB(V2, 6, 2, '+', E26);
+
+    auto expr_E28 =
+        TOOL::AreaFuncExpr(p_2, p_3) + "*" + TOOL::AreaFuncExpr(p_1, p_2);
+    auto E28 = TOOL::TriGaussIntegral(expr_E28, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 2, 8, '+', E28);
+    SetElemOfMatrixB(V2, 8, 2, '+', E28);
+
+    auto E33 = (std::pow(*L2_x, 2) + std::pow(*L2_y, 2)) * t * (*area);
+    SetElemOfMatrixB(V2, 0, 0, '+', boost::make_shared<double>(E33));
+
+    auto expr_E34 =
+        "-" + std::to_string(*L2_y) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E34 = TOOL::TriGaussIntegral(expr_E34, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 3, 4, '+', E34);
+    SetElemOfMatrixB(V2, 4, 3, '+', E34);
+
+    auto expr_E35 =
+        std::to_string(*L2_x) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E35 = TOOL::TriGaussIntegral(expr_E35, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 3, 5, '+', E35);
+    SetElemOfMatrixB(V2, 5, 3, '+', E35);
+
+    auto E36 = (*L2_x) * (*L3_x) + (*L2_y) * (*L3_y);
+    SetElemOfMatrixB(V2, 3, 6, '+', boost::make_shared<double>(E36));
+    SetElemOfMatrixB(V2, 6, 3, '+', boost::make_shared<double>(E36));
+
+    auto expr_E37 =
+        "-" + std::to_string(*L2_y) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E37 = TOOL::TriGaussIntegral(expr_E37, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 3, 7, '+', E37);
+    SetElemOfMatrixB(V2, 7, 3, '+', E37);
+
+    auto expr_E38 =
+        std::to_string(*L2_x) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E38 = TOOL::TriGaussIntegral(expr_E38, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 3, 8, '+', E38);
+    SetElemOfMatrixB(V2, 8, 3, '+', E38);
+
+    auto expr_E44 = TOOL::AreaFuncExpr(p_3, p_1) + "^2";
+    auto E44 = TOOL::TriGaussIntegral(expr_E44, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 4, 4, '+', E44);
+
+    auto expr_E46 =
+        "-" + std::to_string(*L3_y) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E46 = TOOL::TriGaussIntegral(expr_E46, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 4, 6, '+', E46);
+    SetElemOfMatrixB(V2, 6, 4, '+', E46);
+
+    auto expr_E47 =
+        TOOL::AreaFuncExpr(p_3, p_1) + "*" + TOOL::AreaFuncExpr(p_1, p_2);
+    auto E47 = TOOL::TriGaussIntegral(expr_E47, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 4, 7, '+', E47);
+    SetElemOfMatrixB(V2, 7, 4, '+', E47);
+
+    auto expr_E55 = TOOL::AreaFuncExpr(p_3, p_1) + "^2";
+    auto E55 = TOOL::TriGaussIntegral(expr_E55, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 5, 5, '+', E55);
+
+    auto expr_E56 =
+        std::to_string(*L3_x) + "*(" + TOOL::AreaFuncExpr(p_3, p_1) + ")";
+    auto E56 = TOOL::TriGaussIntegral(expr_E56, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 5, 6, '+', E56);
+    SetElemOfMatrixB(V2, 6, 5, '+', E56);
+
+    auto expr_E58 =
+        TOOL::AreaFuncExpr(p_3, p_1) + "*" + TOOL::AreaFuncExpr(p_1, p_2);
+    auto E58 = TOOL::TriGaussIntegral(expr_E58, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 5, 8, '+', E58);
+    SetElemOfMatrixB(V2, 8, 5, '+', E58);
+
+    auto E66 = (std::pow(*L3_x, 2) + std::pow(*L3_y, 2)) * t * (*area);
+    SetElemOfMatrixB(V2, 6, 6, '+', boost::make_shared<double>(E66));
+
+    auto expr_E67 =
+        "-" + std::to_string(*L3_y) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E67 = TOOL::TriGaussIntegral(expr_E67, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 6, 7, '+', E67);
+    SetElemOfMatrixB(V2, 7, 6, '+', E67);
+
+    auto expr_E68 =
+        std::to_string(*L3_x) + "*(" + TOOL::AreaFuncExpr(p_1, p_2) + ")";
+    auto E68 = TOOL::TriGaussIntegral(expr_E68, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 6, 8, '+', E68);
+    SetElemOfMatrixB(V2, 8, 6, '+', E68);
+
+    auto expr_E77 = TOOL::AreaFuncExpr(p_1, p_2) + "^2";
+    auto E77 = TOOL::TriGaussIntegral(expr_E77, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(V2, 7, 7, '+', E77);
+    SetElemOfMatrixB(V2, 8, 8, '+', E77);
+
+
 
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-} // namespace COMPONENT
+}  // namespace COMPONENT
