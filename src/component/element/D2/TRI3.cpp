@@ -196,6 +196,7 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     SetElemOfMatrixB(B1, 3, 8, '+', B38);
 
     auto V1 = B1.inverse() * D1 * B1;
+
     // 给位移-应变矩阵后两行对应的应变能矩阵赋值
     Eigen::MatrixXd V2 = Eigen::MatrixXd::Zero(9, 9);
     auto L1_x = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
@@ -398,7 +399,8 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     SetElemOfMatrixB(V2, 7, 7, '+', E77);
     SetElemOfMatrixB(V2, 8, 8, '+', E77);
 
-
+    // 板横向弯曲刚度矩阵
+    Eigen::MatrixXd V_bending = V1 + V2 / G2;
 
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
