@@ -2,7 +2,7 @@
  * @Author: wxj wxj122350@126.com
  * @Date: 2025-07-06 10:52:50
  * @LastEditors: wxj wxj122350@126.com
- * @LastEditTime: 2025-07-13 22:50:51
+ * @LastEditTime: 2025-07-15 23:04:35
  * @FilePath: /FEASolver/src/component/element/D2/TRI3.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
  * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -25,8 +25,9 @@ public:
 
 protected:
   // 计算三节点三角形单元形函数（面积坐标）的偏导数
-  boost::shared_ptr<double>
-  AreaCoordPartialDerivate(const vec_3 &n1, const vec_3 &n2, const char &lab);
+  boost::shared_ptr<double> AreaCoordPartialDerivate(const Eigen::Vector3d &n1,
+                                                     const Eigen::Vector3d &n2,
+                                                     const char &lab);
   void SetElemOfMatrixB(Eigen::MatrixXd &B, const int &r, const int &c,
                         const char &p, const boost::shared_ptr<double> val);
 

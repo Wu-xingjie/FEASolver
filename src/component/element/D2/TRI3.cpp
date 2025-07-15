@@ -29,9 +29,9 @@ void Tri3::SetComp(const file_data &datas) {
   _G3 = boost::any_cast<int>(card.at(5));
 }
 
-boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(const vec_3 &n1,
-                                                         const vec_3 &n2,
-                                                         const char &lab) {
+boost::shared_ptr<double>
+Tri3::AreaCoordPartialDerivate(const Eigen::Vector3d &n1,
+                               const Eigen::Vector3d &n2, const char &lab) {
   auto result = boost::make_shared<double>();
   if (lab == 'x') {
     *result = n1(2) - n2(2);
@@ -81,9 +81,11 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto N3_datas = N3->get_location();
 
     // 计算单元面积
-    auto area = TOOL::AreaOfThreePoints({N1_datas(0), N1_datas(1)},
-                                        {N2_datas(0), N2_datas(1)},
-                                        {N3_datas(0), N3_datas(1)});
+    auto n1_vec = Eigen::Vector2d{N1_datas(0), N1_datas(1)};
+    auto n2_vec = Eigen::Vector2d{N2_datas(0), N2_datas(1)};
+    auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
+    // 计算三角形面积
+    auto area = TOOL::AreaOfThreePoints(n1_vec, n2_vec, n3_vec);
     if (!area) {
       throw std::runtime_error(
           "[ERROR]:func(Tri3::GenerateK)>>>单元面积计算失败");
@@ -144,7 +146,6 @@ void Tri3::GenerateK(const MODEL::Model &model) {
       double NU2 = mat_info2.at(1);
       double G2 = mat_info2.at(2);
     }
-
     // =============== 板弯行为 ===============
 
     // 因为位移-应变矩阵(B)后两行存在x和y的函数，前四行求过偏导数后都是常数矩阵。
@@ -402,9 +403,11 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     // 板横向弯曲刚度矩阵
     Eigen::MatrixXd V_bending = V1 + V2 / G2;
 
+    // =============== 平面应力行为 ===============
+
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-}  // namespace COMPONENT
+} // namespace COMPONENT
