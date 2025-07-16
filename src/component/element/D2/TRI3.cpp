@@ -134,18 +134,69 @@ void Tri3::GenerateK(const MODEL::Model &model) {
       auto base_mat2 = boost::dynamic_pointer_cast<MaterialBase>(comp_mat2);
       if (!base_mat2) {
         throw std::runtime_error(
-            "[ERROR]:func(Tri3::GenerateK)>>>材料基类获取失败");
+            "[ERROR]:func(Tri3::GenerateK)>>>mat2材料基类获取失败");
       }
       auto mat_data2 = base_mat2->GetMatDate();
       auto mat_info2 = TOOL::DealENuG(mat_data2);
       if (mat_info2.empty()) {
         throw std::runtime_error(
-            "[ERROR]:func(Tri3::GenerateK)>>>材料获取失败");
+            "[ERROR]:func(Tri3::GenerateK)>>>mat2材料获取失败");
       }
       double E2 = mat_info2.at(0);
       double NU2 = mat_info2.at(1);
       double G2 = mat_info2.at(2);
     }
+
+    // =============== 平面应力行为 ===============
+    // 平面物理矩阵
+    Eigen::MatrixXd D_plane = Eigen::MatrixXd::Zero(3, 3);
+    D_plane(0, 0) = E1 / (1 - NU1 * NU1);
+    D_plane(0, 1) = (NU1 * E1) / (1 - NU1 * NU1);
+    D_plane(1, 0) = (NU1 * E1) / (1 - NU1 * NU1);
+    D_plane(1, 1) = E1 / (1 - NU1 * NU1);
+    D_plane(2, 2) = G1;
+
+    // 位移-应变矩阵
+    Eigen::MatrixXd B_plane = Eigen::MatrixXd::Zero(3, 9);
+    auto B00 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    SetElemOfMatrixB(B_plane, 0, 0, '+', B00);
+
+    auto B02 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
+    SetElemOfMatrixB(B_plane, 0, 2, '+', B02);
+
+    auto B04 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
+    SetElemOfMatrixB(B_plane, 0, 4, '+', B04);
+
+    auto B11 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
+    SetElemOfMatrixB(B_plane, 1, 1, '+', B11);
+
+    auto B13 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
+    SetElemOfMatrixB(B_plane, 1, 3, '+', B13);
+
+    auto B15 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
+    SetElemOfMatrixB(B_plane, 1, 5, '+', B15);
+
+    auto B20 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
+    SetElemOfMatrixB(B_plane, 2, 0, '+', B20);
+
+    auto B21 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    SetElemOfMatrixB(B_plane, 2, 1, '+', B21);
+
+    auto B22 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
+    SetElemOfMatrixB(B_plane, 2, 2, '+', B22);
+
+    auto B23 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
+    SetElemOfMatrixB(B_plane, 2, 3, '+', B23);
+
+    auto B24 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
+    SetElemOfMatrixB(B_plane, 2, 4, '+', B24);
+
+    auto B25 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
+    SetElemOfMatrixB(B_plane, 2, 5, '+', B25);
+
+    // 平面应力刚度矩阵
+    auto k_plane = B_plane.transpose() * D_plane * B_plane * (*area) * t;
+
     // =============== 板弯行为 ===============
 
     // 因为位移-应变矩阵(B)后两行存在x和y的函数，前四行求过偏导数后都是常数矩阵。
@@ -153,26 +204,38 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     // 所以，将矩阵B按照前四行和后两行分别处理
 
     // 物理矩阵
-    Eigen::MatrixXd D1 = Eigen::MatrixXd::Zero(4, 4);
-    D1(0, 0) = 1 / E2;
-    D1(1, 1) = 1 / E2;
-    D1(2, 2) = 1 / E2;
-    D1(1, 2) = -NU2 / E2;
-    D1(2, 1) = -NU2 / E2;
-    D1(1, 3) = -NU2 / E2;
-    D1(3, 1) = -NU2 / E2;
-    D1(3, 2) = -NU2 / E2;
-    D1(2, 3) = -NU2 / E2;
-    D1(4, 4) = 1 / G2;
+    Eigen::MatrixXd D1_bend = Eigen::MatrixXd::Zero(4, 4);
+    D1_bend(0, 0) = 1 / E2;
+    D1_bend(1, 1) = 1 / E2;
+    D1_bend(2, 2) = 1 / E2;
+    D1_bend(1, 2) = -NU2 / E2;
+    D1_bend(2, 1) = -NU2 / E2;
+    D1_bend(1, 3) = -NU2 / E2;
+    D1_bend(3, 1) = -NU2 / E2;
+    D1_bend(3, 2) = -NU2 / E2;
+    D1_bend(2, 3) = -NU2 / E2;
+    D1_bend(4, 4) = 1 / G2;
 
-    Eigen::MatrixXd D2 = Eigen::MatrixXd::Zero(2, 2);
-    D2(5, 5) = 1 / G2;
-    D2(6, 6) = 1 / G2;
+    auto L1_x = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
+    auto L1_y = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
+    auto L2_x = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
+    auto L2_y = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
+    auto L3_x = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
+    auto L3_y = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
+    Eigen::Vector2d p_1{N1_datas(0), N1_datas(1)};
+    Eigen::Vector2d p_2{N2_datas(0), N2_datas(1)};
+    Eigen::Vector2d p_3{N3_datas(0), N3_datas(1)};
+    if (!L1_x or !L1_y or !L2_x or !L2_y or !L3_x or !L3_y) {
+      throw std::runtime_error(
+          "[ERROR]:func(Tri3::GenerateK)>>>面积坐标求偏导异常！");
+    }
 
     // 给位移-应变矩阵前四行赋值
     Eigen::MatrixXd B1 = Eigen::MatrixXd::Zero(4, 9);
-    auto B02 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
-    SetElemOfMatrixB(B1, 0, 2, '+', B02);
+    auto B02_expr = "z*" + std::to_string(*L1_x);
+    auto B02_val = TOOL::TriGaussIntegral(B02_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 0, 2, '+', B02_val);
+
     auto B05 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
     SetElemOfMatrixB(B1, 0, 5, '+', B05);
     auto B08 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
@@ -196,23 +259,10 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto B38 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
     SetElemOfMatrixB(B1, 3, 8, '+', B38);
 
-    auto V1 = B1.inverse() * D1 * B1;
+    auto V1 = B1.transpose() * D1_bend * B1;
 
     // 给位移-应变矩阵后两行对应的应变能矩阵赋值
     Eigen::MatrixXd V2 = Eigen::MatrixXd::Zero(9, 9);
-    auto L1_x = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
-    auto L1_y = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
-    auto L2_x = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
-    auto L2_y = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
-    auto L3_x = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
-    auto L3_y = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
-    Eigen::Vector2d p_1{N1_datas(0), N1_datas(1)};
-    Eigen::Vector2d p_2{N2_datas(0), N2_datas(1)};
-    Eigen::Vector2d p_3{N3_datas(0), N3_datas(1)};
-    if (!L1_x or !L1_y or !L2_x or !L2_y or !L3_x or !L3_y) {
-      throw std::runtime_error(
-          "[ERROR]:func(Tri3::GenerateK)>>>面积坐标求偏导异常！");
-    }
 
     auto E00 = (std::pow(*L1_x, 2) + std::pow(*L1_y, 2)) * t * (*area);
     SetElemOfMatrixB(V2, 0, 0, '+', boost::make_shared<double>(E00));
@@ -403,7 +453,8 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     // 板横向弯曲刚度矩阵
     Eigen::MatrixXd V_bending = V1 + V2 / G2;
 
-    // =============== 平面应力行为 ===============
+    // 返回总刚度矩阵
+    return
 
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
