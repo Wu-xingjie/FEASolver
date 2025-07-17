@@ -29,9 +29,8 @@ void Tri3::SetComp(const file_data &datas) {
   _G3 = boost::any_cast<int>(card.at(5));
 }
 
-boost::shared_ptr<double>
-Tri3::AreaCoordPartialDerivate(const Eigen::Vector3d &n1,
-                               const Eigen::Vector3d &n2, const char &lab) {
+boost::shared_ptr<double> Tri3::AreaCoordPartialDerivate(
+    const Eigen::Vector3d &n1, const Eigen::Vector3d &n2, const char &lab) {
   auto result = boost::make_shared<double>();
   if (lab == 'x') {
     *result = n1(2) - n2(2);
@@ -236,28 +235,49 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto B02_val = TOOL::TriGaussIntegral(B02_expr, {p_1, p_2, p_3}, 3, t);
     SetElemOfMatrixB(B1, 0, 2, '+', B02_val);
 
-    auto B05 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
-    SetElemOfMatrixB(B1, 0, 5, '+', B05);
-    auto B08 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
-    SetElemOfMatrixB(B1, 0, 8, '+', B08);
-    auto B11 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
-    SetElemOfMatrixB(B1, 1, 1, '-', B11);
-    auto B14 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
-    SetElemOfMatrixB(B1, 1, 4, '-', B14);
-    auto B17 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
-    SetElemOfMatrixB(B1, 1, 7, '-', B17);
-    auto B31 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
-    SetElemOfMatrixB(B1, 3, 1, '-', B31);
-    auto B32 = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
-    SetElemOfMatrixB(B1, 3, 2, '+', B32);
-    auto B34 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'x');
-    SetElemOfMatrixB(B1, 3, 4, '-', B34);
-    auto B35 = AreaCoordPartialDerivate(N3_datas, N1_datas, 'y');
-    SetElemOfMatrixB(B1, 3, 5, '+', B35);
-    auto B37 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'x');
-    SetElemOfMatrixB(B1, 3, 7, '-', B37);
-    auto B38 = AreaCoordPartialDerivate(N1_datas, N2_datas, 'y');
-    SetElemOfMatrixB(B1, 3, 8, '+', B38);
+    auto B05_expr = "z*" + std::to_string(*L2_x);
+    auto B05_val = TOOL::TriGaussIntegral(B05_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 0, 5, '+', B05_val);
+
+    auto B08_expr = "z*" + std::to_string(*L3_x);
+    auto B08_val = TOOL::TriGaussIntegral(B08_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 0, 8, '+', B08_val);
+
+    auto B11_expr = "-z*" + std::to_string(*L1_y);
+    auto B11_val = TOOL::TriGaussIntegral(B11_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 1, 1, '+', B11_val);
+
+    auto B14_expr = "-z*" + std::to_string(*L2_y);
+    auto B14_val = TOOL::TriGaussIntegral(B14_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 1, 4, '+', B14_val);
+
+    auto B17_expr = "-z*" + std::to_string(*L3_y);
+    auto B17_val = TOOL::TriGaussIntegral(B17_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 1, 7, '+', B17_val);
+
+    auto B31_expr = "-z*" + std::to_string(*L1_x);
+    auto B31_val = TOOL::TriGaussIntegral(B31_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 1, '+', B31_val);
+
+    auto B32_expr = "z*" + std::to_string(*L1_y);
+    auto B32_val = TOOL::TriGaussIntegral(B32_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 2, '+', B32_val);
+
+    auto B34_expr = "-z*" + std::to_string(*L2_x);
+    auto B34_val = TOOL::TriGaussIntegral(B34_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 4, '+', B34_val);
+
+    auto B35_expr = "z*" + std::to_string(*L2_y);
+    auto B35_val = TOOL::TriGaussIntegral(B35_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 5, '+', B35_val);
+
+    auto B37_expr = "-z*" + std::to_string(*L3_x);
+    auto B37_val = TOOL::TriGaussIntegral(B37_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 7, '+', B37_val);
+
+    auto B38_expr = "z*" + std::to_string(*L2_y);
+    auto B38_val = TOOL::TriGaussIntegral(B38_expr, {p_1, p_2, p_3}, 3, t);
+    SetElemOfMatrixB(B1, 3, 8, '+', B38_val);
 
     auto V1 = B1.transpose() * D1_bend * B1;
 
@@ -453,12 +473,15 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     // 板横向弯曲刚度矩阵
     Eigen::MatrixXd V_bending = V1 + V2 / G2;
 
-    // 返回总刚度矩阵
-    return
+    // 设置总刚度矩阵
+    _loc_k = k_plane + V_bending;
 
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
 }
 
-} // namespace COMPONENT
+Eigen::MatrixXd Tri3::GetGlobalK(const MODEL::Model &model){
+  
+}
+}  // namespace COMPONENT
