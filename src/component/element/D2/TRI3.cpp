@@ -468,6 +468,7 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     auto expr_E77 = TOOL::AreaFuncExpr(p_1, p_2) + "^2";
     auto E77 = TOOL::TriGaussIntegral(expr_E77, {p_1, p_2, p_3}, 3, t);
     SetElemOfMatrixB(V2, 7, 7, '+', E77);
+
     SetElemOfMatrixB(V2, 8, 8, '+', E77);
 
     // 板横向弯曲刚度矩阵
@@ -481,7 +482,38 @@ void Tri3::GenerateK(const MODEL::Model &model) {
   }
 }
 
-Eigen::MatrixXd Tri3::GetGlobalK(const MODEL::Model &model){
-  
+Eigen::MatrixXd Tri3::GetGlobalK(const MODEL::Model &model) {
+  // 获取全局坐标系
+  auto global_coord =
+      boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
+  // 构建局部坐标系
+  auto coord_x = TOOL::NodesToCoord(model, _G1, _G2)->_vec1;
+  auto coord_z = TOOL::NodesToCoord(model, _G1, _G3)->_vec1;
+  auto coord_y = coord_x.cross(coord_z);
+  auto comp_N1 = TOOL::GetCompById(model, CompBase::comp_type::node, _G1);
+  auto N1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N1);
+  if (!N1) {
+    throw std::runtime_error(
+        "[ERROR]:func(Tri3::GetGlobalK)>>>局部坐标系原点获取失败");
+  }
+  auto N1_datas = N1->get_location();
+  GeneralCoord loc_coord;
+  loc_coord._coord_origin = N1_datas;
+  loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
+  loc_coord._vec1 = coord_x.normalized();
+  loc_coord._vec2 = coord_y.normalized();
+  loc_coord._vec3 = coord_z.normalized();
+
+  // 生成坐标变换矩阵
+  auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
+  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(9, 9);
+  trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
+  trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
+  trans_matrix.block<3, 3>(6, 6) = trans_matrix_block;
+  // 生成全局坐标系下的单元刚度矩阵
+  // 全局坐标系下单元刚度矩阵
+  Eigen::MatrixXd global_k;
+  global_k = trans_matrix * _loc_k * trans_matrix.transpose();
+  return global_k;
 }
 }  // namespace COMPONENT

@@ -183,7 +183,6 @@ Eigen::MatrixXd BAR::GetGlobalK(const MODEL::Model &model) {
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
   std::cout << "trans_matrix:" << std::endl << trans_matrix << std::endl;
-
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
   std::cout << "global_k:" << std::endl << global_k << std::endl;
   return global_k;
