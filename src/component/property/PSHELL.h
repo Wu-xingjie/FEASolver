@@ -15,7 +15,7 @@ class PSHELL : public PropertyBase {
  private:
   int _mid1;
   double _t;
-  double _mid2;
+  int _mid2;
   double _inertia_ratio_of_bm{1.0};
 };
 }  // namespace COMPONENT

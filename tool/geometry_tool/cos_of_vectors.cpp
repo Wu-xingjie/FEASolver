@@ -1,4 +1,5 @@
 #include "cos_of_vectors.h"
+#include <eigen3/Eigen/Dense>
 
 double TOOL::CosOfVecs(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2) {
   try {
@@ -8,5 +9,6 @@ double TOOL::CosOfVecs(const Eigen::Vector3d &v1, const Eigen::Vector3d &v2) {
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
   }
-  return (v1.dot(v2) / (v1.norm() * v1.norm()));
+  double a = v1.dot(v2);
+  return (v1.dot(v2) / (v1.norm() * v2.norm()));
 }

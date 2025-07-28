@@ -11,7 +11,9 @@ void PSHELL::SetComp(const file_data &datas) {
   } else {
     _mid2 = boost::any_cast<int>(card.at(4));
   }
-  _inertia_ratio_of_bm = boost::any_cast<double>(card.at(5));
+  if (!card.at(5).empty()) {
+    _inertia_ratio_of_bm = boost::any_cast<double>(card.at(5));
+  }
 }
 
 std::map<std::string, boost::any> PSHELL::GetPropDate() {

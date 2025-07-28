@@ -207,13 +207,13 @@ void Tri3::GenerateK(const MODEL::Model &model) {
     D1_bend(0, 0) = 1 / E2;
     D1_bend(1, 1) = 1 / E2;
     D1_bend(2, 2) = 1 / E2;
+    D1_bend(0, 1) = -NU2 / E2;
+    D1_bend(0, 2) = -NU2 / E2;
+    D1_bend(1, 0) = -NU2 / E2;
     D1_bend(1, 2) = -NU2 / E2;
+    D1_bend(2, 0) = -NU2 / E2;
     D1_bend(2, 1) = -NU2 / E2;
-    D1_bend(1, 3) = -NU2 / E2;
-    D1_bend(3, 1) = -NU2 / E2;
-    D1_bend(3, 2) = -NU2 / E2;
-    D1_bend(2, 3) = -NU2 / E2;
-    D1_bend(4, 4) = 1 / G2;
+    D1_bend(3, 3) = 1 / G2;
 
     auto L1_x = AreaCoordPartialDerivate(N2_datas, N3_datas, 'x');
     auto L1_y = AreaCoordPartialDerivate(N2_datas, N3_datas, 'y');
