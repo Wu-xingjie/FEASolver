@@ -21,9 +21,8 @@ std::map<int, std::vector<double>> weight_map = {
     {3, {0.555555, 0.888888, 0.555555}},
     {4, {0.347855, 0.652145, 0.652145, 0.347855}}};
 
-boost::shared_ptr<double> GaussIntegral(const std::string& func,
-                                        const int& num_r,
-                                        const int& num_integal) {
+boost::shared_ptr<double>
+GaussIntegral(const std::string &func, const int &num_r, const int &num_integal) {
   auto result = boost::make_shared<double>();
   if (num_r > 4) {
     throw std::runtime_error(
@@ -99,4 +98,4 @@ boost::shared_ptr<double> GaussIntegral(const std::string& func,
 
   return result;
 }
-}  // namespace TOOL
+} // namespace TOOL
