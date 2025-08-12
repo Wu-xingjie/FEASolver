@@ -17,7 +17,7 @@ namespace COMPONENT {
 
 Cquad4Kf::Cquad4Kf() {
   _elem_type = ElemBase::elem_type::cquad4_kf;
-  _loc_k = Eigen::MatrixXd::Zero(12, 12);
+  _loc_k = Eigen::MatrixXd::Zero(36, 36);
 }
 
 void Cquad4Kf::SetComp(const file_data &datas) {
@@ -410,6 +410,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto k77 = TOOL::GaussIntegral(exp_k77, 4, 2);
     k_plane(7, 7) = *k77;
 
+    k_plane = k_plane * E2 / (1 - std::pow(NU2, 2));
+
     // =============== 板弯行为 ===============
     // 板横向弯曲刚度矩阵
     Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
@@ -485,7 +487,52 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     }
 
     // 设置总刚度矩阵
+    // 1: 把板弯刚度矩阵和膜刚度矩阵扩容成36*36的全自由度刚度矩阵
+    // 1.1:生成所有节点自由度到矩阵索引的映射
+    std::map<std::string, int> dof2index;
+    std::vector<std::string> vec_dof{"x",       "y",       "z",
+                                     "theta_x", "theta_y", "theta_z"};
+    int temp_num = 0;
+    for (int i = 0; i < 4; i++) {
+      std::string str_dof = std::to_string(i + 1) + "_" + vec_dof.at(i);
+      dof2index[str_dof] = temp_num * 4 + i;
+      temp_num += 1;
+    }
+    // 1.2: 将膜刚度矩阵扩容
+    Eigen::MatrixXd plane_k_alldof = Eigen::MatrixXd::Zero(36, 36);
+    std::map<int, std::string> plane_k_map{
+        {0, "1_x"}, {1, "1_y"}, {2, "2_x"}, {3, "2_y"},
+        {4, "3_x"}, {5, "3_y"}, {6, "4_x"}, {7, "4_y"},
+    };
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        std::string dof_col = plane_k_map.at(i);
+        std::string dof_row = plane_k_map.at(j);
+        int idx_col = dof2index.at(dof_col);
+        int idx_row = dof2index.at(dof_row);
+        plane_k_alldof(idx_col, idx_row) = k_plane(i, j);
+      }
+    }
+    // 1.2: 将板弯刚度矩阵扩容
+    Eigen::MatrixXd bend_k_alldof = Eigen::MatrixXd::Zero(36, 36);
+    std::map<int, std::string> bend_k_map{
+        {0, "1_x"}, {1, "1_theta_x"},  {2, "1_theta_y"},
+        {3, "2_x"}, {4, "2_theta_x"},  {5, "2_theta_y"},
+        {6, "3_x"}, {7, "3_theta_x"},  {8, "3_theta_y"},
+        {9, "4_x"}, {10, "4_theta_x"}, {11, "4_theta_y"},
+    };
+    for (int i = 0; i < 12; i++) {
+      for (int j = 0; j < 12; j++) {
+        std::string dof_col = bend_k_map.at(i);
+        std::string dof_row = bend_k_map.at(j);
+        int idx_col = dof2index.at(dof_col);
+        int idx_row = dof2index.at(dof_row);
+        bend_k_alldof(idx_col, idx_row) = k_bend(i, j);
+      }
+    }
 
+    // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
+    _loc_k = plane_k_alldof + bend_k_alldof;
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
