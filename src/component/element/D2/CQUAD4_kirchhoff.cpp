@@ -69,7 +69,6 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     }
     auto N4_datas = N4->get_location();
 
-    // 计算单元面积
     auto n1_vec = Eigen::Vector2d{N1_datas(0), N1_datas(1)};
     auto n2_vec = Eigen::Vector2d{N2_datas(0), N2_datas(1)};
     auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
@@ -482,7 +481,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                       5 * (3 + epsilon0) * (3 + eta0) * std::pow(weight, 2) /
                           std::pow(length, 2));
 
-        k_bend.block<4, 4>(i, j) = k_ij;
+        k_bend.block<3, 3>(i, j) = k_ij;
       }
     }
 
@@ -543,29 +542,72 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   auto global_coord =
       boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
   // 构建局部坐标系
-  auto coord_x = TOOL::NodesToCoord(model, _G1, _G2)->_vec1;
-  auto coord_z = TOOL::NodesToCoord(model, _G1, _G3)->_vec1;
-  auto coord_y = coord_x.cross(coord_z);
+  // 获取节点
   auto comp_N1 = TOOL::GetCompById(model, CompBase::comp_type::node, _G1);
   auto N1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N1);
   if (!N1) {
     throw std::runtime_error(
-        "[ERROR]:func(Cquad4Kf::GetGlobalK)>>>局部坐标系原点获取失败");
+        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点1获取失败");
   }
   auto N1_datas = N1->get_location();
-  GeneralCoord loc_coord;
-  loc_coord._coord_origin = N1_datas;
-  loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
-  loc_coord._vec1 = coord_x.normalized();
-  loc_coord._vec2 = coord_y.normalized();
-  loc_coord._vec3 = coord_z.normalized();
+  auto comp_N2 = TOOL::GetCompById(model, CompBase::comp_type::node, _G2);
+  auto N2 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N2);
+  if (!N2) {
+    throw std::runtime_error(
+        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点2获取失败");
+  }
+  auto N2_datas = N2->get_location();
+  auto comp_N3 = TOOL::GetCompById(model, CompBase::comp_type::node, _G3);
+  auto N3 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N3);
+  if (!N3) {
+    throw std::runtime_error(
+        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点3获取失败");
+  }
+  auto N3_datas = N3->get_location();
+  auto comp_N4 = TOOL::GetCompById(model, CompBase::comp_type::node, _G4);
+  auto N4 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N4);
+  if (!N4) {
+    throw std::runtime_error(
+        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点4获取失败");
+  }
+  auto N4_datas = N4->get_location();
+
+  auto n1_vec = Eigen::Vector2d{N1_datas(0), N1_datas(1)};
+  auto n2_vec = Eigen::Vector2d{N2_datas(0), N2_datas(1)};
+  auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
+  auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
+  // 计算单元长和宽
+  auto length = LenOfNode(n1_vec, n2_vec);
+  auto weight = LenOfNode(n4_vec, n3_vec);
+
+  // 局部矩阵
+  Eigen::Matrix3d local_vec = Eigen::MatrixXd::Zero(3, 3);
+  local_vec(0, 0) = length;
+  local_vec(1, 1) = weight;
+  local_vec(2, 0) = -length;
+
+  // 全局矩阵
+  Eigen::Matrix3d global_vec = Eigen::MatrixXd::Zero(3, 3);
+  global_vec.row(0) = N2_datas - N1_datas;
+  global_vec.row(1) = N3_datas - N2_datas;
+  global_vec.row(2) = N4_datas - N3_datas;
 
   // 生成坐标变换矩阵
-  auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
-  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(9, 9);
+  auto trans_matrix_block = local_vec.inverse() * global_vec;
+  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(36, 36);
   trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
   trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
   trans_matrix.block<3, 3>(6, 6) = trans_matrix_block;
+  trans_matrix.block<3, 3>(9, 9) = trans_matrix_block;
+  trans_matrix.block<3, 3>(12, 12) = trans_matrix_block;
+  trans_matrix.block<3, 3>(15, 15) = trans_matrix_block;
+  trans_matrix.block<3, 3>(18, 18) = trans_matrix_block;
+  trans_matrix.block<3, 3>(21, 21) = trans_matrix_block;
+  trans_matrix.block<3, 3>(24, 24) = trans_matrix_block;
+  trans_matrix.block<3, 3>(27, 27) = trans_matrix_block;
+  trans_matrix.block<3, 3>(30, 30) = trans_matrix_block;
+  trans_matrix.block<3, 3>(33, 33) = trans_matrix_block;
+  trans_matrix.block<3, 3>(36, 36) = trans_matrix_block;
   // 生成全局坐标系下的单元刚度矩阵
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
