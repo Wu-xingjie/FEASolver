@@ -12,6 +12,7 @@
 #include "component_factory/load_factory/factory_concentrated_moment.h"
 #include "component_factory/constrain_factory/factory_single_point_constrain.h"
 #include "component_factory/element_factory/factory_D2/factory_tria3.h"
+#include "component_factory/element_factory/factory_D2/factory_cquad4_kf.h"
 
 
 // 材料注册
@@ -26,6 +27,7 @@ MAPPER::Regist<FACTORY::PshellFactory> _PshellFactoryREGIST("PSHELL");
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
 MAPPER::Regist<FACTORY::CBARFactory> _BarFactoryREGIST("CBAR");
 MAPPER::Regist<FACTORY::TRIA3Factory> _Tria3FactoryREGIST("CTRIA3");
+MAPPER::Regist<FACTORY::Cquad4KfFactory> _Cquad4KfFactoryREGIST("CQUAD4");
 // 坐标系注册
 MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1C");
 // 载荷注册
