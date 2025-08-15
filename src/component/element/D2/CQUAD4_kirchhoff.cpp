@@ -11,13 +11,14 @@
 #include "math_tool/func_expr/func_cal.h"
 #include "math_tool/gauss_integral.h"
 #include "model_tool/deal_E_NU_G.h"
+#include "model_tool/display_matrixXd.h"
 #include "model_tool/get_comp_by_id.h"
 
 namespace COMPONENT {
 
 Cquad4Kf::Cquad4Kf() {
   _elem_type = ElemBase::elem_type::cquad4_kf;
-  _loc_k = Eigen::MatrixXd::Zero(36, 36);
+  _loc_k = Eigen::MatrixXd::Zero(24, 24);
 }
 
 void Cquad4Kf::SetComp(const file_data &datas) {
@@ -129,9 +130,9 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         throw std::runtime_error(
             "[ERROR]:func(Cquad4Kf::GenerateK)>>>mat2材料获取失败");
       }
-      double E2 = mat_info2.at(0);
-      double NU2 = mat_info2.at(1);
-      double G2 = mat_info2.at(2);
+      E2 = mat_info2.at(0);
+      NU2 = mat_info2.at(1);
+      G2 = mat_info2.at(2);
     }
 
     // =============== 平面应力行为 ===============
@@ -156,10 +157,10 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto k00 = TOOL::GaussIntegral(exp_k00, 4, 2);
     k_plane(0, 0) = *k00;
 
-    std::string exp_k01 = "(" + str_nu2 + N1_epsilon + "*" + N1_eta + "/(" +
-                          str_weight + "*" + str_length + ")+((2-" + str_nu2 +
-                          ")*" + N1_epsilon + "*" + N1_eta + ")/(2*" +
-                          str_length + "*" + str_weight;
+    std::string exp_k01 = "(" + str_nu2 + "*" + N1_epsilon + "*" + N1_eta +
+                          "/(" + str_weight + "*" + str_length + "))+((2-" +
+                          str_nu2 + ")*" + N1_epsilon + "*" + N1_eta + ")/(2*" +
+                          str_length + "*" + str_weight + ")";
     auto k01 = TOOL::GaussIntegral(exp_k01, 4, 2);
     k_plane(1, 0) = *k01;
     k_plane(0, 1) = *k01;
@@ -409,6 +410,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto k77 = TOOL::GaussIntegral(exp_k77, 4, 2);
     k_plane(7, 7) = *k77;
 
+    // TOOL::DisplayMatrixXd(k_plane);
+
     k_plane = k_plane * E2 / (1 - std::pow(NU2, 2));
 
     // =============== 板弯行为 ===============
@@ -481,9 +484,12 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                       5 * (3 + epsilon0) * (3 + eta0) * std::pow(weight, 2) /
                           std::pow(length, 2));
 
-        k_bend.block<3, 3>(i, j) = k_ij;
+        k_bend.block<3, 3>(3 * j, 3 * i) = k_ij;
       }
     }
+
+    // std::cout << "k_bend:" << std::endl;
+    // TOOL::DisplayMatrixXd(k_bend);
 
     // 设置总刚度矩阵
     // 1: 把板弯刚度矩阵和膜刚度矩阵扩容成36*36的全自由度刚度矩阵
@@ -491,14 +497,15 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     std::map<std::string, int> dof2index;
     std::vector<std::string> vec_dof{"x",       "y",       "z",
                                      "theta_x", "theta_y", "theta_z"};
-    int temp_num = 0;
+
     for (int i = 0; i < 4; i++) {
-      std::string str_dof = std::to_string(i + 1) + "_" + vec_dof.at(i);
-      dof2index[str_dof] = temp_num * 4 + i;
-      temp_num += 1;
+      for (int j = 0; j < 6; j++) {
+        std::string str_dof = std::to_string(i + 1) + "_" + vec_dof.at(j);
+        dof2index[str_dof] = i * 6 + j;
+      }
     }
     // 1.2: 将膜刚度矩阵扩容
-    Eigen::MatrixXd plane_k_alldof = Eigen::MatrixXd::Zero(36, 36);
+    Eigen::MatrixXd plane_k_alldof = Eigen::MatrixXd::Zero(24, 24);
     std::map<int, std::string> plane_k_map{
         {0, "1_x"}, {1, "1_y"}, {2, "2_x"}, {3, "2_y"},
         {4, "3_x"}, {5, "3_y"}, {6, "4_x"}, {7, "4_y"},
@@ -513,12 +520,12 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
       }
     }
     // 1.2: 将板弯刚度矩阵扩容
-    Eigen::MatrixXd bend_k_alldof = Eigen::MatrixXd::Zero(36, 36);
+    Eigen::MatrixXd bend_k_alldof = Eigen::MatrixXd::Zero(24, 24);
     std::map<int, std::string> bend_k_map{
-        {0, "1_x"}, {1, "1_theta_x"},  {2, "1_theta_y"},
-        {3, "2_x"}, {4, "2_theta_x"},  {5, "2_theta_y"},
-        {6, "3_x"}, {7, "3_theta_x"},  {8, "3_theta_y"},
-        {9, "4_x"}, {10, "4_theta_x"}, {11, "4_theta_y"},
+        {0, "1_z"}, {1, "1_theta_x"},  {2, "1_theta_y"},
+        {3, "2_z"}, {4, "2_theta_x"},  {5, "2_theta_y"},
+        {6, "3_z"}, {7, "3_theta_x"},  {8, "3_theta_y"},
+        {9, "4_z"}, {10, "4_theta_x"}, {11, "4_theta_y"},
     };
     for (int i = 0; i < 12; i++) {
       for (int j = 0; j < 12; j++) {
@@ -529,9 +536,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         bend_k_alldof(idx_col, idx_row) = k_bend(i, j);
       }
     }
+    TOOL::DisplayMatrixXd(k_plane, "k_plane");
+    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof");
+    TOOL::DisplayMatrixXd(k_bend, "k_bend");
+    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof");
 
     // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
     _loc_k = plane_k_alldof + bend_k_alldof;
+    TOOL::DisplayMatrixXd(_loc_k, "_loc_k");
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
@@ -580,21 +592,31 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   auto length = LenOfNode(n1_vec, n2_vec);
   auto weight = LenOfNode(n4_vec, n3_vec);
 
-  // 局部矩阵
-  Eigen::Matrix3d local_vec = Eigen::MatrixXd::Zero(3, 3);
-  local_vec(0, 0) = length;
-  local_vec(1, 1) = weight;
-  local_vec(2, 0) = -length;
+  // 单元中点坐标
+  Eigen::Vector3d mid_point = Eigen::Vector3d::Zero(3);
+  mid_point(0) = (N1_datas(0) + N2_datas(0) + N3_datas(0) + N4_datas(0)) / 4;
+  mid_point(1) = (N1_datas(1) + N2_datas(1) + N3_datas(1) + N4_datas(1)) / 4;
+  mid_point(2) = (N1_datas(2) + N2_datas(2) + N3_datas(2) + N4_datas(2)) / 4;
 
-  // 全局矩阵
-  Eigen::Matrix3d global_vec = Eigen::MatrixXd::Zero(3, 3);
-  global_vec.row(0) = N2_datas - N1_datas;
-  global_vec.row(1) = N3_datas - N2_datas;
-  global_vec.row(2) = N4_datas - N3_datas;
+  // 计算局部坐标系坐标轴
+  auto loc_axis_x = TOOL::NodesToCoord(model, _G1, _G2)->_vec1;
+  auto loc_axis_y = TOOL::NodesToCoord(model, _G1, _G4)->_vec1;
+  auto loc_axis_z = loc_axis_x.cross(loc_axis_y);
+
+  GeneralCoord loc_coord;
+  loc_coord._coord_origin = mid_point;
+  loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
+  loc_coord._vec1 = loc_axis_x.normalized();
+  loc_coord._vec2 = loc_axis_y.normalized();
+  loc_coord._vec3 = loc_axis_z.normalized();
 
   // 生成坐标变换矩阵
-  auto trans_matrix_block = local_vec.inverse() * global_vec;
-  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(36, 36);
+  auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
+
+  // std::cout << "坐标变换矩阵:" << std::endl;
+  // TOOL::DisplayMatrixXd(trans_matrix_block);
+
+  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(24, 24);
   trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
   trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
   trans_matrix.block<3, 3>(6, 6) = trans_matrix_block;
@@ -603,15 +625,14 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   trans_matrix.block<3, 3>(15, 15) = trans_matrix_block;
   trans_matrix.block<3, 3>(18, 18) = trans_matrix_block;
   trans_matrix.block<3, 3>(21, 21) = trans_matrix_block;
-  trans_matrix.block<3, 3>(24, 24) = trans_matrix_block;
-  trans_matrix.block<3, 3>(27, 27) = trans_matrix_block;
-  trans_matrix.block<3, 3>(30, 30) = trans_matrix_block;
-  trans_matrix.block<3, 3>(33, 33) = trans_matrix_block;
-  trans_matrix.block<3, 3>(36, 36) = trans_matrix_block;
+
   // 生成全局坐标系下的单元刚度矩阵
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
+  // TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix");
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
+
+  // TOOL::DisplayMatrixXd(global_k, "global_k");
   return global_k;
 }
 } // namespace COMPONENT
