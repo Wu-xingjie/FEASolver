@@ -1,0 +1,156 @@
+MSC Nastran V2019.0 (AMD Windows 10 Pro 6.2 9200) Control File: 
+----------------------------------------------------------------- 
+$ sysfield=SCR*(RAW=YES,BUFFIO=YES,wnum=16,wsize=16mb) $(d:/patran_nastran/natran_dir/conf/nast20190.rcf[2])
+$ sysfield=DBALL(RAW=YES,BUFFIO=YES,wnum=16,wsize=16mb) $(d:/patran_nastran/natran_dir/conf/nast20190.rcf[3])
+Nastran BUFFSIZE=32769 $(d:/patran_nastran/natran_dir/conf/nast20190.rcf[6])
+JID='D:\FEAlearning\cquad4_kf\cquad4_kf.bdf'
+OUT='./cquad4_kf'
+MEM=7114MB      $ 
+MACH='AMD'
+OPER='Windows 10 Pro'
+OSV='6.2 9200'
+MODEL='AMD Ryzen 5 5600G with Radeon  (DESKTOP-DO1LNEH)'
+NPROC='12'
+CONFIG=15
+NPROC=12
+symbol=DELDIR='d:/patran_nastran/natran_dir/msc20190/nast/del' $(program default)
+symbol=DEMODIR='d:/patran_nastran/natran_dir/msc20190/nast/demo' $(program default)
+symbol=LM_NO_SNMP=1 $(d:/patran_nastran/natran_dir/conf/nast20190.rcf[10])
+symbol=MKL_INTERFACE_LAYER=ILP64 $(d:/patran_nastran/natran_dir/conf/nast20190.rcf[1])
+symbol=SSSALTERDIR='d:/patran_nastran/natran_dir/msc20190/nast/sssalter' $(program default)
+symbol=TPLDIR='d:/patran_nastran/natran_dir/msc20190/nast/tpl' $(program default)
+SDIR='c:/scratch/cquad4_kf.T15004_11'
+DBS='c:/scratch/cquad4_kf.T15004_11'
+SCR='yes'
+SMEM=100
+BPOOL=6518.2MB
+DMPMEM=estimate
+NEWDEL='d:/patran_nastran/natran_dir/msc20190/win64i8/sss'
+DEL='MSCDEF'
+DML=MSCDEF
+SDL=MSCDEF
+AUTH='C:\Program Files\MSC.Software\MSC Licensing\Helium\license.dat'
+AUTHQUE=20
+MSGCAT='d:/patran_nastran/natran_dir/msc20190/win64i8/analysis.msg'
+MSGDEST='f06'
+NEWS='d:/patran_nastran/natran_dir/msc20190/nast/news.txt'
+----------------------------------------------------------------- 
+MSC_ISHELLPATH=D:\Patran_Nastran\Natran_dir\msc20190\actran\win64\Actran_19.0.rc0.115900\bin;D:\Patran_Nastran\Natran_dir\msc20190\nast; 
+MSC_JIDPATH= 
+PATH=d:\patran_nastran\natran_dir\msc20190\win64i8;d:\patran_nastran\natran_dir\msc20190\win64i8\nCode\bin;d:\patran_nastran\natran_dir\msc20190\win64i8\nvidia;d:\patran_nastran\natran_dir\msc20190\win64i8\lib;d:\patran_nastran\natran_dir\msc20190\win64i8;D:\Patran_Nastran\Patran2019_download\bin;D:\Patran_Nastran\Patran2019_download\bin\exe;D:\Patran_Nastran\Patran2019_download\Perl_msc\bin;D:\Patran_Nastran\Patran2019_download\scasystem_files;D:\Patran_Nastran\Patran2019_download\bin;D:\Patran_Nastran\Patran2019_download\bin\exe;D:\Patran_Nastran\Patran2019_download\Perl_msc\bin;D:\Patran_Nastran\Patran2019_download\scasystem_files;D:\Patran_Nastran\Patran2019_download\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;D:\Abaqus\download_address\Commands;D:\Abaqus_2021\command directory path;C:\Program Files\Microsoft MPI\Bin\;C:\Program Files\Microsoft\jdk-11.0.16.101-hotspot\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;D:\MATLAB2020b\DOWNLOAD FILE\runtime\win64;D:\MATLAB2020b\DOWNLOAD FILE\bin;D:\MATLAB2020b\DOWNLOAD FILE\polyspace\bin;D:\MATLAB2016b\runtime\win64;D:\MATLAB2016b\bin;D:\MATLAB2016b\polyspace\bin;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;D:\Matlab R2021b\address\runtime\win64;D:\Matlab R2021b\address\bin;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;D:\Python\python3.7.9\download\Lib\site-packages\pyqt5_tools;D:\Python\interpret\download;;D:\Adams2020\download\bin;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\DTS\Binn\;D:\Python\interpret\Scripts\;D:\Python\interpret\;D:\Python\Scripts\;D:\Python\;C:\Users\WXJ\AppData\Local\Microsoft\WindowsApps;D:\Python\pycharm\download\PyCharm Community Edition 2023.1.2\bin;;D:\vscode\Microsoft VS Code\bin;D:\Patran 
+SCA_SERVICE_CATALOG="d:\patran_nastran\natran_dir\msc20190\res\SCAServiceCatalog.xml" 
+SCA_RESOURCE_DIR="d:\patran_nastran\natran_dir\msc20190\res" 
+Cmd Line:    D:\Patran_Nastran\Natran_dir\msc20190\win64i8\nastran.exe cquad4_kf.bdf bat=no 
+Current Dir: D:\FEAlearning\cquad4_kf 
+Time Cmd:    d:\patran_nastran\natran_dir\msc20190\win64i8\msctime 
+Executable:  d:\patran_nastran\natran_dir\msc20190\win64i8\analysis.exe 
+Arch= Kywd:  [Not specified]  
+MSC_MSG:     stderr  
+FPE:         yes  
+----------------------------------------------------------------- 
+Current resource limits:
+ Physical memory:                    14229 MB
+ Physical memory available:           6992 MB
+ Paging file size:                   16405 MB
+ Paging file size available:          8268 MB
+ Virtual memory:                 134217727 MB
+ Virtual memory available:       134213510 MB
+----------------------------------------------------------------- 
+System configuration:
+ Hostname:         DESKTOP-DO1LNEH
+ Architecture:     win64i8
+ Platform:         AMD Windows 10 Pro 6.2 9200 (Windows Compute Cluster)
+ Model:            AMD Ryzen 5 5600G with Radeon 
+ Clock freq.:      32417 MHz
+ Number of CPUs:   12
+ Executable:       standard
+ Raw model ID:     15
+ Config number:    15
+ Physical memory:  14229 MB
+ Virtual memory:   16405 MB
+ Numeric format:   64-bit little-endian IEEE.
+ Bytes per word:   8
+ Disk block size:  512 bytes (64 words)
+ Remote shell cmd: "d:/patran_nastran/natran_dir/msc20190/win64i8/mscrmtcmd.exe" (Windows non-CCS nodes, UNIX)
+                   <ccs_cmd> (Windows CCS nodes)
+----------------------------------------------------------------- 
+MSC Nastran started  Mon Aug 18 12:53:12 ?D1迆㊣那℅?那㊣?? 2025 
+ 12:53:18  Beginning Analysis
+SCA Kernel 22.2.602065 successfully initialized
+BLAS/LAPACK .dll "d:\patran_nastran\natran_dir\msc20190\win64i8\libimalloc.dll" has been loaded.
+BLAS/LAPACK .dll "d:\patran_nastran\natran_dir\msc20190\win64i8\mkl_core.dll" has been loaded.
+BLAS/LAPACK .dll "d:\patran_nastran\natran_dir\msc20190\win64i8\mkl_intel_thread.dll" has been loaded.
+BLAS/LAPACK .dll "d:\patran_nastran\natran_dir\msc20190\win64i8\mkl_rt.dll" has been loaded.
+BLAS/LAPACK .dll "d:\patran_nastran\natran_dir\msc20190\win64i8\MSCblas.dll" has been loaded.
+
+ 12:53:25  MSC Authorization Information - System Attributes (1004, 0)
+ 12:53:25  -----------------------------------------------------------
+  Date:          Mon Aug 18 12:53:25 2025
+  MSC Id:        d8bbc16de65e (ethernet) (Intel)
+  Hostname:      DESKTOP-DO1LNEH (user WXJ, display DESKTOP-DO1LNEH)
+  License files: C:\Program Files\MSC.Software\MSC Licensing\Helium\license.dat
+  CEID:          C16DE65E-328GA363
+  User:          WXJ
+  Display:       DESKTOP-DO1LNEH
+  LAPI Version:  LAPI 10.4.6 (FLEXlm 11.13.1.3)
+
+  * * * * * * * * * * * * * * * * * * * *
+  * * * * * * * * * * * * * * * * * * * *
+  * *                                 * *
+  * *   MSC Customer Entitlement ID   * *
+  * *        C16DE65E-328GA363        * *
+  * *                                 * *
+  * * * * * * * * * * * * * * * * * * * *
+  * * * * * * * * * * * * * * * * * * * *
+
+ 12:53:26  MSC Authorization Information - Checkout Successful (1016, 0)
+ 12:53:26  -------------------------------------------------------------
+ 12:53:26  Acquired 1 license for MSC Nastran from license server on host DESKTOP-DO1LNEH
+
+
+Beginning bulk data processing using the IFPStar component.
+For more information on IFPStar, please see KB article KB8019200
+on our support pages, at http://simcompanion.mscsoftware.com.
+
+ 12:53:28  55 records read from JID file "D:\FEAlearning\cquad4_kf\cquad4_kf.bdf"
+
+Processing of bulk data entries is complete.
+
+ 12:53:29  Analysis started.
+ 12:53:29  Geometry access/verification to CAD part initiated (if needed).
+ 12:53:29  Geometry access/verification to CAD part successfully completed (if needed).
+ 12:53:29  Finite element model generation started.
+ 12:53:29  Finite element model generated 54 degrees of freedom.
+ 12:53:29  Finite element model generation successfully completed.
+ 12:53:29  Application of Loads and Boundary Conditions to the finite element model started.
+ 12:53:29  Application of Loads and Boundary Conditions to the finite element model successfully completed.
+ 12:53:29  Solution of the system equations for linear statics started.
+ 12:53:29  Solution of the system equations for linear statics successfully completed.
+ 12:53:29  Linear static analysis completed.
+ 12:53:29  20 records read from JID file "D:\FEAlearning\cquad4_kf\cquad4_kf.bdf"
+ 12:53:29  NSEXIT: EXIT(0)
+ 12:53:29  Analysis complete  0
+createMemPool, context=RMRGDROT
+Real:       14.798 seconds ( 0:00:14.798)
+User:        1.250 seconds ( 0:00:01.250)
+Sys:         0.625 seconds ( 0:00:00.625)
+ ==================================================
+ OS:              6.2
+ OEM ID:         9
+ Number of processors:         12
+ Page size:         4096
+ Processor type:         8664
+ Minimum application address:         10000
+ Maximum application address:         fffeffff
+ Active processor mask:         4095
+ Nsocket:         0
+ Ncore:           12
+ Ram:          14229 Mb
+ ==================================================
+ Time Summary                 CPU       Wall   ( Time in Seconds )
+ Consider using SOLVE=AUTO if you have not.
+ =====================================================
+ Detailed performance information can be found in the 
+ "MSC Nastran High Performance Computing User's Guide"
+ =====================================================
+MSC Nastran finished Mon Aug 18 12:53:31 ?D1迆㊣那℅?那㊣?? 2025 

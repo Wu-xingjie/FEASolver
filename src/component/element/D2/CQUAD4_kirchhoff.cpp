@@ -147,7 +147,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     std::string N4_eta = "((1-x)/4)";
     std::string str_length = std::to_string(length);
     std::string str_weight = std::to_string(weight);
-    std::string str_nu2 = std::to_string(NU2);
+    std::string str_nu2 = std::to_string(NU1);
 
     Eigen::MatrixXd k_plane = Eigen::MatrixXd::Zero(8, 8);
 
@@ -411,8 +411,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(7, 7) = *k77;
 
     // TOOL::DisplayMatrixXd(k_plane);
-
-    k_plane = k_plane * E2 / (1 - std::pow(NU2, 2));
+    double temp = E2 / (1 - std::pow(NU1, 2));
+    k_plane = length * weight * t * k_plane * E2 / (1 - std::pow(NU1, 2));
 
     // =============== 板弯行为 ===============
     // 板横向弯曲刚度矩阵

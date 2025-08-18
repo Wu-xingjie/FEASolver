@@ -1,0 +1,55 @@
+$ MSC.Nastran input file created on August    18, 2025 at 12:53:08 by
+$ Patran 2019
+$ Direct Text Input for Nastran System Cell Section
+$ Direct Text Input for File Management Section
+$ Direct Text Input for Executive Control
+$ Linear Static Analysis, Database
+SOL 101
+CEND
+$ Direct Text Input for Global Case Control Data
+TITLE = MSC.Nastran job created on 18-Aug-25 at 12:52:06
+ECHO = NONE
+SUBCASE 1
+   SUBTITLE=Default
+   SPC = 2
+   LOAD = 2
+   DISPLACEMENT(SORT1,REAL)=ALL
+   SPCFORCES(SORT1,REAL)=ALL
+   STRESS(SORT1,REAL,VONMISES,BILIN)=ALL
+$ Direct Text Input for this Subcase
+BEGIN BULK
+$ Direct Text Input for Bulk Data
+MDLPRM   HDF5    0
+PARAM   PRTMAXIM YES
+$ Elements and Element Properties for region : pshell
+PSHELL   1       1      .1       1               1
+$ Pset: "pshell" will be imported as: "pshell.1"
+CQUAD4   1       1       1       2       5       4
+CQUAD4   2       1       2       3       6       5
+CQUAD4   3       1       4       5       8       7
+CQUAD4   4       1       5       6       9       8
+$ Referenced Material Records
+$ Material Record : material
+$ Description of Material : Date: 18-Aug-25           Time: 12:50:07
+MAT1     1      2.+11           .3
+$ Nodes of the Entire Model
+GRID     1               0.      0.      0.
+GRID     2              2.5      0.      0.
+GRID     3              5.       0.      0.
+GRID     4               0.     .5       0.
+GRID     5              2.5     .5       0.
+GRID     6              5.      .5       0.
+GRID     7               0.     1.       0.
+GRID     8              2.5     1.       0.
+GRID     9              5.      1.       0.
+$ Loads for Load Case : Default
+SPCADD   2       1
+LOAD     2      1.      1.       1      1.       3
+$ Displacement Constraints of Load Set : fix
+SPC1     1       123456  1       4       7
+$ Nodal Forces of Load Set : force
+FORCE    1       9       0      1732.05 .57735  .57735  .57735
+$ Nodal Forces of Load Set : force
+MOMENT   3       9       0       0.     .57735  .57735  .57735
+$ Referenced Coordinate Frames
+ENDDATA b50f39c0
