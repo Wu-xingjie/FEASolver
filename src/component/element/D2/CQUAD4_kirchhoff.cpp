@@ -76,7 +76,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
     // 计算单元长和宽
     auto length = LenOfNode(n1_vec, n2_vec);
-    auto weight = LenOfNode(n4_vec, n3_vec);
+    auto weight = LenOfNode(n2_vec, n3_vec);
 
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);
@@ -411,8 +411,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(7, 7) = *k77;
 
     // TOOL::DisplayMatrixXd(k_plane);
-    double temp = E2 / (1 - std::pow(NU1, 2));
-    k_plane = length * weight * t * k_plane * E2 / (1 - std::pow(NU1, 2));
+    double temp = E1 / (1 - std::pow(NU1, 2));
+    k_plane = length * weight * t * k_plane * E1 / (1 - std::pow(NU1, 2));
 
     // =============== 板弯行为 ===============
     // 板横向弯曲刚度矩阵
@@ -536,14 +536,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         bend_k_alldof(idx_col, idx_row) = k_bend(i, j);
       }
     }
-    TOOL::DisplayMatrixXd(k_plane, "k_plane");
-    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof");
-    TOOL::DisplayMatrixXd(k_bend, "k_bend");
-    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof");
+    TOOL::DisplayMatrixXd(k_plane, "k_plane",true);
+    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof",true);
+    TOOL::DisplayMatrixXd(k_bend, "k_bend",true);
+    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof",true);
 
     // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
     _loc_k = plane_k_alldof + bend_k_alldof;
-    TOOL::DisplayMatrixXd(_loc_k, "_loc_k");
+    TOOL::DisplayMatrixXd(_loc_k, "_loc_k",true);
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
@@ -629,7 +629,7 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   // 生成全局坐标系下的单元刚度矩阵
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
-  // TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix");
+  TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix",true);
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
 
   // TOOL::DisplayMatrixXd(global_k, "global_k");

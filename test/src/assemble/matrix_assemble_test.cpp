@@ -6,6 +6,7 @@
 #include "component/element/D1/ROD.h"
 #include "component/element/D1/BAR.h"
 #include "component/load/load_base.h"
+#include "model_tool/display_matrixXd.h"
 #include "mapper.h"
 int main(int argv, char *argc[]) {
   if (argv != 2) {
@@ -43,8 +44,9 @@ int main(int argv, char *argc[]) {
   matrix_assemble.AddConstrain();
 
   // 计算结果
-  std::cout << "_matrix_k:" << std::endl;
-  std::cout << matrix_assemble._matrix_k << std::endl;
+  // std::cout << "_matrix_k:" << std::endl;
+  // std::cout << matrix_assemble._matrix_k << std::endl;
+  TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",true);
   std::cout << "_vector_f:" << std::endl;
   std::cout << matrix_assemble._vector_f << std::endl;
 
