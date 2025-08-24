@@ -30,7 +30,7 @@ void Parser::ParserFile(const std::string &file_address) {
     }
   } else {
     throw std::runtime_error(
-        "[ERROR]:func(Parser::ParserFile)>>>节点1获取失败");
+        "[ERROR]:func(Parser::ParserFile)>>>计算文件打开失败");
   }
 }
 
@@ -121,4 +121,4 @@ void Parser::DividedByComp() {
   }
 }
 
-}  // namespace MAPPER
+} // namespace MAPPER
