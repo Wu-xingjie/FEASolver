@@ -75,8 +75,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
     auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
     // 计算单元长和宽
-    auto length = LenOfNode(n1_vec, n2_vec);
-    auto weight = LenOfNode(n2_vec, n3_vec);
+    auto length = 0.5 * LenOfNode(n1_vec, n2_vec);
+    auto weight = 0.5 * LenOfNode(n2_vec, n3_vec);
 
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);
@@ -151,14 +151,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
 
     Eigen::MatrixXd k_plane = Eigen::MatrixXd::Zero(8, 8);
 
-    std::string exp_k00 = "(" + N1_epsilon + "/" + str_length + ")^2+(2-" +
+    std::string exp_k00 = "(" + N1_epsilon + "/" + str_length + ")^2+(1-" +
                           str_nu1 + ")*(" + N1_eta + ")^2/(2*" + str_weight +
                           "^2)";
     auto k00 = TOOL::GaussIntegral(exp_k00, 4, 2);
     k_plane(0, 0) = *k00;
 
     std::string exp_k01 = "(" + str_nu1 + "*" + N1_epsilon + "*" + N1_eta +
-                          "/(" + str_weight + "*" + str_length + "))+((2-" +
+                          "/(" + str_weight + "*" + str_length + "))+((1-" +
                           str_nu1 + ")*" + N1_epsilon + "*" + N1_eta + ")/(2*" +
                           str_length + "*" + str_weight + ")";
     auto k01 = TOOL::GaussIntegral(exp_k01, 4, 2);
@@ -166,14 +166,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(0, 1) = *k01;
 
     auto exp_k02 = N1_epsilon + "*" + N2_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N1_eta + "*" + N2_eta + "/(2*" +
+                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N2_eta + "/(2*" +
                    str_weight + "^2)";
     auto k02 = TOOL::GaussIntegral(exp_k02, 4, 2);
     k_plane(2, 0) = *k02;
     k_plane(0, 2) = *k02;
 
     auto exp_k03 = str_nu1 + "*" + N1_epsilon + "*" + N2_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_eta + "*" + N2_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k03 = TOOL::GaussIntegral(exp_k03, 4, 2);
@@ -181,14 +181,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(0, 3) = *k03;
 
     auto exp_k04 = N1_epsilon + "*" + N3_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N1_eta + "*" + N3_epsilon +
+                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N3_epsilon +
                    "/(2*" + str_weight + "^2)";
     auto k04 = TOOL::GaussIntegral(exp_k04, 4, 2);
     k_plane(4, 0) = *k04;
     k_plane(0, 4) = *k04;
 
     auto exp_k05 = str_nu1 + "*" + N1_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k05 = TOOL::GaussIntegral(exp_k05, 4, 2);
@@ -196,35 +196,35 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(0, 5) = *k05;
 
     auto exp_k06 = N1_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N1_eta + "*" + N4_eta + "/(2*" +
+                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N4_eta + "/(2*" +
                    str_weight + "^2)";
     auto k06 = TOOL::GaussIntegral(exp_k06, 4, 2);
     k_plane(6, 0) = *k06;
     k_plane(0, 6) = *k06;
 
     auto exp_k07 = str_nu1 + "*" + N1_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k07 = TOOL::GaussIntegral(exp_k07, 4, 2);
     k_plane(7, 0) = *k07;
     k_plane(0, 7) = *k07;
 
-    std::string exp_k11 = "(" + N1_eta + "/" + str_weight + ")^2+(2-" +
+    std::string exp_k11 = "(" + N1_eta + "/" + str_weight + ")^2+(1-" +
                           str_nu1 + ")*(" + N1_epsilon + ")^2/(2*" +
                           str_length + "^2)";
     auto k11 = TOOL::GaussIntegral(exp_k11, 4, 2);
     k_plane(1, 1) = *k11;
 
     auto exp_k12 = str_nu1 + "*" + N1_eta + "*" + N2_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_epsilon + "*" + N2_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k12 = TOOL::GaussIntegral(exp_k12, 4, 2);
     k_plane(1, 2) = *k12;
     k_plane(2, 1) = *k12;
 
-    auto exp_k13 = N1_eta + "*" + N2_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k13 = N1_eta + "*" + N2_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N1_epsilon + "*" + N2_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k13 = TOOL::GaussIntegral(exp_k13, 4, 2);
@@ -232,14 +232,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(3, 1) = *k13;
 
     auto exp_k14 = str_nu1 + "*" + N1_eta + "*" + N3_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_epsilon + "*" + N3_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k14 = TOOL::GaussIntegral(exp_k14, 4, 2);
     k_plane(1, 4) = *k14;
     k_plane(4, 1) = *k14;
 
-    auto exp_k15 = N1_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k15 = N1_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N1_epsilon + "*" + N3_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k15 = TOOL::GaussIntegral(exp_k15, 4, 2);
@@ -247,28 +247,28 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(5, 1) = *k15;
 
     auto exp_k16 = str_nu1 + "*" + N1_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N1_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k16 = TOOL::GaussIntegral(exp_k16, 4, 2);
     k_plane(1, 6) = *k16;
     k_plane(6, 1) = *k16;
 
-    auto exp_k17 = N1_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k17 = N1_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N1_epsilon + "*" + N4_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k17 = TOOL::GaussIntegral(exp_k17, 4, 2);
     k_plane(1, 7) = *k17;
     k_plane(7, 1) = *k17;
 
-    std::string exp_k22 = "(" + N2_epsilon + "/" + str_length + ")^2+(2-" +
+    std::string exp_k22 = "(" + N2_epsilon + "/" + str_length + ")^2+(1-" +
                           str_nu1 + ")*(" + N2_eta + ")^2/(2*" + str_weight +
                           "^2)";
     auto k22 = TOOL::GaussIntegral(exp_k22, 4, 2);
     k_plane(2, 2) = *k22;
 
     auto exp_k23 = str_nu1 + "*" + N2_eta + "*" + N2_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N2_epsilon + "*" + N2_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k23 = TOOL::GaussIntegral(exp_k23, 4, 2);
@@ -276,14 +276,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(3, 2) = *k23;
 
     auto exp_k24 = N2_epsilon + "*" + N3_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N2_eta + "*" + N3_eta + "/(2*" +
+                   "^2)+(1-" + str_nu1 + ")*" + N2_eta + "*" + N3_eta + "/(2*" +
                    str_weight + "^2)";
     auto k24 = TOOL::GaussIntegral(exp_k24, 4, 2);
     k_plane(2, 4) = *k24;
     k_plane(4, 2) = *k24;
 
     auto exp_k25 = str_nu1 + "*" + N2_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N2_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k25 = TOOL::GaussIntegral(exp_k25, 4, 2);
@@ -291,35 +291,35 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(5, 2) = *k25;
 
     auto exp_k26 = N2_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N2_eta + "*" + N4_eta + "/(2*" +
+                   "^2)+(1-" + str_nu1 + ")*" + N2_eta + "*" + N4_eta + "/(2*" +
                    str_weight + "^2)";
     auto k26 = TOOL::GaussIntegral(exp_k26, 4, 2);
     k_plane(2, 6) = *k26;
     k_plane(6, 2) = *k26;
 
     auto exp_k27 = str_nu1 + "*" + N2_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N2_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k27 = TOOL::GaussIntegral(exp_k27, 4, 2);
     k_plane(2, 5) = *k27;
     k_plane(5, 2) = *k27;
 
-    std::string exp_k33 = "(" + N2_eta + "/" + str_weight + ")^2+(2-" +
+    std::string exp_k33 = "(" + N2_eta + "/" + str_weight + ")^2+(1-" +
                           str_nu1 + ")*(" + N2_epsilon + ")^2/(2*" +
                           str_length + "^2)";
     auto k33 = TOOL::GaussIntegral(exp_k33, 4, 2);
     k_plane(3, 3) = *k33;
 
     auto exp_k34 = str_nu1 + "*" + N2_eta + "*" + N3_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N2_epsilon + "*" + N3_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k34 = TOOL::GaussIntegral(exp_k34, 4, 2);
     k_plane(3, 4) = *k34;
     k_plane(4, 3) = *k34;
 
-    auto exp_k35 = N2_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k35 = N2_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N2_epsilon + "*" + N3_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k35 = TOOL::GaussIntegral(exp_k35, 4, 2);
@@ -327,28 +327,28 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(5, 3) = *k35;
 
     auto exp_k36 = str_nu1 + "*" + N2_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N2_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k36 = TOOL::GaussIntegral(exp_k36, 4, 2);
     k_plane(3, 6) = *k36;
     k_plane(6, 3) = *k36;
 
-    auto exp_k37 = N2_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k37 = N2_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N2_epsilon + "*" + N4_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k37 = TOOL::GaussIntegral(exp_k37, 4, 2);
     k_plane(3, 7) = *k37;
     k_plane(7, 3) = *k37;
 
-    std::string exp_k44 = "(" + N3_epsilon + "/" + str_length + ")^2+(2-" +
+    std::string exp_k44 = "(" + N3_epsilon + "/" + str_length + ")^2+(1-" +
                           str_nu1 + ")*(" + N3_eta + ")^2/(2*" + str_weight +
                           "^2)";
     auto k44 = TOOL::GaussIntegral(exp_k44, 4, 2);
     k_plane(4, 4) = *k44;
 
     auto exp_k45 = str_nu1 + "*" + N3_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N3_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k45 = TOOL::GaussIntegral(exp_k45, 4, 2);
@@ -356,49 +356,49 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(5, 4) = *k45;
 
     auto exp_k46 = N3_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(2-" + str_nu1 + ")*" + N3_eta + "*" + N4_eta + "/(2*" +
+                   "^2)+(1-" + str_nu1 + ")*" + N3_eta + "*" + N4_eta + "/(2*" +
                    str_weight + "^2)";
     auto k46 = TOOL::GaussIntegral(exp_k46, 4, 2);
     k_plane(4, 6) = *k46;
     k_plane(6, 4) = *k46;
 
     auto exp_k47 = str_nu1 + "*" + N3_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N3_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k47 = TOOL::GaussIntegral(exp_k47, 4, 2);
     k_plane(4, 7) = *k47;
     k_plane(7, 4) = *k47;
 
-    std::string exp_k55 = "(" + N3_eta + "/" + str_weight + ")^2+(2-" +
+    std::string exp_k55 = "(" + N3_eta + "/" + str_weight + ")^2+(1-" +
                           str_nu1 + ")*(" + N3_epsilon + ")^2/(2*" +
                           str_length + "^2)";
     auto k55 = TOOL::GaussIntegral(exp_k55, 4, 2);
     k_plane(5, 5) = *k55;
 
     auto exp_k56 = str_nu1 + "*" + N3_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N3_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k56 = TOOL::GaussIntegral(exp_k56, 4, 2);
     k_plane(5, 6) = *k56;
     k_plane(6, 5) = *k56;
 
-    auto exp_k57 = N3_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(2-" +
+    auto exp_k57 = N3_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
                    str_nu1 + ")*" + N3_epsilon + "*" + N4_epsilon + "/(2*" +
                    str_length + "^2)";
     auto k57 = TOOL::GaussIntegral(exp_k57, 4, 2);
     k_plane(5, 7) = *k57;
     k_plane(7, 5) = *k57;
 
-    std::string exp_k66 = "(" + N4_epsilon + "/" + str_length + ")^2+(2-" +
+    std::string exp_k66 = "(" + N4_epsilon + "/" + str_length + ")^2+(1-" +
                           str_nu1 + ")*(" + N4_eta + ")^2/(2*" + str_weight +
                           "^2)";
     auto k66 = TOOL::GaussIntegral(exp_k66, 4, 2);
     k_plane(6, 6) = *k66;
 
     auto exp_k67 = str_nu1 + "*" + N4_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(2-" + str_nu1 + ")*" +
+                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
                    N4_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k67 = TOOL::GaussIntegral(exp_k67, 4, 2);
@@ -406,12 +406,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     k_plane(7, 6) = *k67;
 
     std::string exp_k77 = "(" + N4_eta + "/" + str_weight + ")^2+(" +
-                          N4_epsilon + ")^2*(2-" + str_nu1 + ")/(2*" + str_length + "^2)";
+                          N4_epsilon + ")^2*(1-" + str_nu1 + ")/(2*" +
+                          str_length + "^2)";
     auto k77 = TOOL::GaussIntegral(exp_k77, 4, 2);
     k_plane(7, 7) = *k77;
 
     // TOOL::DisplayMatrixXd(k_plane);
     double temp = E1 / (1 - std::pow(NU1, 2));
+    double num = length * weight * t * E1 / (1 - std::pow(NU1, 2));
     k_plane = length * weight * t * k_plane * E1 / (1 - std::pow(NU1, 2));
 
     // =============== 板弯行为 ===============
@@ -492,7 +494,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     // TOOL::DisplayMatrixXd(k_bend);
 
     // 设置总刚度矩阵
-    // 1: 把板弯刚度矩阵和膜刚度矩阵扩容成36*36的全自由度刚度矩阵
+    // 1: 把板弯刚度矩阵和膜刚度矩阵扩容成24*24的全自由度刚度矩阵
     // 1.1:生成所有节点自由度到矩阵索引的映射
     std::map<std::string, int> dof2index;
     std::vector<std::string> vec_dof{"x",       "y",       "z",
@@ -512,11 +514,11 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     };
     for (int i = 0; i < 8; i++) {
       for (int j = 0; j < 8; j++) {
-        std::string dof_col = plane_k_map.at(i);
-        std::string dof_row = plane_k_map.at(j);
+        std::string dof_row = plane_k_map.at(i);
+        std::string dof_col = plane_k_map.at(j);
         int idx_col = dof2index.at(dof_col);
         int idx_row = dof2index.at(dof_row);
-        plane_k_alldof(idx_col, idx_row) = k_plane(i, j);
+        plane_k_alldof(idx_row, idx_col) = k_plane(i, j);
       }
     }
     // 1.2: 将板弯刚度矩阵扩容
@@ -529,21 +531,21 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     };
     for (int i = 0; i < 12; i++) {
       for (int j = 0; j < 12; j++) {
-        std::string dof_col = bend_k_map.at(i);
-        std::string dof_row = bend_k_map.at(j);
+        std::string dof_row = bend_k_map.at(i);
+        std::string dof_col = bend_k_map.at(j);
         int idx_col = dof2index.at(dof_col);
         int idx_row = dof2index.at(dof_row);
-        bend_k_alldof(idx_col, idx_row) = k_bend(i, j);
+        bend_k_alldof(idx_row, idx_col) = k_bend(i, j);
       }
     }
-    TOOL::DisplayMatrixXd(k_plane, "k_plane",true);
-    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof",true);
-    TOOL::DisplayMatrixXd(k_bend, "k_bend",true);
-    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof",true);
+    TOOL::DisplayMatrixXd(k_plane, "k_plane", true);
+    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof", true);
+    TOOL::DisplayMatrixXd(k_bend, "k_bend", true);
+    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof", true);
 
     // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
     _loc_k = plane_k_alldof + bend_k_alldof;
-    TOOL::DisplayMatrixXd(_loc_k, "_loc_k",true);
+    TOOL::DisplayMatrixXd(_loc_k, "_loc_k", true);
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
@@ -629,7 +631,7 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   // 生成全局坐标系下的单元刚度矩阵
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
-  TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix",true);
+  TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix", true);
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
 
   // TOOL::DisplayMatrixXd(global_k, "global_k");
