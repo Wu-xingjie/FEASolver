@@ -1,4 +1,5 @@
 #pragma once
+#include <boost/bimap.hpp>
 #include <eigen3/Eigen/Dense>
 #include <map>
 #include <set>
@@ -29,11 +30,15 @@ class MatrixAssemble {
   // 处理载荷列阵中多余自由度（eg：一维问题放在三维中分析时另外两个维度为多余的维度）
   Eigen::VectorXd RemoveExtraLoadDof();
 
-  int _dof{0};                          // 模型自由度
-  std::map<std::string, int> _dof2idx;  // 总体坐标系自由度到维度的映射关系
-  MODEL::Model _model;                  // 模型库
-  Eigen::MatrixXd _matrix_k;    // 刚度矩阵
-  Eigen::VectorXd _vector_f;    // 载荷列阵
-  std::set<int> _extro_dof;  // 多余自由度
+  // 输出有效自由度序列
+  std::vector<std::string> OutputValidDofSerial();
+
+  int _dof{0};  // 模型自由度
+  // std::map<std::string, int> _dof2idx;  // 总体坐标系自由度到维度的映射关系
+  boost::bimap<std::string, int> _dof2idx;  // 总体坐标系自由度到维度的映射关系
+  MODEL::Model _model;                      // 模型库
+  Eigen::MatrixXd _matrix_k;  // 刚度矩阵
+  Eigen::VectorXd _vector_f;  // 载荷列阵
+  std::set<int> _extro_dof;   // 多余自由度
 };
 }  // namespace ASSEMBLE

@@ -34,7 +34,8 @@ MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
   for (int i = 1; i < _node_used.size() + 1; i++) {
     for (int j = 0; j < 6; j++) {
       std::string k = std::to_string(vec_node_used.at(i - 1)) + "_" + xyz.at(j);
-      _dof2idx[k] = 6 * (i - 1) + j;
+      // _dof2idx[k] = 6 * (i - 1) + j;
+      _dof2idx.insert({k, 6 * (i - 1) + j});
     }
   }
 }
@@ -72,8 +73,8 @@ void MatrixAssemble::AssembleK() {
         std::string r_elem_dof = elem_idx2dof.at(r);
         std::string c_elem_dof = elem_idx2dof.at(c);
         // 获取总体刚度矩阵中该元素对应的位置
-        int r_k_idx = _dof2idx.at(r_elem_dof);
-        int c_k_idx = _dof2idx.at(c_elem_dof);
+        int r_k_idx = _dof2idx.left.find(r_elem_dof)->second;
+        int c_k_idx = _dof2idx.left.find(c_elem_dof)->second;
         // 将该元素加到总体刚度矩阵上
         _matrix_k(r_k_idx, c_k_idx) += elem_matrix(r, c);
       }
@@ -104,7 +105,7 @@ void MatrixAssemble::AssembleLoad() {
     // 给全局载荷列阵赋值
     for (int i = 0; i < global_load.size(); i++) {
       std::string dof_load = load_idx2dof.at(i + 1);
-      int global_load_idx = _dof2idx.at(dof_load);
+      int global_load_idx = _dof2idx.left.find(dof_load)->second;
       _vector_f(global_load_idx) += global_load(i);
     }
   }
@@ -137,7 +138,7 @@ void MatrixAssemble::AddConstrain() {
     // 将总体刚度矩阵中被约束自由度对应行和列的非对角元素设为0,对角元素设置为1
     // 载荷列阵中对应自由度元素设置为0
     for (auto dof : constrianed_dof) {
-      int idx = _dof2idx.at(dof);
+      int idx = _dof2idx.left.find(dof)->second;
       _matrix_k.row(idx).setZero();
       _matrix_k.col(idx).setZero();
       _matrix_k(idx, idx) = 1;
@@ -174,6 +175,13 @@ void MatrixAssemble::GetExtraDof() {
       _extro_dof.insert(i);
     }
   }
+}
+
+std::vector<std::string> MatrixAssemble::OutputValidDofSerial() {
+  std::vector<std::string> result;
+  
+
+  return result;
 }
 
 }  // namespace ASSEMBLE
