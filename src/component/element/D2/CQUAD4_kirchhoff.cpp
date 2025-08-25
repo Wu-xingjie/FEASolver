@@ -137,14 +137,14 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
 
     // =============== 平面应力行为 ===============
     // 形函数对自然坐标的偏导
-    std::string N1_epsilon = "((y-1)/4)";
-    std::string N1_eta = "((x-1)/4)";
-    std::string N2_epsilon = "((1-y)/4)";
-    std::string N2_eta = "(-(1+x)/4)";
-    std::string N3_epsilon = "((1+y)/4)";
-    std::string N3_eta = "((1+x)/4)";
-    std::string N4_epsilon = "(-(1+y)/4)";
-    std::string N4_eta = "((1-x)/4)";
+    std::string N1_epsilon = "((y-1)*0.25)";
+    std::string N1_eta = "((x-1)*0.25)";
+    std::string N2_epsilon = "((1-y)*0.25)";
+    std::string N2_eta = "(-(1+x)*0.25)";
+    std::string N3_epsilon = "((1+y)*0.25)";
+    std::string N3_eta = "((1+x)*0.25)";
+    std::string N4_epsilon = "(-(1+y)*0.25)";
+    std::string N4_eta = "((1-x)*0.25)";
     std::string str_length = std::to_string(length);
     std::string str_weight = std::to_string(weight);
     std::string str_nu1 = std::to_string(NU1);
@@ -302,8 +302,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                    N2_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
                    str_length + ")";
     auto k27 = TOOL::GaussIntegral(exp_k27, 4, 2);
-    k_plane(2, 5) = *k27;
-    k_plane(5, 2) = *k27;
+    k_plane(2, 7) = *k27;
+    k_plane(7, 2) = *k27;
 
     std::string exp_k33 = "(" + N2_eta + "/" + str_weight + ")^2+(1-" +
                           str_nu1 + ")*(" + N2_epsilon + ")^2/(2*" +
@@ -631,7 +631,7 @@ Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
   // 生成全局坐标系下的单元刚度矩阵
   // 全局坐标系下单元刚度矩阵
   Eigen::MatrixXd global_k;
-  TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix", true);
+  // TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix", true);
   global_k = trans_matrix * _loc_k * trans_matrix.transpose();
 
   // TOOL::DisplayMatrixXd(global_k, "global_k");
