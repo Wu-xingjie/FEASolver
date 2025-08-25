@@ -9,7 +9,7 @@
 #include "matrix_tool/delete_row_or_col.h"
 namespace ASSEMBLE {
 
-MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
+MatrixAssemble::MatrixAssemble(const MODEL::Model& model) {
   _model = model;
 
   std::set<int> _node_used;
@@ -179,7 +179,13 @@ void MatrixAssemble::GetExtraDof() {
 
 std::vector<std::string> MatrixAssemble::OutputValidDofSerial() {
   std::vector<std::string> result;
-  
+  for (int i = 0; i < _dof; i++) {
+    auto pos = _extro_dof.find(i);
+    if (pos != _extro_dof.end()) {
+      continue;
+    }
+    result.push_back(_dof2idx.right.find(i)->second);
+  }
 
   return result;
 }

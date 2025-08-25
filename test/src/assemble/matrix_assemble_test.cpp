@@ -3,11 +3,11 @@
 
 #include <iostream>
 
-#include "component/element/D1/ROD.h"
 #include "component/element/D1/BAR.h"
+#include "component/element/D1/ROD.h"
 #include "component/load/load_base.h"
-#include "model_tool/display_matrixXd.h"
 #include "mapper.h"
+#include "model_tool/display_matrixXd.h"
 int main(int argv, char *argc[]) {
   if (argv != 2) {
     std::cout << "[ERROR]:func(main)>>> 输入参数错误!" << std::endl;
@@ -46,22 +46,33 @@ int main(int argv, char *argc[]) {
   // 计算结果
   // std::cout << "_matrix_k:" << std::endl;
   // std::cout << matrix_assemble._matrix_k << std::endl;
-  TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",true);
+  TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",
+                        true);
   std::cout << "_vector_f:" << std::endl;
   std::cout << matrix_assemble._vector_f << std::endl;
 
   matrix_assemble.GetExtraDof();
   auto K = matrix_assemble.RemoveExtraMatrixDof();
   auto f = matrix_assemble.RemoveExtraLoadDof();
+  auto valid_dof = matrix_assemble.OutputValidDofSerial();
   std::cout << "K:" << std::endl;
   std::cout << K << std::endl;
   std::cout << "inverse K:" << std::endl;
   std::cout << K.inverse() << std::endl;
+
   std::cout << "f:" << std::endl;
-  std::cout << f << std::endl;
+  for (int i = 0; i < f.size(); i++) {
+    std::cout << valid_dof.at(i) << " -> " << f(i) << std::endl;
+  }
+
   auto result = K.inverse() * f;
   std::cout << "节点位移:" << std::endl;
-  std::cout << result << std::endl;
+
+  for (int i = 0; i < result.size(); i++) {
+    std::cout << valid_dof.at(i) << " -> " << result(i) << std::endl;
+  }
+
+  // std::cout << result << std::endl;
 
   return 0;
 }
