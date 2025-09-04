@@ -48,6 +48,8 @@ int main(int argv, char *argc[]) {
   // std::cout << matrix_assemble._matrix_k << std::endl;
   TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",
                         true);
+  TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",
+                        false);
   std::cout << "_vector_f:" << std::endl;
   std::cout << matrix_assemble._vector_f << std::endl;
 

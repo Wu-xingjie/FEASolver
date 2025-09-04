@@ -9,7 +9,7 @@ public:
   virtual ~Cquad4Kf() = default;
 
   virtual void SetComp(const file_data &datas) override;
-  virtual elem_type ElemType() override { return ElemBase::elem_type::tri3; }
+  virtual elem_type ElemType() override { return ElemBase::elem_type::cquad4_kf; }
   virtual std::vector<int> GetNodes() override { return {_G1, _G2, _G3, _G4}; }
   virtual void GenerateK(const MODEL::Model &model) override;
   virtual Eigen::MatrixXd GetGlobalK(const MODEL::Model &model) override;
