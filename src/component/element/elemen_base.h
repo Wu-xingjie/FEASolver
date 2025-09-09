@@ -13,7 +13,7 @@ public:
   ElemBase() { _type = comp_type::element; };
   virtual ~ElemBase() = default;
 
-  enum class elem_type { rod, bar, tri3, cquad4_kf};
+  enum class elem_type { rod, bar, tri3, cquad4_kf, chexa8};
   virtual void SetComp(const file_data &datas) = 0;
   virtual elem_type ElemType() = 0;
   virtual std::vector<int> GetNodes() = 0;
