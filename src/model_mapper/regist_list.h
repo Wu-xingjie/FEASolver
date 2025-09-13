@@ -4,6 +4,7 @@
 #include "component_factory/property_factory/factory_prod.h"
 #include "component_factory/property_factory/factory_pbar.h"
 #include "component_factory/property_factory/factory_pshell.h"
+#include "component_factory/property_factory/factory_psolid.h"
 #include "component_factory/node_factory/factory_node.h"
 #include "component_factory/element_factory/factory_D1/factory_rod.h"
 #include "component_factory/element_factory/factory_D1/factory_cbar.h"
@@ -24,6 +25,7 @@ MAPPER::Regist<FACTORY::NodeFactory> _NodeFactoryREGIST("GRID");
 MAPPER::Regist<FACTORY::ProdFactory> _ProdFactoryREGIST("PROD");
 MAPPER::Regist<FACTORY::PbarFactory> _PbarFactoryREGIST("PBAR");
 MAPPER::Regist<FACTORY::PshellFactory> _PshellFactoryREGIST("PSHELL");
+MAPPER::Regist<FACTORY::PsolidFactory> _PsolidFactoryREGIST("PSOLID");
 // 单元注册 
 MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
 MAPPER::Regist<FACTORY::CBARFactory> _BarFactoryREGIST("CBAR");
