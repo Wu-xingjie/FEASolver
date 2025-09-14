@@ -31,7 +31,7 @@ MAPPER::Regist<FACTORY::RodFactory> _RodFactoryREGIST("CROD");
 MAPPER::Regist<FACTORY::CBARFactory> _BarFactoryREGIST("CBAR");
 MAPPER::Regist<FACTORY::TRIA3Factory> _Tria3FactoryREGIST("CTRIA3");
 MAPPER::Regist<FACTORY::Cquad4KfFactory> _Cquad4KfFactoryREGIST("CQUAD4");
-MAPPER::Regist<FACTORY::Cquad4KfFactory> _Cquad4KfFactoryREGIST("CHEXA8");
+MAPPER::Regist<FACTORY::Chexa8Factory> _Chexa8FactoryREGIST("CHEXA8");
 // 坐标系注册
 MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1C");
 // 载荷注册
