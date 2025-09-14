@@ -21,8 +21,25 @@ std::map<int, std::vector<double>> weight_map = {
     {3, {0.555555, 0.888888, 0.555555}},
     {4, {0.347855, 0.652145, 0.652145, 0.347855}}};
 
-boost::shared_ptr<double>
-GaussIntegral(const std::string &func, const int &num_r, const int &num_integal) {
+std::vector<double> GetGaussSampPoint(const int &r) {
+  if (r < 0 && r > 3) {
+    throw std::runtime_error(
+        "[ERROR]:func(TOOL::GetGaussSampPoint)>>>输入积分重数错误！");
+  }
+  return samp_point_map.at(r);
+}
+
+std::vector<double> GetGaussWeightVal(const int &r) {
+  if (r < 0 && r > 3) {
+    throw std::runtime_error(
+        "[ERROR]:func(TOOL::GetGaussWeightVal)>>>输入积分重数错误！");
+  }
+  return weight_map.at(r);
+}
+
+boost::shared_ptr<double> GaussIntegral(const std::string &func,
+                                        const int &num_r,
+                                        const int &num_integal) {
   auto result = boost::make_shared<double>();
   if (num_r > 4) {
     throw std::runtime_error(

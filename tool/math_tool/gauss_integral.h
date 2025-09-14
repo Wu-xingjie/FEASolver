@@ -9,4 +9,10 @@ namespace TOOL {
 boost::shared_ptr<double>
 GaussIntegral(const std::string &func, const int &num_r, const int &num_integal);
 
+// 获取1～3重高斯积分的采样点
+std::vector<double> GetGaussSampPoint(const int& r);
+
+// 获取1～3重高斯积分的积分权值
+std::vector<double> GetGaussWeightVal(const int& r);
+
 } // namespace TOOL
