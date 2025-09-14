@@ -118,6 +118,14 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
     auto n7_vec = Eigen::Vector2d{N7_datas(0), N7_datas(1)};
     auto n8_vec = Eigen::Vector2d{N8_datas(0), N8_datas(1)};
 
+    std::array<double, 8> x_arr{n1_vec(0), n2_vec(0), n3_vec(0), n4_vec(0),
+                                n5_vec(0), n6_vec(0), n7_vec(0), n8_vec(0)};
+    std::array<double, 8> y_arr{n1_vec(1), n2_vec(1), n3_vec(1), n4_vec(1),
+                                n5_vec(1), n6_vec(1), n7_vec(1), n8_vec(1)};
+    std::array<double, 8> z_arr{n1_vec(2), n2_vec(2), n3_vec(2), n4_vec(2),
+                                n5_vec(2), n6_vec(2), n7_vec(2), n8_vec(2)};
+    std::array<std::array<double, 8>, 3> point_arr{x_arr, y_arr, z_arr};
+
     // 等参单元在自然坐标系下单元的边长为2
     double length = 1;
     double weight = 1;
@@ -191,15 +199,44 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
     std::string str_N8_eta = "-(1-x)*(1+z)/8";
     std::string str_N8_gama = "(1-x)*(1-y)/8";
 
+    std::array<std::string, 8> Ni_epsilon{
+        str_N1_epsilon, str_N2_epsilon, str_N3_epsilon, str_N4_epsilon,
+        str_N5_epsilon, str_N6_epsilon, str_N7_epsilon, str_N8_epsilon};
+
+    std::array<std::string, 8> Ni_eta{str_N1_eta, str_N2_eta, str_N3_eta,
+                                      str_N4_eta, str_N5_eta, str_N6_eta,
+                                      str_N7_eta, str_N8_eta};
+
+    std::array<std::string, 8> Ni_gama{str_N1_gama, str_N2_gama, str_N3_gama,
+                                       str_N4_gama, str_N5_gama, str_N6_gama,
+                                       str_N7_gama, str_N8_gama};
+
+    std::array<std::array<std::string, 8>, 3> arr_Ni_partial = {
+        Ni_epsilon, Ni_eta, Ni_gama};
+
     // 拿到高斯积分的采样点和积分权值
     auto gauss_sample = TOOL::GetGaussSampPoint(3);
     auto gauss_weight = TOOL::GetGaussWeightVal(3);
 
     // 获取单元刚度矩阵
-
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
         for (int k = 0; k < 3; k++) {
+          //  计算jacob矩阵行列式
+          Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
+          for (int kk = 0; kk < 3; kk++) {
+            for (int ii = 0; ii < 3; ii++) {
+              for (int jj = 0; jj < 3; jj++) {
+                std::string str_jacob_ki = "";
+                str_jacob_ki += "+(" + arr_Ni_partial.at(kk).at(jj) + ")*" +
+                                std::to_string(point_arr.at(kk).at(jj));
+                jacob(kk, ii) =
+                    TOOL::FuncCal(str_jacob_ki, gauss_sample[i],
+                                  gauss_sample.at(j), gauss_sample.at(k));
+              }
+            }
+          }
+
           // 获取三个权值求积
           double total_weight =
               gauss_weight.at(i) * gauss_weight.at(j) * gauss_weight.at(k);
@@ -355,7 +392,8 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
           sub_B(5, 23) = TOOL::FuncCal(str_N8_eta, gauss_sample.at(i),
                                        gauss_sample.at(j), gauss_sample.at(k));
 
-          _loc_k += total_weight * sub_B.transpose() * D * sub_B;
+          _loc_k += total_weight * sub_B.transpose() * D * sub_B *
+                    jacob.determinant();
         }
       }
     }
