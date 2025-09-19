@@ -13,7 +13,7 @@ void Parser::ParserFile(const std::string &file_address) {
       std::string line;
       std::getline(file, line);
       std::vector<std::string> line_devided = DevideLine(line);
-      std::array<boost::any, 10> temp_content;
+      std::array<boost::any, 20> temp_content;
       for (int i = 0; i < line_devided.size(); i++) {
         if (IsNumber(line_devided.at(i))) {
           if (IsInt(line_devided.at(i))) {
@@ -83,7 +83,7 @@ std::vector<std::string> Parser::DevideLine(const std::string &line) {
   return result;
 }
 
-std::vector<std::array<boost::any, 10>> &Parser::GetData() {
+std::vector<std::array<boost::any, 20>> &Parser::GetData() {
   return _file_data;
 }
 

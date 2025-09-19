@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 namespace MAPPER {
-using cards = std::vector<std::array<boost::any, 10>>;
+using cards = std::vector<std::array<boost::any, 20>>;
 // 文件解析器，负责解析文件信息
 class Parser {
  public:

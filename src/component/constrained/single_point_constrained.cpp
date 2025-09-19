@@ -2,7 +2,7 @@
 
 namespace COMPONENT {
 
-int GetElemNumPerCard(const std::array<boost::any, 10> &card) {
+int GetElemNumPerCard(const std::array<boost::any, 20> &card) {
   int data_num = 0;
   for (int i = 9; i >= 0; i--) {
     if (card.at(i).empty()) {
