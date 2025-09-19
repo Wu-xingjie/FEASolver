@@ -22,6 +22,10 @@ Chexa8::Chexa8() {
 }
 
 void Chexa8::SetComp(const file_data &datas) {
+  if (datas.size() != 2) {
+    throw std::runtime_error(
+        "[ERROR]:func(Chexa8::SetComp)>>>chexa8单元节点输入错误！");
+  }
   auto card = datas.front();
   _id = boost::any_cast<int>(card.at(1));
   _pid = boost::any_cast<int>(card.at(2));
@@ -32,7 +36,8 @@ void Chexa8::SetComp(const file_data &datas) {
   _G5 = boost::any_cast<int>(card.at(7));
   _G6 = boost::any_cast<int>(card.at(8));
   _G7 = boost::any_cast<int>(card.at(9));
-  _G8 = boost::any_cast<int>(card.at(10));
+  auto card2 = datas.at(1);
+  _G8 = boost::any_cast<int>(card2.at(1));
 }
 
 double Chexa8::LenOfNode(const Eigen::Vector2d &n1, const Eigen::Vector2d &n2) {

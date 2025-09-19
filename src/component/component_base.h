@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace COMPONENT {
-typedef std::vector<std::array<boost::any, 20>> file_data;
+typedef std::vector<std::array<boost::any, 10>> file_data;
 // 所有元件都继承自该类
 class CompBase {
 public:

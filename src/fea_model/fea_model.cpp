@@ -5,8 +5,8 @@ namespace MODEL {
 
 Model::Model() {
   // 创建全局坐标系
-  std::vector<std::array<boost::any, 20>> datas;
-  std::array<boost::any, 20> arr_data{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  std::vector<std::array<boost::any, 10>> datas;
+  std::array<boost::any, 10> arr_data{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   datas.push_back(arr_data);
   auto gc = boost::make_shared<COMPONENT::GlobalCoord>();
   gc->SetComp(datas);

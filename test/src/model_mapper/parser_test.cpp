@@ -8,7 +8,7 @@ int main() {
   MAPPER::Parser parser;
   std::cout << "file address: " << addr << std::endl;
   parser.ParserFile(addr);
-  std::vector<std::array<boost::any, 20>> data = parser.GetData();
+  std::vector<std::array<boost::any, 10>> data = parser.GetData();
   for (auto elem : data) {
     for (int i = 0; i < elem.size(); i++) {
       if (!elem.at(i).empty()) {
