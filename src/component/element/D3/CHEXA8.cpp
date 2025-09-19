@@ -221,7 +221,7 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
           for (int kk = 0; kk < 3; kk++) {
             for (int ii = 0; ii < 3; ii++) {
               std::string str_jacob_ki = "";
-              for (int jj = 0; jj < 3; jj++) {
+              for (int jj = 0; jj < 8; jj++) {
                 str_jacob_ki += "+(" + arr_Ni_partial.at(kk).at(jj) + ")*" +
                                 std::to_string(point_arr.at(ii).at(jj));
               }
