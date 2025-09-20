@@ -13,9 +13,6 @@ public:
   MatrixAssemble(const MODEL::Model &model);
   ~MatrixAssemble() = default;
 
-  // 手动初始化矩阵组装器
-  void InitialMatrixAssemble(const MODEL::Model& model);
-  
   // 给控制方程施加约束
   void AddConstrain();
 

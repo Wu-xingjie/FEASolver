@@ -40,37 +40,6 @@ MatrixAssemble::MatrixAssemble(const MODEL::Model &model) {
   }
 }
 
-void MatrixAssemble::InitialMatrixAssemble(const MODEL::Model &model) {
-  _model = model;
-
-  std::set<int> _node_used;
-  for (auto elem : _model._element) {
-    auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
-    if (!base_elem) {
-      throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
-    }
-    auto ns = base_elem->GetNodes();
-    for (auto n : ns) {
-      _node_used.insert(n);
-    }
-  }
-  _dof += 6 * _node_used.size();
-  std::vector<int> vec_node_used;
-  for (auto elem : _node_used) {
-    vec_node_used.push_back(elem);
-  }
-  _matrix_k = Eigen::MatrixXd::Zero(_dof, _dof);
-  _vector_f = Eigen::VectorXd::Zero(_dof, 1);
-  std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
-  for (int i = 1; i < _node_used.size() + 1; i++) {
-    for (int j = 0; j < 6; j++) {
-      std::string k = std::to_string(vec_node_used.at(i - 1)) + "_" + xyz.at(j);
-      // _dof2idx[k] = 6 * (i - 1) + j;
-      _dof2idx.insert({k, 6 * (i - 1) + j});
-    }
-  }
-}
-
 void MatrixAssemble::AssembleK() {
   for (auto elem : _model._element) {
     auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
