@@ -1,6 +1,6 @@
 #include "static_solver.h"
 #include "component/load/load_base.h"
-#include "element/elemen_base.h"
+#include "component/element/elemen_base.h"
 
 namespace SOLVER {
 void StaticSolver::AssembleMatrix() {
