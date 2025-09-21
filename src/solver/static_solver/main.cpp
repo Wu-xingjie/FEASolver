@@ -1,4 +1,5 @@
 #include "static_solver.h"
+#include <fstream>
 
 int main(const int argc, const char *argv[]) {
   try {
@@ -10,9 +11,27 @@ int main(const int argc, const char *argv[]) {
     static_solver.GenCompLib(file_path);
     static_solver.AssembleMatrix();
     auto result = static_solver.solver();
-    for (auto &elem : result) {
-      std::cout << elem.first << "->" << elem.second << std::endl;
+    // 处理输出文件path
+    auto idx = file_path.rfind("/");
+    if (idx == std::string::npos) {
+      throw std::runtime_error("[ERROR]:(main)>>>计算文件绝对路径异常！");
     }
+    std::string file_dir = file_path.substr(0, idx);
+    std::string output_file = file_dir + "/output.txt";
+    std::cout << output_file << std::endl;
+
+    // 输出计算结果
+    std::fstream result_file;
+    result_file.open(output_file, std::ios_base::out);
+    if (result_file.is_open()) {
+      for (auto &elem : result) {
+        result_file << elem.first << "->" << elem.second << std::endl;
+      }
+    }else{
+      throw std::runtime_error("[ERROR]:(main)>>>输出文件无法打开！");
+    }
+
+    result_file.close();
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }

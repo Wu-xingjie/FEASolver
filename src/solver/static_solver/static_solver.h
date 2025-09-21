@@ -1,6 +1,6 @@
 #pragma once
 
-#include "solver_base.h"
+#include "solver/solver_base.h"
 
 namespace SOLVER {
 // 结构静力学求解器

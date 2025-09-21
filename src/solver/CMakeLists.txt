@@ -1,4 +1,31 @@
 message("************** solver start *************")
 add_subdirectory(static_solver)
 add_library(SolverBase SHARED solver_base.cpp)
+
+
+target_link_libraries(SolverBase tool)
+target_link_libraries(SolverBase coord)
+target_link_libraries(SolverBase node)
+target_link_libraries(SolverBase elem)
+target_link_libraries(SolverBase mat)
+target_link_libraries(SolverBase prop)
+target_link_libraries(SolverBase mapper)
+target_link_libraries(SolverBase factory)
+target_link_libraries(SolverBase FEAmodel)
+target_link_libraries(SolverBase constrain)
+target_link_libraries(SolverBase matrix_assemble)
+target_link_libraries(SolverBase ${BOOST_LIBS})
+
+target_include_directories(SolverBase INTERFACE ${Eigen3_INC_DIRS})
+target_include_directories(SolverBase PUBLIC ${BOOST_INCLUDE_DIRS})
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/model_mapper)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/component/constrained)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/component_factory)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/FEAmodel)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/matrix_assemble)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/tool)
+target_include_directories(SolverBase PUBLIC ${CMAKE_SOURCE_DIR}/src/solver)
+
+
 message("************** solver end   *************")
