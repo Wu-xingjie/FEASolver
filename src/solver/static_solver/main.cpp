@@ -18,7 +18,7 @@ int main(const int argc, const char *argv[]) {
     }
     std::string file_dir = file_path.substr(0, idx);
     std::string output_file = file_dir + "/output.txt";
-    std::cout << output_file << std::endl;
+    std::cout << "计算结果文件路径:" << output_file << std::endl;
 
     // 输出计算结果
     std::fstream result_file;
@@ -27,7 +27,7 @@ int main(const int argc, const char *argv[]) {
       for (auto &elem : result) {
         result_file << elem.first << "->" << elem.second << std::endl;
       }
-    }else{
+    } else {
       throw std::runtime_error("[ERROR]:(main)>>>输出文件无法打开！");
     }
 

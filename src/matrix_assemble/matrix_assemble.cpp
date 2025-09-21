@@ -90,7 +90,6 @@ void MatrixAssemble::AssembleLoad() {
       throw "[ERROR]:func(AssembleLoad): 无法获得载荷！";
     }
     auto global_load = base_load->GetGLobalLoad(_model);
-    std::cout << "global_load: " << std::endl << global_load << std::endl;
     auto nodes = base_load->GetNodes();
 
     // 创建载荷列阵维度到自由度的映射关系
@@ -109,7 +108,6 @@ void MatrixAssemble::AssembleLoad() {
       _vector_f(global_load_idx) += global_load(i);
     }
   }
-  std::cout << "_vector_f: " << std::endl << _vector_f << std::endl;
 }
 
 void MatrixAssemble::AddConstrain() {
