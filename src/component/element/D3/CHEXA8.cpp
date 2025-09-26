@@ -158,45 +158,45 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
 
     // 应力-应变矩阵
     Eigen::MatrixXd D = Eigen::MatrixXd::Zero(6, 6);
-    D(0, 0) = 1;
-    D(1, 1) = 1;
-    D(2, 2) = 1;
-    D(0, 1) = NU / (1 - NU);
-    D(1, 0) = NU / (1 - NU);
-    D(0, 2) = NU / (1 - NU);
-    D(2, 0) = NU / (1 - NU);
-    D(1, 2) = NU / (1 - NU);
-    D(2, 1) = NU / (1 - NU);
-    D(3, 3) = (1 - 2 * NU) / (2 * (1 - NU));
-    D(4, 4) = (1 - 2 * NU) / (2 * (1 - NU));
-    D(5, 5) = (1 - 2 * NU) / (2 * (1 - NU));
-    D = (E * (1 - NU) / ((1 + NU) * (1 - 2 * NU))) * D;
+    D(0, 0) = 1.0;
+    D(1, 1) = 1.0;
+    D(2, 2) = 1.0;
+    D(0, 1) = NU / (1.0 - NU);
+    D(1, 0) = NU / (1.0 - NU);
+    D(0, 2) = NU / (1.0 - NU);
+    D(2, 0) = NU / (1.0 - NU);
+    D(1, 2) = NU / (1.0 - NU);
+    D(2, 1) = NU / (1.0 - NU);
+    D(3, 3) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D(4, 4) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D(5, 5) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D = (E * (1.0 - NU) / ((1.0 + NU) * (1.0 - 2.0 * NU))) * D;
 
     // 以字符串的形式表示出形函数对自然坐标的偏导
-    std::string str_N1_epsilon = "(1-y)*(1-z)/8";
-    std::string str_N1_eta = "-(1+x)*(1-z)/8";
-    std::string str_N1_gama = "-(1+x)*(1-y)/8";
-    std::string str_N2_epsilon = "(1+y)*(1-z)/8";
-    std::string str_N2_eta = "(1+x)*(1-z)/8";
-    std::string str_N2_gama = "-(1+x)*(1+y)/8";
-    std::string str_N3_epsilon = "-(1+y)*(1-z)/8";
-    std::string str_N3_eta = "(1-x)*(1-z)/8";
-    std::string str_N3_gama = "-(1-x)*(1+y)/8";
-    std::string str_N4_epsilon = "-(1-y)*(1-z)/8";
-    std::string str_N4_eta = "-(1-x)*(1-z)/8";
-    std::string str_N4_gama = "-(1-x)*(1-y)/8";
-    std::string str_N5_epsilon = "(1-y)*(1+z)/8";
-    std::string str_N5_eta = "-(1+x)*(1+z)/8";
-    std::string str_N5_gama = "(1+x)*(1-y)/8";
-    std::string str_N6_epsilon = "(1+y)*(1+z)/8";
-    std::string str_N6_eta = "(1+x)*(1+z)/8";
-    std::string str_N6_gama = "(1+x)*(1+y)/8";
-    std::string str_N7_epsilon = "-(1+y)*(1+z)/8";
-    std::string str_N7_eta = "(1-x)*(1+z)/8";
-    std::string str_N7_gama = "(1-x)*(1+y)/8";
-    std::string str_N8_epsilon = "-(1-y)*(1+z)/8";
-    std::string str_N8_eta = "-(1-x)*(1+z)/8";
-    std::string str_N8_gama = "(1-x)*(1-y)/8";
+    std::string str_N1_epsilon = "(1.0-y)*(1.0-z)*0.125";
+    std::string str_N1_eta = "-(1.0+x)*(1.0-z)*0.125";
+    std::string str_N1_gama = "-(1.0+x)*(1.0-y)*0.125";
+    std::string str_N2_epsilon = "(1.0+y)*(1.0-z)*0.125";
+    std::string str_N2_eta = "(1.0+x)*(1.0-z)*0.125";
+    std::string str_N2_gama = "-(1.0+x)*(1.0+y)*0.125";
+    std::string str_N3_epsilon = "-(1.0+y)*(1.0-z)*0.125";
+    std::string str_N3_eta = "(1.0-x)*(1.0-z)*0.125";
+    std::string str_N3_gama = "-(1.0-x)*(1.0+y)*0.125";
+    std::string str_N4_epsilon = "-(1.0-y)*(1.0-z)*0.125";
+    std::string str_N4_eta = "-(1.0-x)*(1.0-z)*0.125";
+    std::string str_N4_gama = "-(1.0-x)*(1.0-y)*0.125";
+    std::string str_N5_epsilon = "(1.0-y)*(1.0+z)*0.125";
+    std::string str_N5_eta = "-(1.0+x)*(1.0+z)*0.125";
+    std::string str_N5_gama = "(1.0+x)*(1.0-y)*0.125";
+    std::string str_N6_epsilon = "(1.0+y)*(1.0+z)*0.125";
+    std::string str_N6_eta = "(1.0+x)*(1.0+z)*0.125";
+    std::string str_N6_gama = "(1.0+x)*(1.0+y)*0.125";
+    std::string str_N7_epsilon = "-(1.0+y)*(1.0+z)*0.125";
+    std::string str_N7_eta = "(1.0-x)*(1.0+z)*0.125";
+    std::string str_N7_gama = "(1.0-x)*(1.0+y)*0.125";
+    std::string str_N8_epsilon = "-(1.0-y)*(1.0+z)*0.125";
+    std::string str_N8_eta = "-(1.0-x)*(1.0+z)*0.125";
+    std::string str_N8_gama = "(1.0-x)*(1.0-y)*0.125";
 
     std::array<std::string, 8> Ni_epsilon{
         str_N1_epsilon, str_N2_epsilon, str_N3_epsilon, str_N4_epsilon,
@@ -214,13 +214,15 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
         Ni_epsilon, Ni_eta, Ni_gama};
 
     // 拿到高斯积分的采样点和积分权值
-    auto gauss_sample = TOOL::GetGaussSampPoint(3);
-    auto gauss_weight = TOOL::GetGaussWeightVal(3);
+    int gauss_num = 2;
+    auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
+    auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
 
     // 获取单元刚度矩阵
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < 3; k++) {
+    int num = 1;
+    for (int i = 0; i < gauss_num; i++) {
+      for (int j = 0; j < gauss_num; j++) {
+        for (int k = 0; k < gauss_num; k++) {
           //  计算jacob矩阵行列式
           Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
           for (int kk = 0; kk < 3; kk++) {
@@ -420,8 +422,17 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
             sub_B(5, 22) = N8_X(2);
             sub_B(5, 23) = N8_X(1);
 
+            // auto transpose_B = sub_B.transpose();
+            // auto cur_k =
+            // total_weight * sub_B.transpose() * D * sub_B *
+            // jacob.determinant();
+            // TOOL::DisplayMatrixXd(cur_k, "cur_k_" + std::to_string(num),
+            // true);
             _loc_k += total_weight * sub_B.transpose() * D * sub_B *
                       jacob.determinant();
+            // TOOL::DisplayMatrixXd(_loc_k, "_loc_k_" + std::to_string(num),
+            // true);
+            num += 1;
           } catch (...) {
             throw std::runtime_error("[ERROR]:func(Chexa8::GenerateK)>>>单元" +
                                      std::to_string(_id) +
