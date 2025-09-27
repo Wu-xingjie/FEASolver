@@ -74,9 +74,12 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto n2_vec = Eigen::Vector2d{N2_datas(0), N2_datas(1)};
     auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
     auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
-    // 计算单元长和宽
-    // auto length = 0.5 * LenOfNode(n1_vec, n2_vec);
-    // auto weight = 0.5 * LenOfNode(n2_vec, n3_vec);
+
+    std::array<double, 8> x_arr{N1_datas(0), N2_datas(0), N3_datas(0),
+                                N4_datas(0)};
+    std::array<double, 8> y_arr{N1_datas(1), N2_datas(1), N3_datas(1),
+                                N4_datas(1)};
+    std::array<std::array<double, 8>, 2> point_arr{x_arr, y_arr};
     // 等参单元在自然坐标系下单元的边长为2
     double length = 1;
     double weight = 1;
@@ -138,385 +141,116 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
       G2 = mat_info2.at(2);
     }
 
-    // Jacob矩阵
-    std::string x1 = std::to_string(n1_vec(0));
-    std::string y1 = std::to_string(n1_vec(1));
-    std::string x2 = std::to_string(n2_vec(0));
-    std::string y2 = std::to_string(n2_vec(1));
-    std::string x3 = std::to_string(n3_vec(0));
-    std::string y3 = std::to_string(n3_vec(1));
-    std::string x4 = std::to_string(n4_vec(0));
-    std::string y4 = std::to_string(n4_vec(1));
+    // 物理矩阵
+    // 膜行为物理矩阵
+    Eigen::MatrixXd D_plane = Eigen::MatrixXd::Zero(3, 3);
+    D_plane(0, 0) = 1;
+    D_plane(1, 1) = 1;
+    D_plane(1, 0) = NU1;
+    D_plane(0, 1) = NU1;
+    D_plane(2, 2) = (1 - NU1) / 2.0;
+    D_plane *= E1 / (1 - std::pow(NU1, 2));
 
-    std::string x_epsilon = "((1-y)*(" + x2 + "-" + x1 + ")" + "*0.25+" +
-                            "(1+y)*(" + x3 + "-" + x4 + ")" + "*0.25" + ")";
-    std::string x_eta = "((1-x)*(" + x4 + "-" + x1 + ")" + "*0.25+" +
-                        "(1+x)*(" + x3 + "-" + x4 + ")" + "*0.25" + ")";
-    std::string y_epsilon = "((1-y)*(" + y2 + "-" + y1 + ")" + "*0.25+" +
-                            "(1+y)*(" + y3 + "-" + y4 + ")" + "*0.25" + ")";
-    std::string y_eta = "((1-x)*(" + y4 + "-" + y1 + ")" + "*0.25+" +
-                        "(1+x)*(" + y3 + "-" + y4 + ")" + "*0.25" + ")";
+    // 以字符串的形式表示出形函数对自然坐标的偏导
+    std::string str_N1_epsilon = "-0.25*(1-y)";
+    std::string str_N1_eta = "-0.25*(1-x)";
+    std::string str_N2_epsilon = "0.25*(1-y)";
+    std::string str_N2_eta = "-0.25*(1+x)";
+    std::string str_N3_epsilon = "0.25*(1+y)";
+    std::string str_N3_eta = "0.25*(1+x)";
+    std::string str_N4_epsilon = "-0.25*(1+y)";
+    std::string str_N4_eta = "0.25*(1-x)";
 
-    std::string det_jacob_str =
-        "(" + x_epsilon + "*" + y_eta + "-" + x_eta + "*" + y_epsilon + ")";
+    std::array<std::string, 4> Ni_epsilon{str_N1_epsilon, str_N2_epsilon,
+                                          str_N3_epsilon, str_N4_epsilon};
+    std::array<std::string, 4> Ni_eta{str_N1_eta, str_N2_eta, str_N3_eta,
+                                      str_N4_eta};
+    std::array<std::array<std::string, 4>, 2> arr_Ni_partial{Ni_epsilon,
+                                                             Ni_eta};
 
-    // =============== 平面应力行为 ===============
-    // 形函数对自然坐标的偏导
-    std::string N1_epsilon = "((y-1)*0.25)";
-    std::string N1_eta = "((x-1)*0.25)";
-    std::string N2_epsilon = "((1-y)*0.25)";
-    std::string N2_eta = "(-(1+x)*0.25)";
-    std::string N3_epsilon = "((1+y)*0.25)";
-    std::string N3_eta = "((1+x)*0.25)";
-    std::string N4_epsilon = "(-(1+y)*0.25)";
-    std::string N4_eta = "((1-x)*0.25)";
-    std::string str_length = std::to_string(length);
-    std::string str_weight = std::to_string(weight);
-    std::string str_nu1 = std::to_string(NU1);
+    // 获取高斯积分点和积分权值
+    int gauss_num = 3;
+    auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
+    auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
 
     Eigen::MatrixXd k_plane = Eigen::MatrixXd::Zero(8, 8);
-
-    std::string exp_k00 = "(" + N1_epsilon + "/" + str_length + ")^2+(1-" +
-                          str_nu1 + ")*(" + N1_eta + ")^2/(2*" + str_weight +
-                          "^2)";
-    auto k00 = TOOL::GaussIntegral("(" + exp_k00 + ")*" + det_jacob_str, 3, 2);
-    k_plane(0, 0) = *k00;
-
-    std::string exp_k01 = "(" + str_nu1 + "*" + N1_epsilon + "*" + N1_eta +
-                          "/(" + str_weight + "*" + str_length + "))+((1-" +
-                          str_nu1 + ")*" + N1_epsilon + "*" + N1_eta + ")/(2*" +
-                          str_length + "*" + str_weight + ")";
-    auto k01 = TOOL::GaussIntegral("(" + exp_k01 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 0) = *k01;
-    k_plane(0, 1) = *k01;
-
-    auto exp_k02 = N1_epsilon + "*" + N2_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N2_eta + "/(2*" +
-                   str_weight + "^2)";
-    auto k02 = TOOL::GaussIntegral("(" + exp_k02 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 0) = *k02;
-    k_plane(0, 2) = *k02;
-
-    auto exp_k03 = str_nu1 + "*" + N1_epsilon + "*" + N2_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_eta + "*" + N2_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k03 = TOOL::GaussIntegral("(" + exp_k03 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 0) = *k03;
-    k_plane(0, 3) = *k03;
-
-    auto exp_k04 = N1_epsilon + "*" + N3_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N3_epsilon +
-                   "/(2*" + str_weight + "^2)";
-    auto k04 = TOOL::GaussIntegral("(" + exp_k04 + ")*" + det_jacob_str, 3, 2);
-    k_plane(4, 0) = *k04;
-    k_plane(0, 4) = *k04;
-
-    auto exp_k05 = str_nu1 + "*" + N1_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k05 = TOOL::GaussIntegral("(" + exp_k05 + ")*" + det_jacob_str, 3, 2);
-    k_plane(5, 0) = *k05;
-    k_plane(0, 5) = *k05;
-
-    auto exp_k06 = N1_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N1_eta + "*" + N4_eta + "/(2*" +
-                   str_weight + "^2)";
-    auto k06 = TOOL::GaussIntegral("(" + exp_k06 + ")*" + det_jacob_str, 3, 2);
-    k_plane(6, 0) = *k06;
-    k_plane(0, 6) = *k06;
-
-    auto exp_k07 = str_nu1 + "*" + N1_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k07 = TOOL::GaussIntegral("(" + exp_k07 + ")*" + det_jacob_str, 3, 2);
-    k_plane(7, 0) = *k07;
-    k_plane(0, 7) = *k07;
-
-    std::string exp_k11 = "(" + N1_eta + "/" + str_weight + ")^2+(1-" +
-                          str_nu1 + ")*(" + N1_epsilon + ")^2/(2*" +
-                          str_length + "^2)";
-    auto k11 = TOOL::GaussIntegral("(" + exp_k11 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 1) = *k11;
-
-    auto exp_k12 = str_nu1 + "*" + N1_eta + "*" + N2_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_epsilon + "*" + N2_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k12 = TOOL::GaussIntegral("(" + exp_k12 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 2) = *k12;
-    k_plane(2, 1) = *k12;
-
-    auto exp_k13 = N1_eta + "*" + N2_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N1_epsilon + "*" + N2_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k13 = TOOL::GaussIntegral("(" + exp_k13 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 3) = *k13;
-    k_plane(3, 1) = *k13;
-
-    auto exp_k14 = str_nu1 + "*" + N1_eta + "*" + N3_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_epsilon + "*" + N3_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k14 = TOOL::GaussIntegral("(" + exp_k14 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 4) = *k14;
-    k_plane(4, 1) = *k14;
-
-    auto exp_k15 = N1_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N1_epsilon + "*" + N3_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k15 = TOOL::GaussIntegral("(" + exp_k15 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 5) = *k15;
-    k_plane(5, 1) = *k15;
-
-    auto exp_k16 = str_nu1 + "*" + N1_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N1_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k16 = TOOL::GaussIntegral("(" + exp_k16 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 6) = *k16;
-    k_plane(6, 1) = *k16;
-
-    auto exp_k17 = N1_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N1_epsilon + "*" + N4_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k17 = TOOL::GaussIntegral("(" + exp_k17 + ")*" + det_jacob_str, 3, 2);
-    k_plane(1, 7) = *k17;
-    k_plane(7, 1) = *k17;
-
-    std::string exp_k22 = "(" + N2_epsilon + "/" + str_length + ")^2+(1-" +
-                          str_nu1 + ")*(" + N2_eta + ")^2/(2*" + str_weight +
-                          "^2)";
-    auto k22 = TOOL::GaussIntegral("(" + exp_k22 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 2) = *k22;
-
-    auto exp_k23 = str_nu1 + "*" + N2_eta + "*" + N2_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N2_epsilon + "*" + N2_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k23 = TOOL::GaussIntegral("(" + exp_k23 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 3) = *k23;
-    k_plane(3, 2) = *k23;
-
-    auto exp_k24 = N2_epsilon + "*" + N3_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N2_eta + "*" + N3_eta + "/(2*" +
-                   str_weight + "^2)";
-    auto k24 = TOOL::GaussIntegral("(" + exp_k24 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 4) = *k24;
-    k_plane(4, 2) = *k24;
-
-    auto exp_k25 = str_nu1 + "*" + N2_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N2_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k25 = TOOL::GaussIntegral("(" + exp_k25 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 5) = *k25;
-    k_plane(5, 2) = *k25;
-
-    auto exp_k26 = N2_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N2_eta + "*" + N4_eta + "/(2*" +
-                   str_weight + "^2)";
-    auto k26 = TOOL::GaussIntegral("(" + exp_k26 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 6) = *k26;
-    k_plane(6, 2) = *k26;
-
-    auto exp_k27 = str_nu1 + "*" + N2_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N2_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k27 = TOOL::GaussIntegral("(" + exp_k27 + ")*" + det_jacob_str, 3, 2);
-    k_plane(2, 7) = *k27;
-    k_plane(7, 2) = *k27;
-
-    std::string exp_k33 = "(" + N2_eta + "/" + str_weight + ")^2+(1-" +
-                          str_nu1 + ")*(" + N2_epsilon + ")^2/(2*" +
-                          str_length + "^2)";
-    auto k33 = TOOL::GaussIntegral("(" + exp_k33 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 3) = *k33;
-
-    auto exp_k34 = str_nu1 + "*" + N2_eta + "*" + N3_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N2_epsilon + "*" + N3_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k34 = TOOL::GaussIntegral("(" + exp_k34 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 4) = *k34;
-    k_plane(4, 3) = *k34;
-
-    auto exp_k35 = N2_eta + "*" + N3_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N2_epsilon + "*" + N3_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k35 = TOOL::GaussIntegral("(" + exp_k35 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 5) = *k35;
-    k_plane(5, 3) = *k35;
-
-    auto exp_k36 = str_nu1 + "*" + N2_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N2_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k36 = TOOL::GaussIntegral("(" + exp_k36 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 6) = *k36;
-    k_plane(6, 3) = *k36;
-
-    auto exp_k37 = N2_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N2_epsilon + "*" + N4_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k37 = TOOL::GaussIntegral("(" + exp_k37 + ")*" + det_jacob_str, 3, 2);
-    k_plane(3, 7) = *k37;
-    k_plane(7, 3) = *k37;
-
-    std::string exp_k44 = "(" + N3_epsilon + "/" + str_length + ")^2+(1-" +
-                          str_nu1 + ")*(" + N3_eta + ")^2/(2*" + str_weight +
-                          "^2)";
-    auto k44 = TOOL::GaussIntegral("(" + exp_k44 + ")*" + det_jacob_str, 3, 2);
-    k_plane(4, 4) = *k44;
-
-    auto exp_k45 = str_nu1 + "*" + N3_epsilon + "*" + N3_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N3_eta + "*" + N3_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k45 = TOOL::GaussIntegral("(" + exp_k45 + ")*" + det_jacob_str, 3, 2);
-    k_plane(4, 5) = *k45;
-    k_plane(5, 4) = *k45;
-
-    auto exp_k46 = N3_epsilon + "*" + N4_epsilon + "/(" + str_length +
-                   "^2)+(1-" + str_nu1 + ")*" + N3_eta + "*" + N4_eta + "/(2*" +
-                   str_weight + "^2)";
-    auto k46 = TOOL::GaussIntegral("(" + exp_k46 + ")*" + det_jacob_str, 3, 2);
-    k_plane(4, 6) = *k46;
-    k_plane(6, 4) = *k46;
-
-    auto exp_k47 = str_nu1 + "*" + N3_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N3_eta + "*" + N4_epsilon + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k47 = TOOL::GaussIntegral("(" + exp_k47 + ")*" + det_jacob_str, 3, 2);
-    k_plane(4, 7) = *k47;
-    k_plane(7, 4) = *k47;
-
-    std::string exp_k55 = "(" + N3_eta + "/" + str_weight + ")^2+(1-" +
-                          str_nu1 + ")*(" + N3_epsilon + ")^2/(2*" +
-                          str_length + "^2)";
-    auto k55 = TOOL::GaussIntegral("(" + exp_k55 + ")*" + det_jacob_str, 3, 2);
-    k_plane(5, 5) = *k55;
-
-    auto exp_k56 = str_nu1 + "*" + N3_eta + "*" + N4_epsilon + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N3_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k56 = TOOL::GaussIntegral("(" + exp_k56 + ")*" + det_jacob_str, 3, 2);
-    k_plane(5, 6) = *k56;
-    k_plane(6, 5) = *k56;
-
-    auto exp_k57 = N3_eta + "*" + N4_eta + "/(" + str_weight + "^2)+(1-" +
-                   str_nu1 + ")*" + N3_epsilon + "*" + N4_epsilon + "/(2*" +
-                   str_length + "^2)";
-    auto k57 = TOOL::GaussIntegral("(" + exp_k57 + ")*" + det_jacob_str, 3, 2);
-    k_plane(5, 7) = *k57;
-    k_plane(7, 5) = *k57;
-
-    std::string exp_k66 = "(" + N4_epsilon + "/" + str_length + ")^2+(1-" +
-                          str_nu1 + ")*(" + N4_eta + ")^2/(2*" + str_weight +
-                          "^2)";
-    auto k66 = TOOL::GaussIntegral("(" + exp_k66 + ")*" + det_jacob_str, 3, 2);
-    k_plane(6, 6) = *k66;
-
-    auto exp_k67 = str_nu1 + "*" + N4_epsilon + "*" + N4_eta + "/(" +
-                   str_weight + "*" + str_length + ")+(1-" + str_nu1 + ")*" +
-                   N4_epsilon + "*" + N4_eta + "/(2*" + str_weight + "*" +
-                   str_length + ")";
-    auto k67 = TOOL::GaussIntegral("(" + exp_k67 + ")*" + det_jacob_str, 3, 2);
-    k_plane(6, 7) = *k67;
-    k_plane(7, 6) = *k67;
-
-    std::string exp_k77 = "(" + N4_eta + "/" + str_weight + ")^2+(" +
-                          N4_epsilon + ")^2*(1-" + str_nu1 + ")/(2*" +
-                          str_length + "^2)";
-    auto k77 = TOOL::GaussIntegral("(" + exp_k77 + ")*" + det_jacob_str, 3, 2);
-    k_plane(7, 7) = *k77;
-
-    // TOOL::DisplayMatrixXd(k_plane);
-    double temp = E1 / (1 - std::pow(NU1, 2));
-    double num = length * weight * t * E1 / (1 - std::pow(NU1, 2));
-    k_plane = t * k_plane * E1 / (1 - std::pow(NU1, 2));
-
-    // =============== 板弯行为 ===============
-    // 板横向弯曲刚度矩阵
     Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
 
-    std::array<int, 4> arr_epsilon{-1, 1, 1, -1};
-    std::array<int, 4> arr_eta{-1, -1, 1, 1};
-    double H =
-        E2 * std::pow(t, 3) / (720 * length * weight * (1 - std::pow(NU2, 2)));
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) {
-        double epsilon0 = arr_epsilon.at(i) * arr_epsilon.at(j);
-        double eta0 = arr_eta.at(i) * arr_eta.at(j);
-        Eigen::Matrix3d k_ij = Eigen::Matrix3d::Zero();
-        k_ij(0, 0) =
-            3 * H *
-            (15 * (std::pow(weight, 2) * epsilon0 / std::pow(length, 2) +
-                   std::pow(length, 2) * epsilon0 / std::pow(weight, 2)) +
-             epsilon0 * eta0 *
-                 (14 - 4 * NU2 +
-                  5 * (std::pow(weight, 2) / std::pow(length, 2) +
-                       std::pow(length, 2) / std::pow(weight, 2))));
+    for (int i = 0; i < gauss_num; i++) {
+      for (int j = 0; j < gauss_num; j++) {
+        //  计算jacob矩阵行列式
+        Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
+        for (int kk = 0; kk < 2; kk++) {
+          for (int ii = 0; ii < 2; ii++) {
+            std::string str_jacob_ki = "";
+            for (int jj = 0; jj < 4; jj++) {
+              str_jacob_ki += "+(" + arr_Ni_partial.at(kk).at(jj) + ")*" +
+                              std::to_string(point_arr.at(ii).at(jj));
+            }
+            jacob(kk, ii) = TOOL::FuncCal(str_jacob_ki, gauss_sample[i],
+                                          gauss_sample.at(j));
+          }
+        }
+        // =============== 平面应力行为 ===============
+        auto jacob_inv = jacob.inverse();
+        // 计算形函数Ni对x,y,z的偏导数
+        double N1_epsilon = TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
+                                          gauss_sample.at(j));
+        double N1_eta =
+            TOOL::FuncCal(str_N1_eta, gauss_sample.at(i), gauss_sample.at(j));
+        Eigen::Vector3d N1_X_nature(N1_epsilon, N1_eta);
+        Eigen::Vector3d N1_X = jacob_inv * N1_X_nature;
 
-        k_ij(0, 1) =
-            -3 * H * weight *
-            (epsilon0 * arr_eta.at(i) *
-                 (2 + 3 * NU2 + 5 * std::pow(length, 2) / std::pow(weight, 2)) +
-             15 * arr_eta.at(i) * std::pow(length, 2) / std::pow(weight, 2) +
-             5 * NU2 * epsilon0 * arr_eta.at(j));
+        double N2_epsilon = TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
+                                          gauss_sample.at(j));
+        double N2_eta =
+            TOOL::FuncCal(str_N2_eta, gauss_sample.at(i), gauss_sample.at(j));
+        Eigen::Vector3d N2_X_nature(N2_epsilon, N2_eta);
+        Eigen::Vector3d N2_X = jacob_inv * N2_X_nature;
 
-        k_ij(0, 2) =
-            3 * H * length *
-            (arr_epsilon.at(i) * eta0 *
-                 (2 + 3 * NU2 + 5 * std::pow(weight, 2) / std::pow(length, 2)) +
-             15 * arr_epsilon.at(i) * std::pow(weight, 2) /
-                 std::pow(length, 2) +
-             5 * NU2 * arr_epsilon.at(j) * eta0);
+        double N3_epsilon = TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
+                                          gauss_sample.at(j));
+        double N3_eta =
+            TOOL::FuncCal(str_N3_eta, gauss_sample.at(i), gauss_sample.at(j));
+        Eigen::Vector3d N3_X_nature(N3_epsilon, N3_eta);
+        Eigen::Vector3d N3_X = jacob_inv * N3_X_nature;
 
-        k_ij(1, 0) =
-            -3 * H * weight *
-            (epsilon0 * arr_eta.at(j) *
-                 (2 + 3 * NU2 + 5 * std::pow(length, 2) / std::pow(weight, 2)) +
-             15 * arr_eta.at(j) * std::pow(length, 2) / std::pow(weight, 2) +
-             5 * NU2 * arr_eta.at(i) * epsilon0);
+        double N4_epsilon = TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
+                                          gauss_sample.at(j));
+        double N4_eta =
+            TOOL::FuncCal(str_N4_eta, gauss_sample.at(i), gauss_sample.at(j));
+        Eigen::Vector3d N4_X_nature(N4_epsilon, N4_eta);
+        Eigen::Vector3d N4_X = jacob_inv * N4_X_nature;
 
-        k_ij(1, 1) = H * std::pow(weight, 2) *
-                     (2 * (1 - NU2) * epsilon0 * (3 + 5 * eta0) +
-                      5 * std::pow(length, 2) * (3 + epsilon0) * (3 + eta0) /
-                          std::pow(weight, 2));
+        // 获取三个权值求积
+        double total_weight = gauss_weight.at(i) * gauss_weight.at(j);
 
-        k_ij(1, 2) = -15 * H * NU2 * length * weight *
-                     (arr_epsilon.at(i) + arr_epsilon.at(j)) *
-                     (arr_eta.at(i) + arr_eta.at(j));
+        // 获取当前积分点的B矩阵
+        Eigen::MatrixXd sub_B = Eigen::MatrixXd::Zero(3, 8);
+        sub_B(0, 0) = N1_X(0);
+        sub_B(0, 2) = N2_X(0);
+        sub_B(0, 4) = N3_X(0);
+        sub_B(0, 6) = N4_X(0);
 
-        k_ij(2, 0) =
-            3 * H * length *
-            (arr_epsilon.at(j) * eta0 *
-                 (2 + 3 * NU2 + 5 * std::pow(weight, 2) / std::pow(length, 2)) +
-             15 * arr_epsilon.at(j) * std::pow(weight, 2) /
-                 std::pow(length, 2) +
-             5 * NU2 * arr_epsilon.at(j) * eta0);
+        sub_B(0, 1) = N1_X(1);
+        sub_B(0, 3) = N2_X(1);
+        sub_B(0, 5) = N3_X(1);
+        sub_B(0, 7) = N4_X(1);
 
-        k_ij(2, 1) = -15 * H * NU2 * length * weight *
-                     (arr_epsilon.at(i) + arr_epsilon.at(j)) *
-                     (arr_eta.at(i) + arr_eta.at(j));
+        sub_B(0, 0) = N1_X(1);
+        sub_B(0, 1) = N1_X(0);
+        sub_B(0, 2) = N2_X(1);
+        sub_B(0, 3) = N2_X(0);
+        sub_B(0, 4) = N3_X(1);
+        sub_B(0, 5) = N3_X(0);
+        sub_B(0, 6) = N4_X(1);
+        sub_B(0, 7) = N4_X(0);
 
-        k_ij(2, 2) = H * std::pow(length, 2) *
-                     (2 * (1 - NU2) * eta0 * (3 + 5 * epsilon0) +
-                      5 * (3 + epsilon0) * (3 + eta0) * std::pow(weight, 2) /
-                          std::pow(length, 2));
-
-        k_bend.block<3, 3>(3 * j, 3 * i) = k_ij;
+        k_plane += t * total_weight * sub_B.transpose() * D_plane * sub_B *
+                   jacob.determinant();
+        // =============== 板弯行为 ===============
       }
     }
-
-    // std::cout << "k_bend:" << std::endl;
-    // TOOL::DisplayMatrixXd(k_bend);
 
     // 设置总刚度矩阵
     // 1: 把板弯刚度矩阵和膜刚度矩阵扩容成24*24的全自由度刚度矩阵
