@@ -150,8 +150,21 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     D_plane(0, 1) = NU1;
     D_plane(2, 2) = (1 - NU1) / 2.0;
     D_plane *= E1 / (1 - std::pow(NU1, 2));
+    // 板弯曲的物理矩阵
+    Eigen::MatrixXd D_bend = Eigen::MatrixXd::Zero(3, 3);
+    D_bend(0, 0) = 1;
+    D_bend(0, 1) = NU2;
+    D_bend(1, 0) = NU2;
+    D_bend(1, 1) = 1;
+    D_bend(2, 2) = (1 - NU2) * 0.5;
+    D_bend *= E2 * t * t * t / (12 * (1 - NU2 * NU2));
 
-    // 以字符串的形式表示出形函数对自然坐标的偏导
+    // 获取高斯积分点和积分权值
+    int gauss_num = 3;
+    auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
+    auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
+
+    // 平面应力计算时以字符串的形式表示出形函数对自然坐标的偏导
     std::string str_N1_epsilon = "-0.25*(1-y)";
     std::string str_N1_eta = "-0.25*(1-x)";
     std::string str_N2_epsilon = "0.25*(1-y)";
@@ -168,14 +181,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     std::array<std::array<std::string, 4>, 2> arr_Ni_partial{Ni_epsilon,
                                                              Ni_eta};
 
-    // 获取高斯积分点和积分权值
-    int gauss_num = 3;
-    auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
-    auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
-
     Eigen::MatrixXd k_plane = Eigen::MatrixXd::Zero(8, 8);
-    Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
-
     for (int i = 0; i < gauss_num; i++) {
       for (int j = 0; j < gauss_num; j++) {
         //  计算jacob矩阵行列式
@@ -191,8 +197,10 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                                           gauss_sample.at(j));
           }
         }
-        // =============== 平面应力行为 ===============
         auto jacob_inv = jacob.inverse();
+
+        // =============== 平面应力行为 ===============
+
         // 计算形函数Ni对x,y,z的偏导数
         double N1_epsilon = TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
                                           gauss_sample.at(j));
@@ -248,7 +256,82 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
 
         k_plane += t * total_weight * sub_B.transpose() * D_plane * sub_B *
                    jacob.determinant();
-        // =============== 板弯行为 ===============
+      }
+    }
+
+    // 板弯曲计算时以字符串形式表示的对全坐标的偏导数
+    std::array<std::array<std::string, 12>, 3> nature_point;
+    std::string coef = std::to_string(t) + "*z*0.25*";
+    // x1 = -1,y1 = -1区间
+    nature_point.at(0).at(0) = coef + "3*(-1)*x*(1-y)";
+    nature_point.at(0).at(1) = "0";
+    nature_point.at(0).at(2) = coef + "(-1)*(1-3*x)*(1-y)";
+    nature_point.at(1).at(0) = coef + "3*(-1)*y*(1-x)";
+    nature_point.at(1).at(1) = coef + "(1-x)*(1-3*y)";
+    nature_point.at(1).at(2) = "0";
+    nature_point.at(2).at(0) = coef + "(3*x^2+3*y^2-4)";
+    nature_point.at(2).at(1) = coef + "(3*y^2-2*y-1)";
+    nature_point.at(2).at(2) = coef + "(-1)*(3*x^2-2*x-1)";
+    // x1 = 1,y1 = -1区间
+    nature_point.at(0).at(3) = coef + "3*x*(1-y)";
+    nature_point.at(0).at(4) = "0";
+    nature_point.at(0).at(5) = coef + "(1+3*x)*(1-y)";
+    nature_point.at(1).at(3) = coef + "3*(-1)*y*(1+x)";
+    nature_point.at(1).at(4) = coef + "(1+x)*(1-3*y)";
+    nature_point.at(1).at(5) = "0";
+    nature_point.at(2).at(3) = coef + "(-1)*(3*x^2+3*y^2-4)";
+    nature_point.at(2).at(4) = coef + "(-1)*(3*y^2-2*y-1)";
+    nature_point.at(2).at(5) = coef + "(-1)*(3*x^2+2*x-1)";
+    // x1 = 1,y1 = 1区间
+    nature_point.at(0).at(6) = coef + "3*x*(1+y)";
+    nature_point.at(0).at(7) = "0";
+    nature_point.at(0).at(8) = coef + "(1+3*x)*(1+y)";
+    nature_point.at(1).at(6) = coef + "3*y*(1+x)";
+    nature_point.at(1).at(7) = coef + "(-1)*(1+x)*(1+3*y)";
+    nature_point.at(1).at(8) = "0";
+    nature_point.at(2).at(6) = coef + "(3*x^2+3*y^2-4)";
+    nature_point.at(2).at(7) = coef + "(-1)*(3*y^2+2*y-1)";
+    nature_point.at(2).at(8) = coef + "(3*x^2+2*x-1)";
+    // x1 = -1,y1 = 1区间
+    nature_point.at(0).at(9) = coef + "3*(-1)*x*(1+y)";
+    nature_point.at(0).at(10) = "0";
+    nature_point.at(0).at(11) = coef + "(-1)*(1-3*x)*(1+y)";
+    nature_point.at(1).at(9) = coef + "3*y*(1-x)";
+    nature_point.at(1).at(10) = coef + "(-1)*(1-x)*(1+3*y)";
+    nature_point.at(1).at(11) = "0";
+    nature_point.at(2).at(9) = coef + "(-1)*(3*x^2+3*y^2-4)";
+    nature_point.at(2).at(10) = coef + "(3*y^2+2*y-1)";
+    nature_point.at(2).at(11) = coef + "(3*x^2-2*x-1)";
+
+    Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
+    for (int i = 0; i < gauss_num; i++) {
+      for (int j = 0; j < gauss_num; j++) {
+        for (int k = 0; k < gauss_num; k++) {
+          //  计算jacob矩阵行列式
+          Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
+          for (int kk = 0; kk < 2; kk++) {
+            for (int ii = 0; ii < 2; ii++) {
+              std::string str_jacob_ki = "";
+              for (int jj = 0; jj < 4; jj++) {
+                str_jacob_ki += "+(" + arr_Ni_partial.at(kk).at(jj) + ")*" +
+                                std::to_string(point_arr.at(ii).at(jj));
+              }
+              jacob(kk, ii) = TOOL::FuncCal(str_jacob_ki, gauss_sample[i],
+                                            gauss_sample.at(j));
+            }
+          }
+          // 计算各个采样点下的几何矩阵B
+          Eigen::MatrixXd B = Eigen::MatrixXd::Zero(3, 12);
+          for (int r = 0; r < 3; r++) {
+            for (int c = 0; c < 12; c++) {
+              B(r, c) =
+                  TOOL::FuncCal(nature_point.at(r).at(c), gauss_sample.at(i),
+                                gauss_sample.at(j), gauss_sample.at(k));
+            }
+          }
+
+          k_bend += 0.5 * t * jacob.determinant() * B.transpose() * D_bend * B;
+        }
       }
     }
 
@@ -311,89 +394,6 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
 }
 
 Eigen::MatrixXd Cquad4Kf::GetGlobalK(const MODEL::Model &model) {
-  // 获取全局坐标系
-  auto global_coord =
-      boost::make_shared<COMPONENT::GlobalCoord>()->GetGeneralCoord();
-  // 构建局部坐标系
-  // 获取节点
-  auto comp_N1 = TOOL::GetCompById(model, CompBase::comp_type::node, _G1);
-  auto N1 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N1);
-  if (!N1) {
-    throw std::runtime_error(
-        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点1获取失败");
-  }
-  auto N1_datas = N1->get_location();
-  auto comp_N2 = TOOL::GetCompById(model, CompBase::comp_type::node, _G2);
-  auto N2 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N2);
-  if (!N2) {
-    throw std::runtime_error(
-        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点2获取失败");
-  }
-  auto N2_datas = N2->get_location();
-  auto comp_N3 = TOOL::GetCompById(model, CompBase::comp_type::node, _G3);
-  auto N3 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N3);
-  if (!N3) {
-    throw std::runtime_error(
-        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点3获取失败");
-  }
-  auto N3_datas = N3->get_location();
-  auto comp_N4 = TOOL::GetCompById(model, CompBase::comp_type::node, _G4);
-  auto N4 = boost::dynamic_pointer_cast<COMPONENT::Node>(comp_N4);
-  if (!N4) {
-    throw std::runtime_error(
-        "[ERROR]:func(Cquad4Kf::GenerateK)>>>节点4获取失败");
-  }
-  auto N4_datas = N4->get_location();
-
-  auto n1_vec = Eigen::Vector2d{N1_datas(0), N1_datas(1)};
-  auto n2_vec = Eigen::Vector2d{N2_datas(0), N2_datas(1)};
-  auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
-  auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
-  // 计算单元长和宽
-  auto length = LenOfNode(n1_vec, n2_vec);
-  auto weight = LenOfNode(n4_vec, n3_vec);
-
-  // 单元中点坐标
-  Eigen::Vector3d mid_point = Eigen::Vector3d::Zero(3);
-  mid_point(0) = (N1_datas(0) + N2_datas(0) + N3_datas(0) + N4_datas(0)) / 4;
-  mid_point(1) = (N1_datas(1) + N2_datas(1) + N3_datas(1) + N4_datas(1)) / 4;
-  mid_point(2) = (N1_datas(2) + N2_datas(2) + N3_datas(2) + N4_datas(2)) / 4;
-
-  // 计算局部坐标系坐标轴
-  auto loc_axis_x = TOOL::NodesToCoord(model, _G1, _G2)->_vec1;
-  auto loc_axis_y = TOOL::NodesToCoord(model, _G1, _G4)->_vec1;
-  auto loc_axis_z = loc_axis_x.cross(loc_axis_y);
-
-  GeneralCoord loc_coord;
-  loc_coord._coord_origin = mid_point;
-  loc_coord._dim_type = GeneralCoord::gen_coord_type::dim3;
-  loc_coord._vec1 = loc_axis_x.normalized();
-  loc_coord._vec2 = loc_axis_y.normalized();
-  loc_coord._vec3 = loc_axis_z.normalized();
-
-  // 生成坐标变换矩阵
-  auto trans_matrix_block = TOOL::TransCoordToCoord(global_coord, loc_coord);
-
-  // std::cout << "坐标变换矩阵:" << std::endl;
-  // TOOL::DisplayMatrixXd(trans_matrix_block);
-
-  Eigen::MatrixXd trans_matrix = Eigen::MatrixXd::Zero(24, 24);
-  trans_matrix.block<3, 3>(0, 0) = trans_matrix_block;
-  trans_matrix.block<3, 3>(3, 3) = trans_matrix_block;
-  trans_matrix.block<3, 3>(6, 6) = trans_matrix_block;
-  trans_matrix.block<3, 3>(9, 9) = trans_matrix_block;
-  trans_matrix.block<3, 3>(12, 12) = trans_matrix_block;
-  trans_matrix.block<3, 3>(15, 15) = trans_matrix_block;
-  trans_matrix.block<3, 3>(18, 18) = trans_matrix_block;
-  trans_matrix.block<3, 3>(21, 21) = trans_matrix_block;
-
-  // 生成全局坐标系下的单元刚度矩阵
-  // 全局坐标系下单元刚度矩阵
-  Eigen::MatrixXd global_k;
-  // TOOL::DisplayMatrixXd(trans_matrix, "trans_matrix", true);
-  global_k = trans_matrix * _loc_k * trans_matrix.transpose();
-
-  // TOOL::DisplayMatrixXd(global_k, "global_k");
-  return global_k;
+  return _loc_k;
 }
 } // namespace COMPONENT
