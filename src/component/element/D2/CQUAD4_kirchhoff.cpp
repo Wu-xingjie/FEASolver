@@ -75,11 +75,11 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     auto n3_vec = Eigen::Vector2d{N3_datas(0), N3_datas(1)};
     auto n4_vec = Eigen::Vector2d{N4_datas(0), N4_datas(1)};
 
-    std::array<double, 8> x_arr{N1_datas(0), N2_datas(0), N3_datas(0),
+    std::array<double, 4> x_arr{N1_datas(0), N2_datas(0), N3_datas(0),
                                 N4_datas(0)};
-    std::array<double, 8> y_arr{N1_datas(1), N2_datas(1), N3_datas(1),
+    std::array<double, 4> y_arr{N1_datas(1), N2_datas(1), N3_datas(1),
                                 N4_datas(1)};
-    std::array<std::array<double, 8>, 2> point_arr{x_arr, y_arr};
+    std::array<std::array<double, 4>, 2> point_arr{x_arr, y_arr};
     // 等参单元在自然坐标系下单元的边长为2
     double length = 1;
     double weight = 1;
@@ -159,7 +159,10 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     D_bend(2, 2) = (1 - NU2) * 0.5;
     D_bend *= E2 * t * t * t / (12 * (1 - NU2 * NU2));
 
+    TOOL::DisplayMatrixXd(D_bend, "D_bend");
+
     // 获取高斯积分点和积分权值
+    // TODO:单元如果需要采取减缩积分，可以修改变量gauss_num
     int gauss_num = 3;
     auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
     auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
@@ -185,7 +188,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     for (int i = 0; i < gauss_num; i++) {
       for (int j = 0; j < gauss_num; j++) {
         //  计算jacob矩阵行列式
-        Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
+        Eigen::Matrix2d jacob = Eigen::Matrix2d::Zero();
         for (int kk = 0; kk < 2; kk++) {
           for (int ii = 0; ii < 2; ii++) {
             std::string str_jacob_ki = "";
@@ -206,29 +209,29 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                                           gauss_sample.at(j));
         double N1_eta =
             TOOL::FuncCal(str_N1_eta, gauss_sample.at(i), gauss_sample.at(j));
-        Eigen::Vector3d N1_X_nature(N1_epsilon, N1_eta);
-        Eigen::Vector3d N1_X = jacob_inv * N1_X_nature;
+        Eigen::Vector2d N1_X_nature(N1_epsilon, N1_eta);
+        Eigen::Vector2d N1_X = jacob_inv * N1_X_nature;
 
         double N2_epsilon = TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
                                           gauss_sample.at(j));
         double N2_eta =
             TOOL::FuncCal(str_N2_eta, gauss_sample.at(i), gauss_sample.at(j));
-        Eigen::Vector3d N2_X_nature(N2_epsilon, N2_eta);
-        Eigen::Vector3d N2_X = jacob_inv * N2_X_nature;
+        Eigen::Vector2d N2_X_nature(N2_epsilon, N2_eta);
+        Eigen::Vector2d N2_X = jacob_inv * N2_X_nature;
 
         double N3_epsilon = TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
                                           gauss_sample.at(j));
         double N3_eta =
             TOOL::FuncCal(str_N3_eta, gauss_sample.at(i), gauss_sample.at(j));
-        Eigen::Vector3d N3_X_nature(N3_epsilon, N3_eta);
-        Eigen::Vector3d N3_X = jacob_inv * N3_X_nature;
+        Eigen::Vector2d N3_X_nature(N3_epsilon, N3_eta);
+        Eigen::Vector2d N3_X = jacob_inv * N3_X_nature;
 
         double N4_epsilon = TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
                                           gauss_sample.at(j));
         double N4_eta =
             TOOL::FuncCal(str_N4_eta, gauss_sample.at(i), gauss_sample.at(j));
-        Eigen::Vector3d N4_X_nature(N4_epsilon, N4_eta);
-        Eigen::Vector3d N4_X = jacob_inv * N4_X_nature;
+        Eigen::Vector2d N4_X_nature(N4_epsilon, N4_eta);
+        Eigen::Vector2d N4_X = jacob_inv * N4_X_nature;
 
         // 获取三个权值求积
         double total_weight = gauss_weight.at(i) * gauss_weight.at(j);
@@ -260,55 +263,105 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     }
 
     // 板弯曲计算时以字符串形式表示的对全坐标的偏导数
-    std::array<std::array<std::string, 12>, 3> nature_point;
-    std::string coef = std::to_string(t) + "*z*0.25*";
-    // x1 = -1,y1 = -1区间
-    nature_point.at(0).at(0) = coef + "3*(-1)*x*(1-y)";
-    nature_point.at(0).at(1) = "0";
-    nature_point.at(0).at(2) = coef + "(-1)*(1-3*x)*(1-y)";
-    nature_point.at(1).at(0) = coef + "3*(-1)*y*(1-x)";
-    nature_point.at(1).at(1) = coef + "(1-x)*(1-3*y)";
-    nature_point.at(1).at(2) = "0";
-    nature_point.at(2).at(0) = coef + "(3*x^2+3*y^2-4)";
-    nature_point.at(2).at(1) = coef + "(3*y^2-2*y-1)";
-    nature_point.at(2).at(2) = coef + "(-1)*(3*x^2-2*x-1)";
-    // x1 = 1,y1 = -1区间
-    nature_point.at(0).at(3) = coef + "3*x*(1-y)";
-    nature_point.at(0).at(4) = "0";
-    nature_point.at(0).at(5) = coef + "(1+3*x)*(1-y)";
-    nature_point.at(1).at(3) = coef + "3*(-1)*y*(1+x)";
-    nature_point.at(1).at(4) = coef + "(1+x)*(1-3*y)";
-    nature_point.at(1).at(5) = "0";
-    nature_point.at(2).at(3) = coef + "(-1)*(3*x^2+3*y^2-4)";
-    nature_point.at(2).at(4) = coef + "(-1)*(3*y^2-2*y-1)";
-    nature_point.at(2).at(5) = coef + "(-1)*(3*x^2+2*x-1)";
-    // x1 = 1,y1 = 1区间
-    nature_point.at(0).at(6) = coef + "3*x*(1+y)";
-    nature_point.at(0).at(7) = "0";
-    nature_point.at(0).at(8) = coef + "(1+3*x)*(1+y)";
-    nature_point.at(1).at(6) = coef + "3*y*(1+x)";
-    nature_point.at(1).at(7) = coef + "(-1)*(1+x)*(1+3*y)";
-    nature_point.at(1).at(8) = "0";
-    nature_point.at(2).at(6) = coef + "(3*x^2+3*y^2-4)";
-    nature_point.at(2).at(7) = coef + "(-1)*(3*y^2+2*y-1)";
-    nature_point.at(2).at(8) = coef + "(3*x^2+2*x-1)";
-    // x1 = -1,y1 = 1区间
-    nature_point.at(0).at(9) = coef + "3*(-1)*x*(1+y)";
-    nature_point.at(0).at(10) = "0";
-    nature_point.at(0).at(11) = coef + "(-1)*(1-3*x)*(1+y)";
-    nature_point.at(1).at(9) = coef + "3*y*(1-x)";
-    nature_point.at(1).at(10) = coef + "(-1)*(1-x)*(1+3*y)";
-    nature_point.at(1).at(11) = "0";
-    nature_point.at(2).at(9) = coef + "(-1)*(3*x^2+3*y^2-4)";
-    nature_point.at(2).at(10) = coef + "(3*y^2+2*y-1)";
-    nature_point.at(2).at(11) = coef + "(3*x^2-2*x-1)";
+    std::array<std::array<std::string, 2>, 4> nature_point_coord{
+        {{"-1", "-1"}, {"1", "-1"}, {"1", "1"}, {"-1", "1"}}};
+    std::array<std::map<std::string, std::string>, 4> str_N_partial;
+    std::array<std::map<std::string, std::string>, 4> str_N_sec_partial;
+
+    for (int i = 0; i < 4; i++) {
+      std::string epsilon_i = nature_point_coord.at(i).at(0);
+      std::string eta_i = nature_point_coord.at(i).at(1);
+
+      // N对epsilon和eta的一价偏导数
+      {
+        // N0的偏导数
+        str_N_partial.at(i)["N_epsilon"] =
+            "0.125*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i +
+            ")*(2+x*" + epsilon_i + "+y*" + eta_i + "-x^2-y^2)+0.125*(1+y*" +
+            eta_i + "+x*" + epsilon_i + "+x*y*" + eta_i + "*" + epsilon_i +
+            ")*(" + epsilon_i + "-2*x)";
+        str_N_partial.at(i)["N_eta"] =
+            "0.125*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i + ")*(2+x*" +
+            epsilon_i + "+y*" + eta_i + "-x^2-y^2)+0.125*(1+y*" + eta_i +
+            "+x*" + epsilon_i + "+x*y*" + eta_i + "*" + epsilon_i + ")*(" +
+            eta_i + "-2*y)";
+        //  Nx的偏导
+        str_N_partial.at(i)["Nx_epsilon"] =
+            "-0.125*(1-y^2)*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i +
+            ")";
+        str_N_partial.at(i)["Nx_eta"] =
+            "-0.125*(1-y^2)*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
+            ")+0.25*y*(1-y*" + eta_i + "+x*" + epsilon_i + "x*y*" + epsilon_i +
+            "*" + eta_i + ")";
+        // Ny的偏导
+        str_N_partial.at(i)["Ny_epsilon"] =
+            "0.125*" + epsilon_i + "*(" + epsilon_i + "+y*" + epsilon_i + "*" +
+            eta_i + ")*(1-x^2)-0.25*" + epsilon_i + "*(1+y*" + eta_i + "+x*" +
+            epsilon_i + "+x*y*" + epsilon_i + "*" + eta_i + ")";
+
+        str_N_partial.at(i)["Ny_eta"] =
+            "0.125*" + epsilon_i + "*(1-x^2)*(" + eta_i + "+x*" + eta_i + "*" +
+            epsilon_i + ")";
+      }
+      // N对epsilon和eta的二价偏导数
+      {
+        // N0的二价偏导
+        str_N_sec_partial.at(i)["N_2epsilon"] =
+            "0.125*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i + ")*(" +
+            epsilon_i + "-2*x)+0.125*(" + epsilon_i + "+y*" + eta_i + "*" +
+            epsilon_i + ")*(" + epsilon_i + "-2*x)-2*(1+y*" + eta_i + "+x*" +
+            epsilon_i + "+x*y*" + epsilon_i + "*" + eta_i + ")";
+        str_N_sec_partial.at(i)["N_2eta"] =
+            "0.125*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i + ")*(" +
+            eta_i + "-2*y)+0.125*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
+            ")*(" + eta_i + "-2*y)-2*(1+y*" + eta_i + "+x*" + epsilon_i +
+            "+x*y*" + epsilon_i + "*" + eta_i + ")";
+        str_N_sec_partial.at(i)["N_eta_epsilon"] =
+            "0.125*" + epsilon_i + "*" + eta_i + "*(2+x*" + epsilon_i + "+y*" +
+            eta_i + "-x^2-y^2)+0.125*(" + epsilon_i + "+y*" + epsilon_i + "*" +
+            eta_i + ")*(" + eta_i + "-2*y)+0.125*(" + eta_i + "+x*" +
+            epsilon_i + "*" + eta_i + ")*(" + epsilon_i + "-2*x)";
+        // Nx的二价偏导
+        str_N_sec_partial.at(i)["Nx_2epsilon"] = "0";
+        str_N_sec_partial.at(i)["Nx_2eta"] =
+            "0.25*y+(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
+            ")+0.25*(1-y*" + eta_i + "+x*" + epsilon_i + "+x*y*" + epsilon_i +
+            "*" + eta_i + ")+0.25*y*(x*" + epsilon_i + "*" + eta_i + "-" +
+            eta_i + ")";
+        str_N_sec_partial.at(i)["Nx_eta_epsilon"] =
+            "0.25*y*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i +
+            ")-0.125*(1-y^2)*" + epsilon_i + "*" + eta_i;
+        // Ny的二价偏导
+        str_N_sec_partial.at(i)["Ny_2epsilon"] =
+            "-0.25*x*" + epsilon_i + "*(" + epsilon_i + "+y*" + epsilon_i +
+            "*" + eta_i + ")-0.25*" + epsilon_i + "*(1+y*" + eta_i + "+x*" +
+            epsilon_i + "+x*y*" + eta_i + "*" + epsilon_i + ")-0.25*" +
+            epsilon_i + "*x*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i +
+            ")";
+        str_N_sec_partial.at(i)["Ny_2eta"] = "0";
+        str_N_sec_partial.at(i)["Ny_eta_epsilon"] =
+            "-0.25*x*" + epsilon_i + "*(" + eta_i + "+x*" + epsilon_i + "*" +
+            eta_i + ")+0.125*" + eta_i + "*" + epsilon_i + "*" + epsilon_i +
+            "*(1-x^2)";
+      }
+    }
+
+    std::array<std::string, 6> partial_lab{
+        "N_epsilon", "N_eta", "Nx_epsilon", "Nx_eta", "Ny_epsilon", "Ny_eta"};
+    std::array<std::string, 9> sec_partial_lab{
+        "N_2epsilon",  "N_2eta",  "N_eta_epsilon",
+        "Nx_2epsilon", "Nx_2eta", "Nx_eta_epsilon",
+        "Ny_2epsilon", "Ny_2eta", "Ny_eta_epsilon"};
+    std::array<std::string, 3> partial_comp{"N", "Nx", "Ny"};
 
     Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
     for (int i = 0; i < gauss_num; i++) {
       for (int j = 0; j < gauss_num; j++) {
         for (int k = 0; k < gauss_num; k++) {
+          // 记录全局坐标对自然坐标的一阶偏导数值
+          std::map<std::string, double> X_nature_coord;
           //  计算jacob矩阵行列式
-          Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
+          Eigen::Matrix2d jacob = Eigen::Matrix2d::Zero();
           for (int kk = 0; kk < 2; kk++) {
             for (int ii = 0; ii < 2; ii++) {
               std::string str_jacob_ki = "";
@@ -320,17 +373,86 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                                             gauss_sample.at(j));
             }
           }
-          // 计算各个采样点下的几何矩阵B
-          Eigen::MatrixXd B = Eigen::MatrixXd::Zero(3, 12);
-          for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 12; c++) {
-              B(r, c) =
-                  TOOL::FuncCal(nature_point.at(r).at(c), gauss_sample.at(i),
-                                gauss_sample.at(j), gauss_sample.at(k));
+
+          // 计算各采样点处形函数对自然坐标偏导的值
+          std::array<std::map<std::string, double>, 4> N_partial;
+          std::array<std::map<std::string, double>, 4> N_sec_partial;
+          for (int node = 0; node < 4; node++) {
+            for (int pi = 0; pi < 6; pi++) {
+              std::string lab = partial_lab.at(pi);
+              std::string expr = str_N_partial.at(node).at(lab);
+              N_partial.at(node)[lab] =
+                  TOOL::FuncCal(expr, gauss_sample.at(i), gauss_sample.at(j));
+            }
+            for (int pj = 0; pj < 9; pj++) {
+              std::string lab = sec_partial_lab.at(pj);
+              std::string expr = str_N_sec_partial.at(node).at(lab);
+              N_sec_partial.at(node)[lab] =
+                  TOOL::FuncCal(expr, gauss_sample.at(i), gauss_sample.at(j));
             }
           }
 
-          k_bend += 0.5 * t * jacob.determinant() * B.transpose() * D_bend * B;
+          // 计算板弯形函数对全局坐标的二阶偏导
+          std::vector<std::array<double, 3>> N_partial_global_coord;
+
+          for (int pi = 0; pi < 4; pi++) {
+            for (int pj = 0; pj < 3; pj++) {
+              // 生成矩阵A，矩阵A参考公式推导笔记
+              Eigen::MatrixXd bend_A = Eigen::MatrixXd::Zero(3, 3);
+              bend_A(0, 0) =
+                  jacob(0, 0) *
+                  N_partial.at(pi).at(partial_comp.at(pj) + "_epsilon");
+              bend_A(0, 1) = std::pow(jacob(1, 0), 2);
+              bend_A(0, 2) =
+                  jacob(1, 0) *
+                      N_partial.at(pi).at(partial_comp.at(pj) + "_epsilon") +
+                  jacob(1, 0) * jacob(0, 0);
+              bend_A(1, 0) = jacob(0, 1) *
+                             N_partial.at(pi).at(partial_comp.at(pj) + "_eta");
+              bend_A(1, 1) = std::pow(jacob(1, 1), 2);
+              bend_A(1, 2) = jacob(1, 1) * N_partial.at(pi).at(
+                                               partial_comp.at(pj) + "_eta") +
+                             jacob(1, 1) * jacob(0, 1);
+              bend_A(2, 0) = jacob(0, 0) * jacob(0, 1);
+              bend_A(2, 1) = jacob(1, 0) * jacob(1, 1);
+              bend_A(2, 2) =
+                  jacob(0, 0) * jacob(1, 1) + jacob(1, 0) * jacob(0, 1);
+              // 生成相应形函数对全局坐标的二阶偏导数
+              Eigen::Vector3d vec_N_sec_partial = Eigen::Vector3d::Zero();
+              vec_N_sec_partial(0) =
+                  N_sec_partial.at(pi).at(partial_comp.at(pj) + "_2epsilon");
+              vec_N_sec_partial(1) =
+                  N_sec_partial.at(pi).at(partial_comp.at(pj) + "_2eta");
+              vec_N_sec_partial(2) =
+                  N_sec_partial.at(pi).at(partial_comp.at(pj) + "_eta_epsilon");
+              auto temp_target = bend_A.inverse() * vec_N_sec_partial;
+              // 处理结果
+              std::array<double, 3> temp;
+              for (int z = 0; z < 3; z++) {
+                temp[z] = temp_target(z);
+              }
+              N_partial_global_coord.push_back(temp);
+            }
+          }
+
+          // 给几何矩阵赋值
+          if (N_partial_global_coord.size() != 12) {
+            throw std::runtime_error(
+                "[ERROR]:func(Cquad4Kf::GenerateK)>>>"
+                "生成板弯刚度矩过程中形函数对全局坐标偏导数计算失败！");
+          }
+          Eigen::MatrixXd bend_b = Eigen::MatrixXd::Zero(3, 12);
+          for (int m = 0; m < 12; m++) {
+            for (int n = 0; n < 3; n++)
+              bend_b(n, m) = N_partial_global_coord.at(m).at(n);
+          }
+
+          // 获取三个权值求积
+          double total_weight = gauss_weight.at(i) * gauss_weight.at(j);
+
+          // gauss积分计算板弯刚度矩阵
+          k_bend += total_weight * 0.125 * t * t * t * gauss_sample.at(k) *
+                    jacob.determinant() * bend_b.transpose() * D_bend * bend_b;
         }
       }
     }
@@ -381,13 +503,13 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
       }
     }
     TOOL::DisplayMatrixXd(k_plane, "k_plane", true);
-    TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof", true);
+    // TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof", true);
     TOOL::DisplayMatrixXd(k_bend, "k_bend", true);
-    TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof", true);
+    // TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof", true);
 
     // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
     _loc_k = plane_k_alldof + bend_k_alldof;
-    TOOL::DisplayMatrixXd(_loc_k, "_loc_k", true);
+    // TOOL::DisplayMatrixXd(_loc_k, "_loc_k", true);
   } catch (const char *e) {
     std::cout << "[ERROR]:单元" << _id << ": " << e << '\n';
   }
