@@ -159,7 +159,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
     D_bend(2, 2) = (1 - NU2) * 0.5;
     D_bend *= E2 * t * t * t / (12 * (1 - NU2 * NU2));
 
-    TOOL::DisplayMatrixXd(D_bend, "D_bend");
+    // TOOL::DisplayMatrixXd(D_bend, "D_bend");
 
     // 获取高斯积分点和积分权值
     // TODO:单元如果需要采取减缩积分，可以修改变量gauss_num
@@ -185,6 +185,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
                                                              Ni_eta};
 
     Eigen::MatrixXd k_plane = Eigen::MatrixXd::Zero(8, 8);
+    Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
     for (int i = 0; i < gauss_num; i++) {
       for (int j = 0; j < gauss_num; j++) {
         //  计算jacob矩阵行列式
@@ -264,7 +265,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
 
     // 板弯曲计算时以字符串形式表示的对全坐标的偏导数
     std::array<std::array<std::string, 2>, 4> nature_point_coord{
-        {{"-1", "-1"}, {"1", "-1"}, {"1", "1"}, {"-1", "1"}}};
+        {{"(-1)", "(-1)"}, {"1", "(-1)"}, {"1", "1"}, {"(-1)", "1"}}};
     std::array<std::map<std::string, std::string>, 4> str_N_partial;
     std::array<std::map<std::string, std::string>, 4> str_N_sec_partial;
 
@@ -286,12 +287,12 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
             "+x*" + epsilon_i + "+x*y*" + eta_i + "*" + epsilon_i + ")*(" +
             eta_i + "-2*y)";
         //  Nx的偏导
-        str_N_partial.at(i)["Nx_epsilon"] =
-            "-0.125*(1-y^2)*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i +
-            ")";
+        str_N_partial.at(i)["Nx_epsilon"] = "-0.125*(1-y^2)*(" + epsilon_i +
+                                            "+y*" + eta_i + "*" + epsilon_i +
+                                            ")";
         str_N_partial.at(i)["Nx_eta"] =
             "-0.125*(1-y^2)*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
-            ")+0.25*y*(1-y*" + eta_i + "+x*" + epsilon_i + "x*y*" + epsilon_i +
+            ")+0.25*y*(1-y*" + eta_i + "+x*" + epsilon_i + "+x*y*" + epsilon_i +
             "*" + eta_i + ")";
         // Ny的偏导
         str_N_partial.at(i)["Ny_epsilon"] =
@@ -299,9 +300,9 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
             eta_i + ")*(1-x^2)-0.25*" + epsilon_i + "*(1+y*" + eta_i + "+x*" +
             epsilon_i + "+x*y*" + epsilon_i + "*" + eta_i + ")";
 
-        str_N_partial.at(i)["Ny_eta"] =
-            "0.125*" + epsilon_i + "*(1-x^2)*(" + eta_i + "+x*" + eta_i + "*" +
-            epsilon_i + ")";
+        str_N_partial.at(i)["Ny_eta"] = "0.125*" + epsilon_i + "*(1-x^2)*(" +
+                                        eta_i + "+x*" + eta_i + "*" +
+                                        epsilon_i + ")";
       }
       // N对epsilon和eta的二价偏导数
       {
@@ -309,12 +310,12 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         str_N_sec_partial.at(i)["N_2epsilon"] =
             "0.125*(" + epsilon_i + "+y*" + eta_i + "*" + epsilon_i + ")*(" +
             epsilon_i + "-2*x)+0.125*(" + epsilon_i + "+y*" + eta_i + "*" +
-            epsilon_i + ")*(" + epsilon_i + "-2*x)-2*(1+y*" + eta_i + "+x*" +
+            epsilon_i + ")*(" + epsilon_i + "-2*x)-0.25*(1+y*" + eta_i + "+x*" +
             epsilon_i + "+x*y*" + epsilon_i + "*" + eta_i + ")";
         str_N_sec_partial.at(i)["N_2eta"] =
             "0.125*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i + ")*(" +
             eta_i + "-2*y)+0.125*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
-            ")*(" + eta_i + "-2*y)-2*(1+y*" + eta_i + "+x*" + epsilon_i +
+            ")*(" + eta_i + "-2*y)-0.25*(1+y*" + eta_i + "+x*" + epsilon_i +
             "+x*y*" + epsilon_i + "*" + eta_i + ")";
         str_N_sec_partial.at(i)["N_eta_epsilon"] =
             "0.125*" + epsilon_i + "*" + eta_i + "*(2+x*" + epsilon_i + "+y*" +
@@ -324,7 +325,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         // Nx的二价偏导
         str_N_sec_partial.at(i)["Nx_2epsilon"] = "0";
         str_N_sec_partial.at(i)["Nx_2eta"] =
-            "0.25*y+(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
+            "0.25*y*(" + eta_i + "+x*" + eta_i + "*" + epsilon_i +
             ")+0.25*(1-y*" + eta_i + "+x*" + epsilon_i + "+x*y*" + epsilon_i +
             "*" + eta_i + ")+0.25*y*(x*" + epsilon_i + "*" + eta_i + "-" +
             eta_i + ")";
@@ -354,7 +355,6 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         "Ny_2epsilon", "Ny_2eta", "Ny_eta_epsilon"};
     std::array<std::string, 3> partial_comp{"N", "Nx", "Ny"};
 
-    Eigen::MatrixXd k_bend = Eigen::MatrixXd::Zero(12, 12);
     for (int i = 0; i < gauss_num; i++) {
       for (int j = 0; j < gauss_num; j++) {
         for (int k = 0; k < gauss_num; k++) {
@@ -417,6 +417,9 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
               bend_A(2, 1) = jacob(1, 0) * jacob(1, 1);
               bend_A(2, 2) =
                   jacob(0, 0) * jacob(1, 1) + jacob(1, 0) * jacob(0, 1);
+
+              // TOOL::DisplayMatrixXd(bend_A, "bend_A");
+
               // 生成相应形函数对全局坐标的二阶偏导数
               Eigen::Vector3d vec_N_sec_partial = Eigen::Vector3d::Zero();
               vec_N_sec_partial(0) =
@@ -429,7 +432,8 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
               // 处理结果
               std::array<double, 3> temp;
               for (int z = 0; z < 3; z++) {
-                temp[z] = temp_target(z);
+                double a = temp_target[z];
+                temp[z] = temp_target[z];
               }
               N_partial_global_coord.push_back(temp);
             }
@@ -448,11 +452,17 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
           }
 
           // 获取三个权值求积
-          double total_weight = gauss_weight.at(i) * gauss_weight.at(j);
+          double total_weight =
+              gauss_weight.at(k) * gauss_weight.at(i) * gauss_weight.at(j);
 
           // gauss积分计算板弯刚度矩阵
-          k_bend += total_weight * 0.125 * t * t * t * gauss_sample.at(k) *
-                    jacob.determinant() * bend_b.transpose() * D_bend * bend_b;
+          auto one_bend = total_weight * 0.125 * t * t * t *
+                          gauss_sample.at(k) * gauss_sample.at(k) *
+                          jacob.determinant() * bend_b.transpose() * D_bend *
+                          bend_b;
+          // TOOL::DisplayMatrixXd(one_bend, "one_bend");
+          k_bend = k_bend + one_bend;
+          // TOOL::DisplayMatrixXd(k_bend, "k_bend");
         }
       }
     }
@@ -470,6 +480,7 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         dof2index[str_dof] = i * 6 + j;
       }
     }
+
     // 1.2: 将膜刚度矩阵扩容
     Eigen::MatrixXd plane_k_alldof = Eigen::MatrixXd::Zero(24, 24);
     std::map<int, std::string> plane_k_map{
@@ -502,9 +513,9 @@ void Cquad4Kf::GenerateK(const MODEL::Model &model) {
         bend_k_alldof(idx_row, idx_col) = k_bend(i, j);
       }
     }
-    TOOL::DisplayMatrixXd(k_plane, "k_plane", true);
+    // TOOL::DisplayMatrixXd(k_plane, "k_plane", true);
     // TOOL::DisplayMatrixXd(plane_k_alldof, "plane_k_alldof", true);
-    TOOL::DisplayMatrixXd(k_bend, "k_bend", true);
+    // TOOL::DisplayMatrixXd(k_bend, "k_bend", true);
     // TOOL::DisplayMatrixXd(bend_k_alldof, "bend_k_alldof", true);
 
     // 2:将扩容后的板弯刚度矩阵和膜刚度矩阵相加；
