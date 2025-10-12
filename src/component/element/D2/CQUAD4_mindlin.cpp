@@ -165,7 +165,7 @@ void Cquad4Mindlin::GenerateK(const MODEL::Model &model) {
     D_bend.block<3, 3>(0, 0) = D_bend_b;
     D_bend.block<2, 2>(3, 3) = D_bend_s;
 
-    TOOL::DisplayMatrixXd(D_bend, "D_bend");
+    // TOOL::DisplayMatrixXd(D_bend, "D_bend");
 
     // 获取高斯积分点和积分权值
     // TODO:单元如果需要采取减缩积分，可以修改变量gauss_num
@@ -240,7 +240,7 @@ void Cquad4Mindlin::GenerateK(const MODEL::Model &model) {
         Eigen::Vector2d N4_X_nature(N4_epsilon, N4_eta);
         Eigen::Vector2d N4_X = jacob_inv * N4_X_nature;
 
-        // 获取三个权值求积
+        // 获取权值求积
         double total_weight = gauss_weight.at(i) * gauss_weight.at(j);
 
         // 获取当前积分点的B矩阵
@@ -269,6 +269,7 @@ void Cquad4Mindlin::GenerateK(const MODEL::Model &model) {
       }
     }
     // =============== 基于mindlin理论的板弯曲行为 ===============
+    // TODO:单元如果需要采取减缩积分，可以修改变量gauss_num_bend
     int gauss_num_bend = 3;
     auto gauss_sample_bend = TOOL::GetGaussSampPoint(gauss_num_bend);
     auto gauss_weight_bend = TOOL::GetGaussWeightVal(gauss_num_bend);
@@ -352,8 +353,8 @@ void Cquad4Mindlin::GenerateK(const MODEL::Model &model) {
           temp_B(3, 2) = Ni;
           temp_B(4, 1) = -Ni;
           sub_bend_B.block<5, 3>(0, 3 * bi) = temp_B;
-          TOOL::DisplayMatrixXd(temp_B, "temp_B");
-          TOOL::DisplayMatrixXd(sub_bend_B, "sub_bend_B");
+          // TOOL::DisplayMatrixXd(temp_B, "temp_B");
+          // TOOL::DisplayMatrixXd(sub_bend_B, "sub_bend_B");
         }
         k_bend += total_weight * jacob.determinant() * sub_bend_B.transpose() *
                   D_bend * sub_bend_B;
