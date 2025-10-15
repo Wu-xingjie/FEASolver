@@ -158,45 +158,45 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
 
     // 应力-应变矩阵
     Eigen::MatrixXd D = Eigen::MatrixXd::Zero(6, 6);
-    D(0, 0) = 1;
-    D(1, 1) = 1;
-    D(2, 2) = 1;
-    D(0, 1) = NU / (1 - NU);
-    D(1, 0) = NU / (1 - NU);
-    D(0, 2) = NU / (1 - NU);
-    D(2, 0) = NU / (1 - NU);
-    D(1, 2) = NU / (1 - NU);
-    D(2, 1) = NU / (1 - NU);
-    D(3, 3) = (1 - 2 * NU) / (2 * (1 - NU));
-    D(4, 4) = (1 - 2 * NU) / (2 * (1 - NU));
-    D(5, 5) = (1 - 2 * NU) / (2 * (1 - NU));
-    D = E * (1 - NU) * D / ((1 + NU) * (1 - 2 * NU));
+    D(0, 0) = 1.0;
+    D(1, 1) = 1.0;
+    D(2, 2) = 1.0;
+    D(0, 1) = NU / (1.0 - NU);
+    D(1, 0) = NU / (1.0 - NU);
+    D(0, 2) = NU / (1.0 - NU);
+    D(2, 0) = NU / (1.0 - NU);
+    D(1, 2) = NU / (1.0 - NU);
+    D(2, 1) = NU / (1.0 - NU);
+    D(3, 3) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D(4, 4) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D(5, 5) = (1.0 - 2.0 * NU) / (2.0 * (1.0 - NU));
+    D = (E * (1.0 - NU) / ((1.0 + NU) * (1.0 - 2.0 * NU))) * D;
 
     // 以字符串的形式表示出形函数对自然坐标的偏导
-    std::string str_N1_epsilon = "(1-y)*(1-z)/8";
-    std::string str_N1_eta = "-(1+x)*(1-z)/8";
-    std::string str_N1_gama = "-(1+x)*(1-y)/8";
-    std::string str_N2_epsilon = "(1+y)*(1-z)/8";
-    std::string str_N2_eta = "(1+x)*(1-z)/8";
-    std::string str_N2_gama = "-(1+x)*(1+y)/8";
-    std::string str_N3_epsilon = "-(1+y)*(1-z)/8";
-    std::string str_N3_eta = "(1-x)*(1-z)/8";
-    std::string str_N3_gama = "-(1-x)*(1+y)/8";
-    std::string str_N4_epsilon = "-(1-y)*(1-z)/8";
-    std::string str_N4_eta = "-(1-x)*(1-z)/8";
-    std::string str_N4_gama = "-(1-x)*(1-y)/8";
-    std::string str_N5_epsilon = "(1-y)*(1+z)/8";
-    std::string str_N5_eta = "-(1+x)*(1+z)/8";
-    std::string str_N5_gama = "(1+x)*(1-y)/8";
-    std::string str_N6_epsilon = "(1+y)*(1+z)/8";
-    std::string str_N6_eta = "(1+x)*(1+z)/8";
-    std::string str_N6_gama = "(1+x)*(1+y)/8";
-    std::string str_N7_epsilon = "-(1+y)*(1+z)/8";
-    std::string str_N7_eta = "(1-x)*(1+z)/8";
-    std::string str_N7_gama = "(1-x)*(1+y)/8";
-    std::string str_N8_epsilon = "-(1-y)*(1+z)/8";
-    std::string str_N8_eta = "-(1-x)*(1+z)/8";
-    std::string str_N8_gama = "(1-x)*(1-y)/8";
+    std::string str_N1_epsilon = "(1.0-y)*(1.0-z)*0.125";
+    std::string str_N1_eta = "-(1.0+x)*(1.0-z)*0.125";
+    std::string str_N1_gama = "-(1.0+x)*(1.0-y)*0.125";
+    std::string str_N2_epsilon = "(1.0+y)*(1.0-z)*0.125";
+    std::string str_N2_eta = "(1.0+x)*(1.0-z)*0.125";
+    std::string str_N2_gama = "-(1.0+x)*(1.0+y)*0.125";
+    std::string str_N3_epsilon = "-(1.0+y)*(1.0-z)*0.125";
+    std::string str_N3_eta = "(1.0-x)*(1.0-z)*0.125";
+    std::string str_N3_gama = "-(1.0-x)*(1.0+y)*0.125";
+    std::string str_N4_epsilon = "-(1.0-y)*(1.0-z)*0.125";
+    std::string str_N4_eta = "-(1.0-x)*(1.0-z)*0.125";
+    std::string str_N4_gama = "-(1.0-x)*(1.0-y)*0.125";
+    std::string str_N5_epsilon = "(1.0-y)*(1.0+z)*0.125";
+    std::string str_N5_eta = "-(1.0+x)*(1.0+z)*0.125";
+    std::string str_N5_gama = "(1.0+x)*(1.0-y)*0.125";
+    std::string str_N6_epsilon = "(1.0+y)*(1.0+z)*0.125";
+    std::string str_N6_eta = "(1.0+x)*(1.0+z)*0.125";
+    std::string str_N6_gama = "(1.0+x)*(1.0+y)*0.125";
+    std::string str_N7_epsilon = "-(1.0+y)*(1.0+z)*0.125";
+    std::string str_N7_eta = "(1.0-x)*(1.0+z)*0.125";
+    std::string str_N7_gama = "(1.0-x)*(1.0+y)*0.125";
+    std::string str_N8_epsilon = "-(1.0-y)*(1.0+z)*0.125";
+    std::string str_N8_eta = "-(1.0-x)*(1.0+z)*0.125";
+    std::string str_N8_gama = "(1.0-x)*(1.0-y)*0.125";
 
     std::array<std::string, 8> Ni_epsilon{
         str_N1_epsilon, str_N2_epsilon, str_N3_epsilon, str_N4_epsilon,
@@ -214,13 +214,15 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
         Ni_epsilon, Ni_eta, Ni_gama};
 
     // 拿到高斯积分的采样点和积分权值
-    auto gauss_sample = TOOL::GetGaussSampPoint(3);
-    auto gauss_weight = TOOL::GetGaussWeightVal(3);
+    int gauss_num = 2;
+    auto gauss_sample = TOOL::GetGaussSampPoint(gauss_num);
+    auto gauss_weight = TOOL::GetGaussWeightVal(gauss_num);
 
     // 获取单元刚度矩阵
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        for (int k = 0; k < 3; k++) {
+    int num = 1;
+    for (int i = 0; i < gauss_num; i++) {
+      for (int j = 0; j < gauss_num; j++) {
+        for (int k = 0; k < gauss_num; k++) {
           //  计算jacob矩阵行列式
           Eigen::Matrix3d jacob = Eigen::Matrix3d::Zero();
           for (int kk = 0; kk < 3; kk++) {
@@ -236,163 +238,206 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
             }
           }
 
-          // 获取三个权值求积
-          double total_weight =
-              gauss_weight.at(i) * gauss_weight.at(j) * gauss_weight.at(k);
-          // 获取当前积分点的B矩阵
-          Eigen::MatrixXd sub_B = Eigen::MatrixXd::Zero(6, 24);
-          sub_B(0, 0) = TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 3) = TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 6) = TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 9) = TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 12) = TOOL::FuncCal(str_N5_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 15) = TOOL::FuncCal(str_N6_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 18) = TOOL::FuncCal(str_N7_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(0, 21) = TOOL::FuncCal(str_N8_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+          // jacob矩阵求逆矩阵
+          try {
+            auto jacob_inv = jacob.inverse();
 
-          sub_B(1, 1) = TOOL::FuncCal(str_N1_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 4) = TOOL::FuncCal(str_N2_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 7) = TOOL::FuncCal(str_N3_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 10) = TOOL::FuncCal(str_N4_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 13) = TOOL::FuncCal(str_N5_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 16) = TOOL::FuncCal(str_N6_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 19) = TOOL::FuncCal(str_N7_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(1, 22) = TOOL::FuncCal(str_N8_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+            // 计算形函数Ni对x,y,z的偏导数
+            double N1_epsilon =
+                TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N1_eta =
+                TOOL::FuncCal(str_N1_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N1_gama =
+                TOOL::FuncCal(str_N1_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N1_X_nature(N1_epsilon, N1_eta, N1_gama);
+            Eigen::Vector3d N1_X = jacob_inv * N1_X_nature;
 
-          sub_B(2, 2) = TOOL::FuncCal(str_N1_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 5) = TOOL::FuncCal(str_N2_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 8) = TOOL::FuncCal(str_N3_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 11) = TOOL::FuncCal(str_N4_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 14) = TOOL::FuncCal(str_N5_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 17) = TOOL::FuncCal(str_N6_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 20) = TOOL::FuncCal(str_N7_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(2, 23) = TOOL::FuncCal(str_N8_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+            double N2_epsilon =
+                TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N2_eta =
+                TOOL::FuncCal(str_N2_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N2_gama =
+                TOOL::FuncCal(str_N2_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N2_X_nature(N2_epsilon, N2_eta, N2_gama);
+            Eigen::Vector3d N2_X = jacob_inv * N2_X_nature;
 
-          sub_B(3, 0) = TOOL::FuncCal(str_N1_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 1) = TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 3) = TOOL::FuncCal(str_N2_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 4) = TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 6) = TOOL::FuncCal(str_N3_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 7) = TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 9) = TOOL::FuncCal(str_N4_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 10) = TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 12) = TOOL::FuncCal(str_N5_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 13) = TOOL::FuncCal(str_N5_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 15) = TOOL::FuncCal(str_N6_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 16) = TOOL::FuncCal(str_N6_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 18) = TOOL::FuncCal(str_N7_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 19) = TOOL::FuncCal(str_N7_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 21) = TOOL::FuncCal(str_N8_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(3, 22) = TOOL::FuncCal(str_N8_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+            double N3_epsilon =
+                TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N3_eta =
+                TOOL::FuncCal(str_N3_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N3_gama =
+                TOOL::FuncCal(str_N3_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N3_X_nature(N3_epsilon, N3_eta, N3_gama);
+            Eigen::Vector3d N3_X = jacob_inv * N3_X_nature;
 
-          sub_B(4, 0) = TOOL::FuncCal(str_N1_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 2) = TOOL::FuncCal(str_N1_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 3) = TOOL::FuncCal(str_N2_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 5) = TOOL::FuncCal(str_N2_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 6) = TOOL::FuncCal(str_N3_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 8) = TOOL::FuncCal(str_N3_epsilon, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 9) = TOOL::FuncCal(str_N4_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 11) = TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 12) = TOOL::FuncCal(str_N5_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 14) = TOOL::FuncCal(str_N5_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 15) = TOOL::FuncCal(str_N6_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 17) = TOOL::FuncCal(str_N6_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 18) = TOOL::FuncCal(str_N7_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 20) = TOOL::FuncCal(str_N7_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 21) = TOOL::FuncCal(str_N8_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(4, 23) = TOOL::FuncCal(str_N8_epsilon, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+            double N4_epsilon =
+                TOOL::FuncCal(str_N4_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N4_eta =
+                TOOL::FuncCal(str_N4_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N4_gama =
+                TOOL::FuncCal(str_N4_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N4_X_nature(N4_epsilon, N4_eta, N4_gama);
+            Eigen::Vector3d N4_X = jacob_inv * N4_X_nature;
 
-          sub_B(5, 1) = TOOL::FuncCal(str_N1_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 2) = TOOL::FuncCal(str_N1_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 4) = TOOL::FuncCal(str_N2_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 5) = TOOL::FuncCal(str_N2_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 7) = TOOL::FuncCal(str_N3_gama, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 8) = TOOL::FuncCal(str_N3_eta, gauss_sample.at(i),
-                                      gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 10) = TOOL::FuncCal(str_N4_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 11) = TOOL::FuncCal(str_N4_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 13) = TOOL::FuncCal(str_N5_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 14) = TOOL::FuncCal(str_N5_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 16) = TOOL::FuncCal(str_N6_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 17) = TOOL::FuncCal(str_N6_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 19) = TOOL::FuncCal(str_N7_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 20) = TOOL::FuncCal(str_N7_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 22) = TOOL::FuncCal(str_N8_gama, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
-          sub_B(5, 23) = TOOL::FuncCal(str_N8_eta, gauss_sample.at(i),
-                                       gauss_sample.at(j), gauss_sample.at(k));
+            double N5_epsilon =
+                TOOL::FuncCal(str_N5_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N5_eta =
+                TOOL::FuncCal(str_N5_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N5_gama =
+                TOOL::FuncCal(str_N5_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N5_X_nature(N5_epsilon, N5_eta, N5_gama);
+            Eigen::Vector3d N5_X = jacob_inv * N5_X_nature;
 
-          _loc_k += total_weight * sub_B.transpose() * D * sub_B *
-                    jacob.determinant();
+            double N6_epsilon =
+                TOOL::FuncCal(str_N6_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N6_eta =
+                TOOL::FuncCal(str_N6_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N6_gama =
+                TOOL::FuncCal(str_N6_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N6_X_nature(N6_epsilon, N6_eta, N6_gama);
+            Eigen::Vector3d N6_X = jacob_inv * N6_X_nature;
+
+            double N7_epsilon =
+                TOOL::FuncCal(str_N7_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N7_eta =
+                TOOL::FuncCal(str_N7_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N7_gama =
+                TOOL::FuncCal(str_N7_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N7_X_nature(N7_epsilon, N7_eta, N7_gama);
+            Eigen::Vector3d N7_X = jacob_inv * N7_X_nature;
+
+            double N8_epsilon =
+                TOOL::FuncCal(str_N8_epsilon, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N8_eta =
+                TOOL::FuncCal(str_N8_eta, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            double N8_gama =
+                TOOL::FuncCal(str_N8_gama, gauss_sample.at(i),
+                              gauss_sample.at(j), gauss_sample.at(k));
+            Eigen::Vector3d N8_X_nature(N8_epsilon, N8_eta, N8_gama);
+            Eigen::Vector3d N8_X = jacob_inv * N8_X_nature;
+
+            // 获取三个权值求积
+            double total_weight =
+                gauss_weight.at(i) * gauss_weight.at(j) * gauss_weight.at(k);
+            // 获取当前积分点的B矩阵
+            Eigen::MatrixXd sub_B = Eigen::MatrixXd::Zero(6, 24);
+            sub_B(0, 0) = N1_X(0);
+            sub_B(0, 3) = N2_X(0);
+            sub_B(0, 6) = N3_X(0);
+            sub_B(0, 9) = N4_X(0);
+            sub_B(0, 12) = N5_X(0);
+            sub_B(0, 15) = N6_X(0);
+            sub_B(0, 18) = N7_X(0);
+            sub_B(0, 21) = N8_X(0);
+
+            sub_B(1, 1) = N1_X(1);
+            sub_B(1, 4) = N2_X(1);
+            sub_B(1, 7) = N3_X(1);
+            sub_B(1, 10) = N4_X(1);
+            sub_B(1, 13) = N5_X(1);
+            sub_B(1, 16) = N6_X(1);
+            sub_B(1, 19) = N7_X(1);
+            sub_B(1, 22) = N8_X(1);
+
+            sub_B(2, 2) = N1_X(2);
+            sub_B(2, 5) = N2_X(2);
+            sub_B(2, 8) = N3_X(2);
+            sub_B(2, 11) = N4_X(2);
+            sub_B(2, 14) = N5_X(2);
+            sub_B(2, 17) = N6_X(2);
+            sub_B(2, 20) = N7_X(2);
+            sub_B(2, 23) = N8_X(2);
+
+            sub_B(3, 0) = N1_X(1);
+            sub_B(3, 1) = N1_X(0);
+            sub_B(3, 3) = N2_X(1);
+            sub_B(3, 4) = N2_X(0);
+            sub_B(3, 6) = N3_X(1);
+            sub_B(3, 7) = N3_X(0);
+            sub_B(3, 9) = N4_X(1);
+            sub_B(3, 10) = N4_X(0);
+            sub_B(3, 12) = N5_X(1);
+            sub_B(3, 13) = N5_X(0);
+            sub_B(3, 15) = N6_X(1);
+            sub_B(3, 16) = N6_X(0);
+            sub_B(3, 18) = N7_X(1);
+            sub_B(3, 19) = N7_X(0);
+            sub_B(3, 21) = N8_X(1);
+            sub_B(3, 22) = N8_X(0);
+
+            sub_B(4, 0) = N1_X(2);
+            sub_B(4, 2) = N1_X(0);
+            sub_B(4, 3) = N2_X(2);
+            sub_B(4, 5) = N2_X(0);
+            sub_B(4, 6) = N3_X(2);
+            sub_B(4, 8) = N3_X(0);
+            sub_B(4, 9) = N4_X(2);
+            sub_B(4, 11) = N4_X(0);
+            sub_B(4, 12) = N5_X(2);
+            sub_B(4, 14) = N5_X(0);
+            sub_B(4, 15) = N6_X(2);
+            sub_B(4, 17) = N6_X(0);
+            sub_B(4, 18) = N7_X(2);
+            sub_B(4, 20) = N7_X(0);
+            sub_B(4, 21) = N8_X(2);
+            sub_B(4, 23) = N8_X(0);
+
+            sub_B(5, 1) = N1_X(2);
+            sub_B(5, 2) = N1_X(1);
+            sub_B(5, 4) = N2_X(2);
+            sub_B(5, 5) = N2_X(1);
+            sub_B(5, 7) = N3_X(2);
+            sub_B(5, 8) = N3_X(1);
+            sub_B(5, 10) = N4_X(2);
+            sub_B(5, 11) = N4_X(1);
+            sub_B(5, 13) = N5_X(2);
+            sub_B(5, 14) = N5_X(1);
+            sub_B(5, 16) = N6_X(2);
+            sub_B(5, 17) = N6_X(1);
+            sub_B(5, 19) = N7_X(2);
+            sub_B(5, 20) = N7_X(1);
+            sub_B(5, 22) = N8_X(2);
+            sub_B(5, 23) = N8_X(1);
+
+            // auto transpose_B = sub_B.transpose();
+            // auto cur_k =
+            // total_weight * sub_B.transpose() * D * sub_B *
+            // jacob.determinant();
+            // TOOL::DisplayMatrixXd(cur_k, "cur_k_" + std::to_string(num),
+            // true);
+            _loc_k += total_weight * sub_B.transpose() * D * sub_B *
+                      jacob.determinant();
+            // TOOL::DisplayMatrixXd(_loc_k, "_loc_k_" + std::to_string(num),
+            // true);
+            num += 1;
+          } catch (...) {
+            throw std::runtime_error("[ERROR]:func(Chexa8::GenerateK)>>>单元" +
+                                     std::to_string(_id) +
+                                     "形状奇异导致jacob矩阵求逆失败!");
+          }
         }
       }
     }

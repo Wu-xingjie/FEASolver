@@ -1,7 +1,9 @@
 #include "static_solver.h"
+#include <chrono>
 #include <fstream>
 
 int main(const int argc, const char *argv[]) {
+  auto start_time = std::chrono::high_resolution_clock::now();
   try {
     if (argc != 2) {
       throw std::runtime_error("[ERROR]:(main)>>>输入参数错误！");
@@ -35,5 +37,10 @@ int main(const int argc, const char *argv[]) {
   } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
+  auto end_time = std::chrono::high_resolution_clock::now();
+  auto dur =
+      std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+  std::cout << "[INFO]:(main)>>>程序运行时间：" << dur.count() << "s"
+            << std::endl;
   return 0;
 }

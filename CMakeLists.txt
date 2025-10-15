@@ -14,7 +14,7 @@ if (Eigen3_FOUND)
         # 添加子目录
         add_subdirectory(src)
         add_subdirectory(tool)
-        # add_subdirectory(test)
+        add_subdirectory(test)
     else()
         message(FATAL_ERROR "Boost NOT FOUND!")
     endif()
