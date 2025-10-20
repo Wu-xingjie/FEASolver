@@ -40,7 +40,32 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
   }
 
   // 初始化_matrix_k
-  
+  int estimate_size = 0;
+  for (auto &dof : dof_used) {
+    auto nodes = _dof2node.at(dof);
+    auto min_node = std::min_element(nodes.begin(), nodes.end());
+    auto min_node_dof = std::to_string(*min_node) + "_vx";
+    int diag_dof_idx = _dof2idx.left.at(dof);
+    int min_node_idx = _dof2idx.left.at(min_node_dof);
+    // 创建_matrix_k中的自由度到下标的双向映射表
+    auto min_dof_idx =
+        std::find(dof_used.cbegin(), dof_used.cend(), min_node_dof);
+    auto diag_idx = std::find(dof_used.cbegin(), dof_used.cend(), dof);
+    if (min_dof_idx == dof_used.end() || diag_idx == dof_used.end()) {
+      throw std::runtime_error(
+          "[ERROR]:func(OneDimMatrixAssemble::OneDimMatrixAssemble)>>>"
+          "未在使用到的自由度列表(used_dof)中搜索到对应元素！");
+    }
+    int temp_len = 0;
+    for (auto ptr = min_dof_idx; ptr != diag_idx + 1; ptr++) {
+      _matrix_k._dof2idx.insert({*ptr, estimate_size + temp_len});
+      temp_len += 1;
+    }
+    _matrix_k._diag_elem_loc.Zero(estimate_size);
+    // 计算_matrix_k._none_zero_elem大概长度
+    estimate_size += diag_dof_idx - min_node_idx + 1;
+  }
+  _matrix_k._none_zero_elem.Zero(estimate_size);
 }
 
 std::vector<int> OneDimMatrixAssemble::FindNodesOfDof(const std::string &dof) {
