@@ -3,19 +3,32 @@
 #include <array>
 #include <boost/lexical_cast.hpp>
 namespace TOOL {
-std::map<int, std::string> ElemIdx2Dof(COMPONENT::ElemBase &elem_base) {
-  std::map<int, std::string> result;
+std::map<std::array<int, 2>, std::array<std::string, 2>>
+ElemIdx2Dof(COMPONENT::ElemBase &elem_base) {
+  std::map<std::array<int, 2>, std::array<std::string, 2>> result;
   auto nodes = elem_base.GetNodes();
   std::sort(nodes.begin(), nodes.end());
+  // 创建单刚矩阵索引到自由度的map
   int num = 0;
+  std::map<int, std::string> temp_map;
   for (int &n : nodes) {
-    result[num] = std::to_string(n) + "_vx";
-    result[num + 1] = std::to_string(n) + "_vy";
-    result[num + 2] = std::to_string(n) + "_vz";
-    result[num + 3] = std::to_string(n) + "_rx";
-    result[num + 4] = std::to_string(n) + "_ry";
-    result[num + 5] = std::to_string(n) + "_rz";
+    temp_map[num] = std::to_string(n) + "_vx";
+    temp_map[num + 1] = std::to_string(n) + "_vy";
+    temp_map[num + 2] = std::to_string(n) + "_vz";
+    temp_map[num + 3] = std::to_string(n) + "_rx";
+    temp_map[num + 4] = std::to_string(n) + "_ry";
+    temp_map[num + 5] = std::to_string(n) + "_rz";
     num += 6;
+  }
+  // 生成刚度矩阵自由度坐标到
+  int k_size = 6 * nodes.size();
+  for (int i = 0; i < k_size; i++) {
+    for (int j = i; j < k_size; j++) {
+      std::array<std::string, 2> dof_pair;
+      dof_pair[0] = temp_map.at(i);
+      dof_pair[1] = temp_map.at(j);
+      result[{i, j}] = dof_pair;
+    }
   }
   return result;
 }
