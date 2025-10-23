@@ -1,5 +1,6 @@
 #pragma once
 #include "fea_model/fea_model.h"
+#include <array>
 #include <boost/bimap.hpp>
 #include <eigen3/Eigen/Dense>
 #include <map>
@@ -11,13 +12,16 @@ namespace ASSEMBLE {
 struct OneDimModel {
   Eigen::VectorXd _none_zero_elem;
   Eigen::VectorXd _diag_elem_loc;
-  boost::bimap<std::string, int> _dof2idx;
+  boost::bimap<std::array<std::string, 2>, int> _dof2idx;
 };
 
 class OneDimMatrixAssemble {
 public:
   OneDimMatrixAssemble(const MODEL::Model &model);
   ~OneDimMatrixAssemble() = default;
+
+  // 组装刚度矩阵
+  void AssembleK();
 
 protected:
   std::vector<int> FindNodesOfDof(const std::string &dof);

@@ -1,5 +1,6 @@
 #include "one_dim_storage.h"
 #include "component/element/elemen_base.h"
+#include "model_tool/get_elem_idx2dof_map.h"
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <set>
@@ -58,7 +59,8 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
     }
     int temp_len = 0;
     for (auto ptr = min_dof_idx; ptr != diag_idx + 1; ptr++) {
-      _matrix_k._dof2idx.insert({*ptr, estimate_size + temp_len});
+      std::array<std::string, 2> dof_pair{*ptr, dof};
+      _matrix_k._dof2idx.insert({dof_pair, estimate_size + temp_len});
       temp_len += 1;
     }
     _matrix_k._diag_elem_loc.Zero(estimate_size);
@@ -66,6 +68,7 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
     estimate_size += diag_dof_idx - min_node_idx + 1;
   }
   _matrix_k._none_zero_elem.Zero(estimate_size);
+  _vector_f = Eigen::VectorXd::Zero(_dof);
 }
 
 std::vector<int> OneDimMatrixAssemble::FindNodesOfDof(const std::string &dof) {
@@ -92,6 +95,19 @@ std::vector<int> OneDimMatrixAssemble::FindNodesOfDof(const std::string &dof) {
     }
   }
   return result;
+}
+
+void OneDimMatrixAssemble::AssembleK() {
+  for (auto elem : _model._element) {
+    auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
+    if (!base_elem) {
+      throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
+    }
+    auto elem_matrix = base_elem->GetGlobalK(_model);
+    auto elem_idx2dof = TOOL::ElemIdx2Dof(*base_elem);
+    // 通过单刚矩阵索引->自由度->一位数组索引来给_matrix_k赋值
+    //
+  }
 }
 
 } // namespace ASSEMBLE
