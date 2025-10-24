@@ -116,6 +116,11 @@ void OneDimMatrixAssemble::AssembleK() {
         if (begin_store) {
           auto dof_coord = elem_idx2dof.at({r, c});
           int array_idx = _matrix_k._dof2idx.left.at(dof_coord);
+          if (array_idx > _matrix_k._none_zero_elem.size()) {
+            throw std::runtime_error(
+                "[ERROR]:func(MatrixAssemble::AssembleK)>>>"
+                "单刚矩阵元素索引超出待插入一维数组维度！");
+          }
           _matrix_k._none_zero_elem(array_idx) += elem_matrix(r, c);
         }
       }
