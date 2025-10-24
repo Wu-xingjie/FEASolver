@@ -105,8 +105,21 @@ void OneDimMatrixAssemble::AssembleK() {
     }
     auto elem_matrix = base_elem->GetGlobalK(_model);
     auto elem_idx2dof = TOOL::ElemIdx2Dof(*base_elem);
-    // 通过单刚矩阵索引->自由度->一位数组索引来给_matrix_k赋值
-    //
+    // 通过单刚矩阵索引坐标 -> 自由度坐标 -> 一位数组索引的映射，给_matrix_k赋值
+    for (int r = 0; r < elem_matrix.size(); r++) {
+      bool begin_store = false;
+      for (int c = 0; c < r + 1; c++) {
+        // 找到第一个非零元素然后开始存储
+        if (std::abs(elem_matrix(r, c)) > 1.0e-16) {
+          begin_store = true;
+        }
+        if (begin_store) {
+          auto dof_coord = elem_idx2dof.at({r, c});
+          int array_idx = _matrix_k._dof2idx.left.at(dof_coord);
+          _matrix_k._none_zero_elem(array_idx) += elem_matrix(r, c);
+        }
+      }
+    }
   }
 }
 
