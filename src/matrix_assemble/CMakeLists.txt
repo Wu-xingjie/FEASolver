@@ -1,13 +1,13 @@
 message("-------------- assemble start -------------")
 add_subdirectory(one_dim_varialbe_bandwidth_stroage)
 
-# file(GLOB_RECURSE assemble *.cpp)
-# add_library(matrix_assemble SHARED ${assemble})
-# target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src)
-# target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
-# target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/tool)
-# target_include_directories(matrix_assemble PUBLIC ${BOOST_INCLUDE_DIRS})
-# target_link_libraries(matrix_assemble ${Boost_LIBS})
-# target_link_libraries(matrix_assemble tool)
+
+add_library(matrix_assemble SHARED matrix_assemble.cpp)
+target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src/component/coordinate)
+target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/tool)
+target_include_directories(matrix_assemble PUBLIC ${BOOST_INCLUDE_DIRS})
+target_link_libraries(matrix_assemble ${Boost_LIBS})
+target_link_libraries(matrix_assemble tool)
 
 message("-------------- assemble end   -------------")

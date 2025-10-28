@@ -1,9 +1,12 @@
 #include "one_dim_storage.h"
-#include "component/element/elemen_base.h"
-#include "model_tool/get_elem_idx2dof_map.h"
+
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 #include <set>
+
+#include "component/element/elemen_base.h"
+#include "model_tool/get_elem_idx2dof_map.h"
 
 namespace ASSEMBLE {
 OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
@@ -63,11 +66,11 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
       _matrix_k._dof2idx.insert({dof_pair, estimate_size + temp_len});
       temp_len += 1;
     }
-    _matrix_k._diag_elem_loc.Zero(estimate_size);
+    // _matrix_k._diag_elem_loc.Zero(estimate_size);
     // 计算_matrix_k._none_zero_elem大概长度
     estimate_size += diag_dof_idx - min_node_idx + 1;
   }
-  _matrix_k._none_zero_elem.Zero(estimate_size);
+  _matrix_k._none_zero_elem = Eigen::VectorXd::Zero(estimate_size);
   _vector_f = Eigen::VectorXd::Zero(_dof);
 }
 
@@ -86,7 +89,7 @@ std::vector<int> OneDimMatrixAssemble::FindNodesOfDof(const std::string &dof) {
       throw "[ERROR]:func(OneDimMatrixAssemble::FindNodesOfDof)>>>"
             "自由度dof中未找到下划线！";
     }
-    std::string str_node = dof.substr(idx_lab);
+    std::string str_node = dof.substr(0, idx_lab);
     int int_dof = boost::lexical_cast<int>(str_node);
 
     if (std::find(elem_nodes.cbegin(), elem_nodes.cend(), int_dof) !=
@@ -106,21 +109,39 @@ void OneDimMatrixAssemble::AssembleK() {
     auto elem_matrix = base_elem->GetGlobalK(_model);
     auto elem_idx2dof = TOOL::ElemIdx2Dof(*base_elem);
     // 通过单刚矩阵索引坐标 -> 自由度坐标 -> 一位数组索引的映射，给_matrix_k赋值
-    for (int r = 0; r < elem_matrix.size(); r++) {
+    int elem_idx = 0;
+    for (int c = 0; c < elem_matrix.rows(); c++) {
       bool begin_store = false;
-      for (int c = 0; c < r + 1; c++) {
+      for (int r = 0; r < c + 1; r++) {
         // 找到第一个非零元素然后开始存储
         if (std::abs(elem_matrix(r, c)) > 1.0e-16) {
           begin_store = true;
         }
         if (begin_store) {
-          auto dof_coord = elem_idx2dof.at({r, c});
+          std::array<int, 2> idx_coord{r, c};
+          auto dof_coord = elem_idx2dof.at(idx_coord);
           int array_idx = _matrix_k._dof2idx.left.at(dof_coord);
           _matrix_k._none_zero_elem(array_idx) += elem_matrix(r, c);
+          if (r == c) {
+            _matrix_k._diag_elem_loc.push_back(elem_idx);
+          }
         }
+        elem_idx += 1;
       }
     }
   }
 }
 
-} // namespace ASSEMBLE
+void OneDimMatrixAssemble::ShowK() {
+  std::cout << "一维存储刚度矩阵, 长度 = " << _matrix_k._none_zero_elem.size()
+            << ": " << std::endl;
+  for (int i = 0; i < _matrix_k._none_zero_elem.size(); i++) {
+    auto dof_coord = _matrix_k._dof2idx.right.at(i);
+    std::string str_dof_coord =
+        "<" + dof_coord.at(0) + ", " + dof_coord.at(1) + ">";
+    std::cout << str_dof_coord << ": " << _matrix_k._none_zero_elem(i)
+              << std::endl;
+  }
+}
+
+}  // namespace ASSEMBLE
