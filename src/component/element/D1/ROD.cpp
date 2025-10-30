@@ -94,7 +94,7 @@ void ROD::GenerateK(const MODEL::Model &model) {
         _loc_k(idx_row, idx_col) = temp_k(i, j);
       }
     }
-    TOOL::DisplayMatrixXd(_loc_k, "loc_k");
+    // TOOL::DisplayMatrixXd(_loc_k, "loc_k");
 
   } catch (const char *e) {
     std::cout << "[ERROR]:func(ROD::GenerateK)>>>单元" << _id << ": " << e
