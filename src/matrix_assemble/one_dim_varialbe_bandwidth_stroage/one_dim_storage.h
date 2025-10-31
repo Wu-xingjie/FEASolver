@@ -28,10 +28,12 @@ public:
   // 组装刚度矩阵
   void AssembleK();
   void ShowK();
+  boost::shared_ptr<double> GetKElem(const int &row, const int &col);
+  boost::shared_ptr<double> GetLoadElem(const int &idx);
+  
 
 protected:
   std::vector<int> FindNodesOfDof(const std::string &dof);
-  boost::shared_ptr<double> GetMatrixElem(const int &row, const int &col);
 
 private:
   int _dof{0}; // 模型自由度
