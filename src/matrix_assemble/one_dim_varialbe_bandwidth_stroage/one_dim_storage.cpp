@@ -149,4 +149,16 @@ void OneDimMatrixAssemble::ShowK() {
   }
 }
 
-}  // namespace ASSEMBLE
+boost::shared_ptr<double> OneDimMatrixAssemble::GetMatrixElem(const int &row,
+                                                              const int &col) {
+  if (row < 0 or col < 0) {
+    throw std::runtime_error("[ERROR]:func(MatrixAssemble::GetMatrixElem)>>>"
+                             "输入元素元素坐标无效");
+  }
+  int idx = _matrix_k._diag_elem_loc.at(row) - row + col;
+  boost::shared_ptr<double> elem =
+      boost::make_shared<double>(_matrix_k._none_zero_elem(idx));
+  return elem;
+}
+
+} // namespace ASSEMBLE

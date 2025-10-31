@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <boost/bimap.hpp>
+#include <boost/shared_ptr.hpp>
 #include <eigen3/Eigen/Dense>
 #include <map>
 #include <string>
@@ -20,7 +21,7 @@ struct OneDimModel {
 };
 
 class OneDimMatrixAssemble {
- public:
+public:
   OneDimMatrixAssemble(const MODEL::Model &model);
   ~OneDimMatrixAssemble() = default;
 
@@ -28,18 +29,19 @@ class OneDimMatrixAssemble {
   void AssembleK();
   void ShowK();
 
- protected:
+protected:
   std::vector<int> FindNodesOfDof(const std::string &dof);
+  boost::shared_ptr<double> GetMatrixElem(const int &row, const int &col);
 
- private:
-  int _dof{0};  // 模型自由度
+private:
+  int _dof{0}; // 模型自由度
   boost::bimap<std::string, int>
-      _dof2idx;         // 总体坐标系(全)自由度到维度的映射关系
-  MODEL::Model _model;  // 模型库
+      _dof2idx;        // 总体坐标系(全)自由度到维度的映射关系
+  MODEL::Model _model; // 模型库
   std::map<std::string, std::vector<int>>
-      _dof2node;  // 记录模型中和某个自由度关联的所有单元的节点集
-  OneDimModel _matrix_k;      // 刚度矩阵
-  Eigen::VectorXd _vector_f;  // 载荷列阵
+      _dof2node; // 记录模型中和某个自由度关联的所有单元的节点集
+  OneDimModel _matrix_k;     // 刚度矩阵
+  Eigen::VectorXd _vector_f; // 载荷列阵
 };
 
-}  // namespace ASSEMBLE
+} // namespace ASSEMBLE
