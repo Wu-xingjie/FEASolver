@@ -22,8 +22,8 @@ ElemIdx2Dof(COMPONENT::ElemBase &elem_base) {
   }
   // 生成刚度矩阵自由度坐标到
   int k_size = 6 * nodes.size();
-  for (int c = 0; c < k_size; c++) {
-    for (int r = 0; r < c + 1; r++) {
+  for (int r = 0; r < k_size; r++) {
+    for (int c = 0; c < r + 1; c++) {
       std::array<std::string, 2> dof_pair;
       dof_pair[0] = temp_map.at(r);
       dof_pair[1] = temp_map.at(c);

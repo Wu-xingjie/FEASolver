@@ -1,3 +1,4 @@
+#include "matrix_assemble/matrix_assemble.h"
 #include "matrix_assemble/one_dim_varialbe_bandwidth_stroage/one_dim_storage.h"
 
 #include <iostream>
@@ -37,7 +38,15 @@ int main(int argv, char *argc[]) {
         boost::dynamic_pointer_cast<COMPONENT::LoadBase>(comp_load);
     base_load->GenLoadVec(model);
   }
+
+  // 全矩阵组装
   // 矩阵组装
+  ASSEMBLE::MatrixAssemble matrix_assemble(model);
+  matrix_assemble.AssembleK();
+  TOOL::DisplayMatrixXd(matrix_assemble._matrix_k, "total_stiffness_matrix",
+                        true);
+
+  // 矩阵一维变带宽组装
   ASSEMBLE::OneDimMatrixAssemble test_assmebler(model);
   test_assmebler.AssembleK();
   test_assmebler.ShowK();

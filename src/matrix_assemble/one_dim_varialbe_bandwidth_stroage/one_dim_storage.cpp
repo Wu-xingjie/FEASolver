@@ -62,7 +62,7 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
     }
     int temp_len = 0;
     for (auto ptr = min_dof_idx; ptr != diag_idx + 1; ptr++) {
-      std::array<std::string, 2> dof_pair{*ptr, dof};
+      std::array<std::string, 2> dof_pair{dof, *ptr};
       _matrix_k._dof2idx.insert({dof_pair, estimate_size + temp_len});
       temp_len += 1;
     }
@@ -110,9 +110,9 @@ void OneDimMatrixAssemble::AssembleK() {
     auto elem_idx2dof = TOOL::ElemIdx2Dof(*base_elem);
     // 通过单刚矩阵索引坐标 -> 自由度坐标 -> 一位数组索引的映射，给_matrix_k赋值
     int elem_idx = 0;
-    for (int c = 0; c < elem_matrix.rows(); c++) {
+    for (int r = 0; r < elem_matrix.rows(); r++) {
       bool begin_store = false;
-      for (int r = 0; r < c + 1; r++) {
+      for (int c = 0; c < r + 1; c++) {
         // 找到第一个非零元素然后开始存储
         if (std::abs(elem_matrix(r, c)) > 1.0e-16) {
           begin_store = true;
