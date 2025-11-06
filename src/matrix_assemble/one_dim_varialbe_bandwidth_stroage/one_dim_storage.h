@@ -27,8 +27,13 @@ public:
 
   // 组装刚度矩阵
   void AssembleK();
+  // 组装载荷列阵
+  void AssembleF();
+  // 打印刚度矩阵
   void ShowK();
+  // 获取总体刚度矩阵元素值                 
   boost::shared_ptr<double> GetKElem(const int &row, const int &col);
+  // 获取载荷列阵元素值
   boost::shared_ptr<double> GetLoadElem(const int &idx);
   
 

@@ -6,6 +6,7 @@
 #include <set>
 
 #include "component/element/elemen_base.h"
+#include "component/load/load_base.h"
 #include "model_tool/get_elem_idx2dof_map.h"
 
 namespace ASSEMBLE {
@@ -100,11 +101,38 @@ std::vector<int> OneDimMatrixAssemble::FindNodesOfDof(const std::string &dof) {
   return result;
 }
 
+void OneDimMatrixAssemble::AssembleF() {
+  for (auto load : _model._load) {
+    auto base_load = boost::dynamic_pointer_cast<COMPONENT::LoadBase>(load);
+    if (!base_load) {
+      throw "[ERROR]:func(OneDimMatrixAssemble::AssembleF)>>>载荷转换失败！";
+    }
+    auto global_load = base_load->GetGLobalLoad(_model);
+    auto nodes = base_load->GetNodes();
+
+    // 创建载荷列阵维度到自由度的映射关系
+    std::map<int, std::string> load_idx2dof;
+    std::vector<std::string> xyz{"vx", "vy", "vz", "rx", "ry", "rz"};
+    for (int i = 0; i < nodes.size(); i++) {
+      for (int j = 1; j < 7; j++) {
+        auto val = std::to_string(nodes.at(i)) + "_" + xyz.at(j - 1);
+        load_idx2dof[6 * i + j] = val;
+      }
+    }
+    // 给全局载荷列阵赋值
+    for (int i = 0; i < global_load.size(); i++) {
+      std::string dof_load = load_idx2dof.at(i + 1);
+      int global_load_idx = _dof2idx.left.find(dof_load)->second;
+      _vector_f(global_load_idx) += global_load(i);
+    }
+  }
+}
+
 void OneDimMatrixAssemble::AssembleK() {
   for (auto elem : _model._element) {
     auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
     if (!base_elem) {
-      throw "[ERROR]:func(MatrixAssemble)>>>有单元转换失败！";
+      throw "[ERROR]:func(OneDimMatrixAssemble::AssembleK)>>>单元转换失败！";
     }
     auto elem_matrix = base_elem->GetGlobalK(_model);
     auto elem_idx2dof = TOOL::ElemIdx2Dof(*base_elem);
