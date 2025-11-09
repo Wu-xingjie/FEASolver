@@ -4,14 +4,14 @@
 
 namespace NUMERICAL {
 // 数值求解器基类
-class NumericalSolverBase {
+class ControlFuncCalBase {
 public:
-  NumericalSolverBase(const MODEL::Model &model) {
+  ControlFuncCalBase(const MODEL::Model &model) {
     _assemble = boost::make_shared<ASSEMBLE::OneDimMatrixAssemble>(model);
     // 在数值求解器基类基类构造函数中组装刚度矩阵，目的是让数值求解器专注于数值求解
     _assemble->AssembleK();
   };
-  ~NumericalSolverBase() = default;
+  ~ControlFuncCalBase() = default;
 
   virtual Eigen::VectorXd NumericalSolver() = 0;
 
