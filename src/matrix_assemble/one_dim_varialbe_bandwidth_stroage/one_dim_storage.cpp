@@ -10,9 +10,15 @@
 #include "model_tool/get_elem_idx2dof_map.h"
 
 namespace ASSEMBLE {
+boost::shared_ptr<OneDimModel> OneDimModel::operator+(const OneDimModel &m) {
+  auto result = boost::make_shared<OneDimModel>();
+  // 求两个OneDimModel的_dof2idx的并集
+  
+  return result;
+}
+
 OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
   _model = model;
-
   std::set<int> _node_used;
   for (auto elem : _model._element) {
     auto base_elem = boost::dynamic_pointer_cast<COMPONENT::ElemBase>(elem);
@@ -38,12 +44,10 @@ OneDimMatrixAssemble::OneDimMatrixAssemble(const MODEL::Model &model) {
       _dof2idx.insert({k, 6 * (i - 1) + j});
     }
   }
-
   // 定义_dof2node
   for (auto &dof : dof_used) {
     _dof2node[dof] = FindNodesOfDof(dof);
   }
-
   // 初始化_matrix_k
   int estimate_size = 0;
   for (auto &dof : dof_used) {

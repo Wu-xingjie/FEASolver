@@ -1,4 +1,5 @@
 #pragma once
+#include "fea_model/fea_model.h"
 #include <array>
 #include <boost/bimap.hpp>
 #include <boost/shared_ptr.hpp>
@@ -7,10 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "fea_model/fea_model.h"
-
 namespace ASSEMBLE {
-// 定义一维存储统一数据模型
+// 定义矩阵一维存储统一数据模型
 // _none_zero_elem: 一维存储的刚度矩阵值
 // _diag_elem_loc： 主对角线元素在_none_zero_elem中的位置
 // _dof2idx： 自由度坐标和刚度矩阵元素之间的双向映射表
@@ -18,6 +17,9 @@ struct OneDimModel {
   Eigen::VectorXd _none_zero_elem;
   std::vector<int> _diag_elem_loc;
   boost::bimap<std::array<std::string, 2>, int> _dof2idx;
+
+  // 矩阵加法
+  boost::shared_ptr<OneDimModel> operator+(const OneDimModel &m);
 };
 
 class OneDimMatrixAssemble {
@@ -31,11 +33,12 @@ public:
   void AssembleF();
   // 打印刚度矩阵
   void ShowK();
-  // 获取总体刚度矩阵元素值                 
+  // 获取总体刚度矩阵元素值
   boost::shared_ptr<double> GetKElem(const int &row, const int &col);
   // 获取载荷列阵元素值
   boost::shared_ptr<double> GetLoadElem(const int &idx);
-  
+  // 获取模型自由度
+  int GetModalDof() { return _dof; }
 
 protected:
   std::vector<int> FindNodesOfDof(const std::string &dof);

@@ -1,5 +1,6 @@
 message("-------------- assemble start -------------")
-add_subdirectory(one_dim_varialbe_bandwidth_stroage)
+# TODO：暂缓刚度矩阵一维度变带宽存储的工作
+# add_subdirectory(one_dim_varialbe_bandwidth_stroage)
 
 
 add_library(matrix_assemble SHARED matrix_assemble.cpp)
