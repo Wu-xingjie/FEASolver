@@ -13,7 +13,7 @@ target_include_directories(StaticSolver PUBLIC ${CMAKE_SOURCE_DIR}/src/matrix_as
 target_include_directories(StaticSolver PUBLIC ${CMAKE_SOURCE_DIR}/tool)
 target_include_directories(StaticSolver PUBLIC ${CMAKE_SOURCE_DIR}/src)
 
-target_link_libraries(static_solver StaticSolver)
+target_link_libraries(static_solver StaticSolver pthread)
 
 # 将可执行程序放入制定的目录下
 set_target_properties(static_solver PROPERTIES

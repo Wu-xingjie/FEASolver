@@ -1,5 +1,5 @@
-add_library(one_dim_assemble SHARED one_dim_storage.cpp)
-target_link_libraries(one_dim_assemble matrix_assemble)
+# add_library(one_dim_assemble SHARED one_dim_storage.cpp)
+# target_link_libraries(one_dim_assemble matrix_assemble)
 # target_link_libraries(FEAmodel ${Boost_LIBS})
 # target_link_libraries(matrix_assemble FEAmodel)
 # target_include_directories(matrix_assemble PUBLIC ${CMAKE_SOURCE_DIR}/src)

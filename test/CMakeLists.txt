@@ -25,7 +25,7 @@ foreach(elem_test ${test_lists})
     target_link_libraries(${elem_name} FEAmodel)
     target_link_libraries(${elem_name} constrain)
     target_link_libraries(${elem_name} matrix_assemble)
-    target_link_libraries(${elem_name} one_dim_assemble)
+    # target_link_libraries(${elem_name} one_dim_assemble)
 
 
 

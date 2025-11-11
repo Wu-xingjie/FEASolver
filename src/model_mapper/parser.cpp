@@ -1,13 +1,15 @@
 #include "parser.h"
-
+#include <future>
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
 #include <fstream>
 #include <iostream>
+
 namespace MAPPER {
 void Parser::ParserFile(const std::string &file_address) {
   std::fstream file;
   file.open(file_address, std::ios_base::in);
+
   if (file.is_open()) {
     while (file.good()) {
       std::string line;
