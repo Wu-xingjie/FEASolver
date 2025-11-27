@@ -21,7 +21,8 @@ public:
   void add_task(Func &&func, Args &&...args) {
     // 1: 打包任务函数
     // 利用std::bind将有参数有返回类型的可调用对象封装成无参数有返回类型的可调用对象
-    // 利用通用引用(Func &&func, Args &&...args)和std::forward实现完美转发，记录参数传入信息
+    // 利用通用引用(Func &&func, Args
+    // &&...args)和std::forward实现完美转发，记录参数传入信息
     std::function<decltype(func(args...))()> first_package =
         std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
     std::function<void()> task = [first_package]() { first_package(); };
@@ -39,6 +40,7 @@ private:
   std::vector<std::thread> _workers;
   std::atomic<bool> _stop;
   std::condition_variable _cond_val;
+  std::condition_variable _cv_tasks_empty;
 };
 
 } // namespace TOOL
