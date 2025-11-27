@@ -5,7 +5,7 @@ namespace TOOL {
 ThreadPool::ThreadPool(const int &thread_num) {
   _stop = false;
   for (int i = 0; i < thread_num; i++) {
-    std::cout << "创建线程" << std::this_thread::get_id() << std::endl;
+    std::cout << "创建线程" << std::endl;
     _workers.push_back(std::thread(&ThreadPool::thread_work, this));
   }
 }
@@ -21,8 +21,8 @@ ThreadPool::~ThreadPool() {
 void ThreadPool::thread_work() {
   while (!_stop) {
     std::unique_lock<std::mutex> mtx(_mtx);
-    _cond_val.wait(
-        mtx, [this]() { return (this->_stop) || !this->_tasks.empty(); });
+    _cond_val.wait(mtx,
+                   [this]() { return (this->_stop) || !this->_tasks.empty(); });
     if (_stop && _tasks.empty()) {
       break;
     }

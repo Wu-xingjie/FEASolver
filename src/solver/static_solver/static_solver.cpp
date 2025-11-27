@@ -1,15 +1,29 @@
 #include "static_solver.h"
-#include "component/load/load_base.h"
 #include "component/element/elemen_base.h"
+#include "component/load/load_base.h"
+#include "thread_pool/thread_pool.h"
 
 namespace SOLVER {
 void StaticSolver::AssembleMatrix() {
   // 生成单元刚度矩阵和载荷列阵
+  TOOL::ThreadPool thread_pool(4);
   for (auto comp_elem : _model._element) {
-    auto base_elem =
-        boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-    base_elem->GenerateK(_model);
+    auto generate_k = [&]() {
+      auto base_elem =
+          boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+      base_elem->GenerateK(_model);
+    };
+    thread_pool.add_task(generate_k);
   }
+  thread_pool.close();
+  std::cout << "[INFO]:(StaticSolver::AssembleMatrix)>>>线程池关闭" << std::endl;
+
+  // for (auto comp_elem : _model._element) {
+  // auto base_elem =
+  // boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+  // base_elem->GenerateK(_model);
+  // }
+
   for (auto comp_load : _model._load) {
     auto base_load =
         boost::dynamic_pointer_cast<COMPONENT::LoadBase>(comp_load);

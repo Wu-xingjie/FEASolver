@@ -29,7 +29,7 @@ public:
 
     // 2: 将打包好的task塞入任务队列中
     std::unique_lock<std::mutex> mtx(_mtx);
-    _tasks.emplace(task);
+    _tasks.push(task);
     _cond_val.notify_one();
   }
 
