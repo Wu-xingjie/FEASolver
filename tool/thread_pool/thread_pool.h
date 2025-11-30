@@ -6,12 +6,13 @@
 #include <mutex>
 #include <queue>
 #include <thread>
+#include <string>
 
 namespace TOOL {
 // 用于框架并行化的线程池
 class ThreadPool {
 public:
-  ThreadPool(const int &thread_num);
+  ThreadPool(const int thread_num, const std::string& thread_user = "null");
   ~ThreadPool();
 
   void close();

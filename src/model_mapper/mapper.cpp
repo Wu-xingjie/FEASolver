@@ -9,7 +9,7 @@ namespace MAPPER {
 void FileToMapper::mapper(MODEL::Model &model,
                           const std::vector<cards> &file_model) {
   // 创建线程池
-  TOOL::ThreadPool thread_pool(4);
+  TOOL::ThreadPool thread_pool(4, "FileToMapper::mapper");
   for (auto &i : file_model) {
     try {
       // 创建任务
@@ -39,7 +39,7 @@ void FileToMapper::mapper(MODEL::Model &model,
     }
   }
   // 关闭线程池
-  std::cout << "准备关闭线程池"<<std::endl;
+  std::cout << "准备关闭线程池" << std::endl;
   thread_pool.close();
   std::cout << "[INFO]:(mapper)>>>线程池关闭" << std::endl;
 }

@@ -125,11 +125,6 @@ void Chexa8::GenerateK(const MODEL::Model &model) {
                                 N7_datas(2), N8_datas(2)};
     std::array<std::array<double, 8>, 3> point_arr{x_arr, y_arr, z_arr};
 
-    // 等参单元在自然坐标系下单元的边长为2
-    double length = 1;
-    double weight = 1;
-    double height = 1;
-
     // 获取单元属性
     auto comp_prop = TOOL::GetCompById(model, CompBase::comp_type::prop, _pid);
     auto base_prop = boost::dynamic_pointer_cast<PropertyBase>(comp_prop);

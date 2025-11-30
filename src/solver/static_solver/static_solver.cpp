@@ -6,12 +6,12 @@
 namespace SOLVER {
 void StaticSolver::AssembleMatrix() {
   // 生成单元刚度矩阵和载荷列阵
-  TOOL::ThreadPool thread_pool(4);
+  TOOL::ThreadPool thread_pool(4, "StaticSolver::AssembleMatrix");
   for (auto comp_elem : _model._element) {
-    auto generate_k = [&]() {
+    auto generate_k = [comp_elem, this]() {
       auto base_elem =
           boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-      base_elem->GenerateK(_model);
+      base_elem->GenerateK(this->_model);
     };
     thread_pool.add_task(generate_k);
   }
