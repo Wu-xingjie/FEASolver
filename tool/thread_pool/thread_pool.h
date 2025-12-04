@@ -3,16 +3,17 @@
 #include <atomic>
 #include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <queue>
-#include <thread>
 #include <string>
+#include <thread>
 
 namespace TOOL {
 // 用于框架并行化的线程池
 class ThreadPool {
-public:
-  ThreadPool(const int thread_num, const std::string& thread_user = "null");
+ public:
+  ThreadPool(const int thread_num, const std::string &thread_user = "null");
   ~ThreadPool();
 
   void close();
@@ -30,11 +31,17 @@ public:
 
     // 2: 将打包好的task塞入任务队列中
     std::unique_lock<std::mutex> mtx(_mtx);
+    if (!task) {
+      throw std::runtime_error(
+          "[ERROR]:func(ThreadPool::add_task)>>>任务添加失败！");
+    }
     _tasks.push(task);
+    std::cout << "[INFO]:func(ThreadPool::add_task)>>>任务添加成功！"
+              << std::endl;
     _cond_val.notify_one();
   }
 
-private:
+ private:
   void thread_work();
   std::mutex _mtx;
   std::queue<std::function<void()>> _tasks;
@@ -44,4 +51,4 @@ private:
   std::condition_variable _cv_tasks_empty;
 };
 
-} // namespace TOOL
+}  // namespace TOOL

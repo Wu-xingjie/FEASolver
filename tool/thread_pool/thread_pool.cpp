@@ -1,4 +1,5 @@
 #include "thread_pool.h"
+
 #include <iostream>
 
 namespace TOOL {
@@ -37,6 +38,10 @@ void ThreadPool::thread_work() {
     mtx.unlock();
     // 运行任务函数
     try {
+      if (!task) {
+        throw std::runtime_error(
+            "[ERROR]:func(ThreadPool::thread_work)>>>任务为空！");
+      }
       task();
     } catch (const std::exception &e) {
       std::cout << e.what() << std::endl;
@@ -55,4 +60,4 @@ void ThreadPool::close() {
   mtx.unlock();
 }
 
-} // namespace TOOL
+}  // namespace TOOL

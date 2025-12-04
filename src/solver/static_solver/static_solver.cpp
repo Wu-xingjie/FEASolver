@@ -1,4 +1,5 @@
 #include "static_solver.h"
+
 #include "component/element/elemen_base.h"
 #include "component/load/load_base.h"
 #include "thread_pool/thread_pool.h"
@@ -6,23 +7,26 @@
 namespace SOLVER {
 void StaticSolver::AssembleMatrix() {
   // 生成单元刚度矩阵和载荷列阵
-  TOOL::ThreadPool thread_pool(4, "StaticSolver::AssembleMatrix");
-  for (auto comp_elem : _model._element) {
-    auto generate_k = [comp_elem, this]() {
-      auto base_elem =
-          boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-      base_elem->GenerateK(this->_model);
-    };
-    thread_pool.add_task(generate_k);
-  }
-  thread_pool.close();
-  std::cout << "[INFO]:(StaticSolver::AssembleMatrix)>>>线程池关闭" << std::endl;
-
+  // TOOL::ThreadPool thread_pool(4, "StaticSolver::AssembleMatrix");
   // for (auto comp_elem : _model._element) {
-  // auto base_elem =
-  // boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-  // base_elem->GenerateK(_model);
+  //   std::mutex this_mutex;
+  //   auto generate_k = [comp_elem, this, &this_mutex]() {
+  //     auto base_elem =
+  //         boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+  //     std::lock_guard<std::mutex> mtx(this_mutex);
+  //     base_elem->GenerateK(this->_model);
+  //   };
+  //   thread_pool.add_task(generate_k);
   // }
+  // thread_pool.close();
+  // std::cout << "[INFO]:(StaticSolver::AssembleMatrix)>>>线程池关闭"
+  //           << std::endl;
+
+  for (auto comp_elem : _model._element) {
+  auto base_elem =
+  boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+  base_elem->GenerateK(_model);
+  }
 
   for (auto comp_load : _model._load) {
     auto base_load =
@@ -56,4 +60,4 @@ std::map<std::string, double> StaticSolver::solver() {
   return result;
 }
 
-} // namespace SOLVER
+}  // namespace SOLVER
