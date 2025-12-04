@@ -10,6 +10,7 @@ void FileToMapper::mapper(MODEL::Model &model,
                           const std::vector<cards> &file_model) {
   // 创建线程池
   TOOL::ThreadPool thread_pool(4, "FileToMapper::mapper");
+  std::mutex mapper_mtx;
   for (auto &i : file_model) {
     try {
       // 创建任务
@@ -28,6 +29,7 @@ void FileToMapper::mapper(MODEL::Model &model,
           if (comp) {
             comp->SetComp(i);
             // 将元件塞入到有限元模型中
+            std::lock_guard<std::mutex> mtx(mapper_mtx);
             model.InsertComp(comp);
           }
         }

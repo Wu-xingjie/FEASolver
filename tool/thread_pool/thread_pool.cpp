@@ -17,7 +17,6 @@ ThreadPool::ThreadPool(const int thread_num, const std::string &thread_user) {
 }
 
 ThreadPool::~ThreadPool() {
-  // close();
   _stop = true;
   for (auto &td : _workers) {
     td.join();
@@ -33,7 +32,7 @@ void ThreadPool::thread_work() {
     if (_stop && _tasks.empty()) {
       break;
     }
-    auto task = _tasks.front();
+    auto task = std::move(_tasks.front());
     _tasks.pop();
     mtx.unlock();
     // 运行任务函数
@@ -53,6 +52,7 @@ void ThreadPool::close() {
   _cv_tasks_empty.wait(mtx, [this]() { return this->_tasks.empty(); });
   _stop = true;
   _cond_val.notify_all();
+  mtx.unlock();
 }
 
 } // namespace TOOL
