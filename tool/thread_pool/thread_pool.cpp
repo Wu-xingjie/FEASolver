@@ -33,7 +33,7 @@ void ThreadPool::thread_work() {
     if (_stop && _tasks.empty()) {
       break;
     }
-    auto task = std::move(_tasks.front());
+    auto task = _tasks.front();
     _tasks.pop();
     mtx.unlock();
     // 运行任务函数

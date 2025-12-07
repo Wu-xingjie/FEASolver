@@ -27,14 +27,13 @@ class ThreadPool {
     // &&...args)和std::forward实现完美转发，记录参数传入信息
     std::function<decltype(func(args...))()> first_package =
         std::bind(std::forward<Func>(func), std::forward<Args>(args)...);
-    std::function<void()> task = [first_package]() { first_package(); };
-
-    // 2: 将打包好的task塞入任务队列中
-    std::unique_lock<std::mutex> mtx(_mtx);
-    if (!task) {
+    if (!first_package) {
       throw std::runtime_error(
           "[ERROR]:func(ThreadPool::add_task)>>>任务添加失败！");
     }
+    std::function<void()> task = [first_package]() { first_package(); };
+    // 2: 将打包好的task塞入任务队列中
+    std::lock_guard<std::mutex> mtx(_mtx);
     _tasks.push(task);
     std::cout << "[INFO]:func(ThreadPool::add_task)>>>任务添加成功！"
               << std::endl;
