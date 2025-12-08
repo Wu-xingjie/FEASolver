@@ -19,17 +19,18 @@ ThreadPool::ThreadPool(const int thread_num, const std::string &thread_user) {
 
 ThreadPool::~ThreadPool() {
   _stop = true;
+  _cond_val.notify_all();
   for (auto &td : _workers) {
-    td.join();
+    if (td.joinable()) {
+      td.join();
+    }
   }
 }
 
 void ThreadPool::thread_work() {
   while (!_stop) {
     std::unique_lock<std::mutex> mtx(_mtx);
-    if (_tasks.empty()) {
-      _cond_val.wait(mtx);
-    }
+    _cond_val.wait(mtx, [this](){ return !_tasks.empty() || _stop; });
     if (_stop && _tasks.empty()) {
       break;
     }
