@@ -7,26 +7,32 @@
 namespace SOLVER {
 void StaticSolver::AssembleMatrix() {
   // 生成单元刚度矩阵和载荷列阵
-  // TOOL::ThreadPool thread_pool(4, "StaticSolver::AssembleMatrix");
-  // for (auto comp_elem : _model._element) {
-  //   std::mutex this_mutex;
-  //   auto generate_k = [comp_elem, this, &this_mutex]() {
-  //     auto base_elem =
-  //         boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-  //     std::lock_guard<std::mutex> mtx(this_mutex);
-  //     base_elem->GenerateK(this->_model);
-  //   };
-  //   thread_pool.add_task(generate_k);
-  // }
-  // thread_pool.close();
-  // std::cout << "[INFO]:(StaticSolver::AssembleMatrix)>>>线程池关闭"
-  //           << std::endl;
-
-  for (auto comp_elem : _model._element) {
-  auto base_elem =
-  boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
-  base_elem->GenerateK(_model);
+  {
+    TOOL::ThreadPool thread_pool(9, "StaticSolver::AssembleMatrix");
+    std::mutex this_mutex;
+    for (auto& comp_elem : _model._element) {
+      try {
+        auto generate_k =
+            [&](const boost::shared_ptr<COMPONENT::CompBase>& comp_elem) {
+              auto base_elem =
+                  boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+              base_elem->GenerateK(this->_model);
+            };
+        thread_pool.add_task(generate_k, comp_elem);
+      } catch (const std::exception& e) {
+        std::cout << e.what() << std::endl;
+      }
+    }
+    thread_pool.close();
+    std::cout << "[INFO]:(StaticSolver::AssembleMatrix)>>>线程池关闭"
+              << std::endl;
   }
+
+  // for (auto comp_elem : _model._element) {
+  //   auto base_elem =
+  //       boost::dynamic_pointer_cast<COMPONENT::ElemBase>(comp_elem);
+  //   base_elem->GenerateK(_model);
+  // }
 
   for (auto comp_load : _model._load) {
     auto base_load =
