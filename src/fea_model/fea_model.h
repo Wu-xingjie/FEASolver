@@ -20,5 +20,6 @@ public:
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _prop;    // 属性库
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _mat;     // 材料库
   std::vector<boost::shared_ptr<COMPONENT::CompBase>> _constrain; // 约束库
+  
 };
 } // namespace MODEL
