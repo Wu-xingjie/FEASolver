@@ -10,6 +10,7 @@
 #include "component_factory/element_factory/factory_D1/factory_cbar.h"
 #include "component_factory/coordinate_factory/factory_cartesian_by_node.h"
 #include "component_factory/load_factory/factory_concentrated_force.h"
+#include "component_factory/load_factory/factory_uniformly_distribute_surf_load.h"
 #include "component_factory/load_factory/factory_concentrated_moment.h"
 #include "component_factory/constrain_factory/factory_single_point_constrain.h"
 #include "component_factory/element_factory/factory_D2/factory_tria3.h"
@@ -37,5 +38,6 @@ MAPPER::Regist<FACTORY::CartesianByNodeFactory> _GlobalCoordFactoryREGIST("CORD1
 // 载荷注册
 MAPPER::Regist<FACTORY::ConcentratedForceFactory> _ConcentratedForceFactoryREGIST("FORCE");
 MAPPER::Regist<FACTORY::ConcentratedMomentFactory> _ConcentratedMomentFactoryREGIST("MOMENT");
+MAPPER::Regist<FACTORY::UnifDistributeSurfLoadFactory> _UnifDistributeSurfLoadFactory("USFORCE");
 // 约束注册
 MAPPER::Regist<FACTORY::SinglePointConstrainFactory> _SinglePointConstrainFactoryREGIST("SPC");
