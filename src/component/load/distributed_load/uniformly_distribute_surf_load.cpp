@@ -1,5 +1,5 @@
 #include "uniformly_distribute_surf_load.h"
-
+#include "geometry_tool/trans_coord_to_coord.h"
 #include "math_tool/func_expr/func_cal.h"
 #include "math_tool/gauss_integral.h"
 #include "model_tool/get_comp_by_id.h"
@@ -7,16 +7,16 @@
 namespace COMPONENT {
 void UniDistributeSurfLoad::SetComp(const file_data &datas) {
   if (datas.size() > 1) {
-    throw std::runtime_error(
-        "[ERROR]:func(UniDistributeSurfLoad::SetComp)>>>"
-        "均布面载荷暂不支持作用于节点数超过6的单元面");
+    throw std::runtime_error("[ERROR]:func(UniDistributeSurfLoad::SetComp)>>>"
+                             "均布面载荷暂不支持作用于节点数超过5的单元面");
   }
   auto card = datas.front();
   _id = boost::any_cast<int>(card.at(1));
-  _load_x = boost::any_cast<int>(card.at(2));
-  _load_y = boost::any_cast<int>(card.at(3));
-  _load_z = boost::any_cast<int>(card.at(4));
-  for (int i = 5; i < 11; i++) {
+  _coord_id = boost::any_cast<int>(card.at(2));
+  _load_x = boost::any_cast<int>(card.at(3));
+  _load_y = boost::any_cast<int>(card.at(4));
+  _load_z = boost::any_cast<int>(card.at(5));
+  for (int i = 6; i < 11; i++) {
     int nid = boost::any_cast<int>(card.at(i));
     _surf_nids.push_back(nid);
   }
@@ -70,7 +70,7 @@ void UniDistributeSurfLoad::GenLoadVec(const MODEL::Model &model) {
                                 N4_datas(1)};
     std::array<std::array<double, 4>, 2> point_arr{x_arr, y_arr};
 
-    Eigen::Vector3d load_vec{_load_x, _load_y, _load_z};  // 载荷列阵
+    Eigen::Vector3d load_vec{_load_x, _load_y, _load_z}; // 载荷列阵
 
     // 算式预处理
     std::string str_N1 = "0.25*(1-x)*(1-y)";
@@ -143,10 +143,37 @@ void UniDistributeSurfLoad::GenLoadVec(const MODEL::Model &model) {
     }
 
   } else {
-    throw std::runtime_error(
-        "[ERROR]:func(UniDistributeSurfLoad::GenLoadVec)>>"
-        ">当前仅考虑施加在四边形面上的均布载荷");
+    throw std::runtime_error("[ERROR]:func(UniDistributeSurfLoad::GenLoadVec)>>"
+                             ">当前仅考虑施加在四边形面上的均布载荷");
   }
 }
 
-}  // namespace COMPONENT
+std::vector<int> UniDistributeSurfLoad::GetNodes() { return _surf_nids; }
+
+Eigen::VectorXd
+UniDistributeSurfLoad::GetGLobalLoad(const MODEL::Model &model) {
+  Eigen::VectorXd result = Eigen::VectorXd::Zero(3 * _surf_nids.size());
+  for (int i = 0; i < _surf_nids.size(); i++) {
+    // 载荷坐标系
+    auto comp_coord = TOOL::GetCompById(
+        model, COMPONENT::CompBase::comp_type::coord, _coord_id);
+    auto base_coord = boost::dynamic_pointer_cast<CoordBase>(comp_coord);
+    if (!base_coord) {
+      throw "[ERROR]:func(GetGLobalLoad):无法通过坐标系id找到对应坐标系!";
+    }
+    // 将载荷坐标系变换到全局坐标系下
+    auto base_global_coord = model._coord.front();
+    auto global_coord =
+        boost::dynamic_pointer_cast<CoordBase>(base_global_coord);
+    auto trans_matrix = TOOL::TransCoordToCoord(global_coord, base_coord);
+    // 获取全局坐标系下的载荷列阵
+    Eigen::Vector3d origin;
+    origin << _load_x, _load_y, _load_z;
+    auto result_per_node = trans_matrix * origin;
+    for (int j = 0; j < origin.size(); j++) {
+      result(3 * i + j) = result_per_node(j);
+    }
+  }
+  return result;
+}
+} // namespace COMPONENT

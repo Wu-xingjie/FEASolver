@@ -14,9 +14,10 @@ public:
   virtual void SetComp(const file_data &datas) override;
   virtual void GenLoadVec(const MODEL::Model &model) override;
   virtual Eigen::VectorXd GetGLobalLoad(const MODEL::Model &model) override;
-  virtual std::vector<int> GetNodes();
+  virtual std::vector<int> GetNodes() override;
 
 private:
+  int _coord_id{0};
   double _load_x;
   double _load_y;
   double _load_z;

@@ -1,6 +1,6 @@
 #pragma once
-#include "component/component_base.h"
 #include "fea_model/fea_model.h"
+#include <eigen3/Eigen/Dense>
 namespace COMPONENT {
 class LoadBase : public CompBase {
 public:
